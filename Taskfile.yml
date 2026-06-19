@@ -21,7 +21,7 @@ tasks:
   install:
     desc: 'First-time setup: start, install deps, migrate, load fixtures'
     cmds:
-      - task: start
+      - '{{.DOCKER_COMPOSE}} up -d'
       - '{{.COMPOSER}} install'
       - '{{.CONSOLE}} doctrine:database:create --if-not-exists'
       - '{{.CONSOLE}} doctrine:migrations:migrate --no-interaction'
