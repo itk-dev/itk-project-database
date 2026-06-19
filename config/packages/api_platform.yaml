@@ -1,0 +1,8 @@
+api_platform:
+    title: Project database API
+    description: Read-only API exposing published initiatives and their classification terms.
+    version: 1.0.0
+    defaults:
+        stateless: true
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin']
