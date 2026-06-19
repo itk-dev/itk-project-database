@@ -1,0 +1,11 @@
+<div class="activity-item activity-item--{{ action }}">
+    <span class="activity-item__dot"></span>
+    <div class="activity-item__body">
+        <span class="activity-item__text">
+            {%- if actor %}<strong>{{ actor }}</strong> {% endif -%}
+            {{ ('activity.action.' ~ action)|trans }}
+            {% if url %}<a href="{{ url }}" class="activity-item__link">{{ title }}</a>{% else %}<span class="activity-item__title">{{ title }}</span>{% endif %}
+        </span>
+        <time class="activity-item__time" datetime="{{ at|date('c') }}">{{ at|date('d.m.Y H:i') }}</time>
+    </div>
+</div>

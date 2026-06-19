@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Initiative;
+use App\Entity\User;
 use App\Form\InitiativeFilterType;
 use App\Form\InitiativeType;
 use App\Model\InitiativeFilter;
 use App\Repository\InitiativeRepository;
+use App\Service\ActivityPublisher;
 use App\Service\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Writer;
@@ -107,7 +109,7 @@ class InitiativeController extends AbstractController
     }
 
     #[Route('/initiatives/new', name: 'app_initiative_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, ActivityPublisher $activityPublisher): Response
     {
         $initiative = new Initiative();
         $form = $this->createForm(InitiativeType::class, $initiative);
@@ -117,6 +119,8 @@ class InitiativeController extends AbstractController
             $this->removeEmptyMedia($initiative);
             $entityManager->persist($initiative);
             $entityManager->flush();
+
+            $activityPublisher->publish('created', $initiative, $this->currentUser());
 
             $this->addFlash('success', 'flash.initiative.created');
 
@@ -138,18 +142,40 @@ class InitiativeController extends AbstractController
     }
 
     #[Route('/initiatives/{id}/edit', name: 'app_initiative_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function edit(Request $request, Initiative $initiative, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Initiative $initiative, EntityManagerInterface $entityManager, ActivityPublisher $activityPublisher): Response
     {
-        $form = $this->createForm(InitiativeType::class, $initiative);
+        // Autosave posts the same form via fetch; it expects to stay on the page.
+        $isAutosave = $request->headers->has('X-Autosave');
+
+        // A background fetch can't run the stateless-CSRF JS (no real submit), so the
+        // sentinel token never resolves. Autosave is guarded instead by the mandatory
+        // X-Autosave header — a cross-origin caller can't set it without a refused CORS
+        // pre-flight — so we drop CSRF and ignore the now-stray _token field for it.
+        $form = $this->createForm(InitiativeType::class, $initiative, [
+            'csrf_protection' => !$isAutosave,
+            'allow_extra_fields' => $isAutosave,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->removeEmptyMedia($initiative);
             $entityManager->flush();
 
+            if ($isAutosave) {
+                return new Response(null, Response::HTTP_NO_CONTENT);
+            }
+
+            // Only explicit saves reach the feed; autosave returned above, so it never floods it.
+            $activityPublisher->publish('updated', $initiative, $this->currentUser());
+
             $this->addFlash('success', 'flash.initiative.updated');
 
             return $this->redirectToRoute('app_initiative_show', ['id' => $initiative->getId()]);
+        }
+
+        if ($isAutosave) {
+            // Report the failed validation without redrawing the form the user is editing.
+            return new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('initiative/edit.html.twig', [
@@ -159,15 +185,25 @@ class InitiativeController extends AbstractController
     }
 
     #[Route('/initiatives/{id}/delete', name: 'app_initiative_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function delete(Request $request, Initiative $initiative, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Initiative $initiative, EntityManagerInterface $entityManager, ActivityPublisher $activityPublisher): Response
     {
         if ($this->isCsrfTokenValid('delete-initiative-'.$initiative->getId(), (string) $request->request->get('_token'))) {
+            // Publish before removal so the title is still available for the feed.
+            $activityPublisher->publish('deleted', $initiative, $this->currentUser());
+
             $entityManager->remove($initiative);
             $entityManager->flush();
             $this->addFlash('success', 'flash.initiative.deleted');
         }
 
         return $this->redirectToRoute('app_initiative_index');
+    }
+
+    private function currentUser(): ?User
+    {
+        $user = $this->getUser();
+
+        return $user instanceof User ? $user : null;
     }
 
     /**

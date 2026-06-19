@@ -1,4 +1,18 @@
-{{ form_start(form, {attr: {class: 'form'}}) }}
+{% set form_attr = {class: 'form'} %}
+{% if autosave|default(false) %}
+    {% set form_attr = form_attr|merge({
+        'data-controller': 'autosave',
+        'data-action': 'input->autosave#schedule change->autosave#schedule',
+        'data-autosave-debounce-value': 800,
+        'data-autosave-saving-text-value': 'autosave.saving'|trans,
+        'data-autosave-saved-text-value': 'autosave.saved'|trans,
+        'data-autosave-unsaved-text-value': 'autosave.unsaved'|trans,
+        'data-autosave-error-text-value': 'autosave.error'|trans,
+        'data-autosave-offline-text-value': 'autosave.offline'|trans,
+        'data-autosave-files-hint-text-value': 'autosave.files_hint'|trans,
+    }) %}
+{% endif %}
+{{ form_start(form, {attr: form_attr}) }}
     {{ form_errors(form) }}
 
     <div class="form-section">
@@ -128,5 +142,8 @@
     <div class="form-actions">
         <button type="submit" class="btn btn--primary">{{ button_label|default('action.save')|trans }}</button>
         <a href="{{ initiative.id ? path('app_initiative_show', {id: initiative.id}) : path('app_initiative_index') }}" class="btn btn--ghost">{{ 'action.cancel'|trans }}</a>
+        {% if autosave|default(false) %}
+            <span class="autosave-status" data-autosave-target="status" role="status" aria-live="polite"></span>
+        {% endif %}
     </div>
 {{ form_end(form) }}

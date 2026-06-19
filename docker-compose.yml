@@ -90,6 +90,24 @@ services:
             - "traefik.http.routers.${COMPOSE_PROJECT_NAME:?}mail.rule=Host(`mail-${COMPOSE_DOMAIN:?}`)"
             - "traefik.http.services.${COMPOSE_PROJECT_NAME:?}mail.loadbalancer.server.port=8025"
 
+    mercure:
+        image: dunglas/mercure
+        networks:
+            - app
+            - frontend
+        environment:
+            SERVER_NAME: ":80"
+            MERCURE_PUBLISHER_JWT_KEY: "!ChangeThisMercureHubJWTSecretKey!"
+            MERCURE_SUBSCRIBER_JWT_KEY: "!ChangeThisMercureHubJWTSecretKey!"
+            MERCURE_EXTRA_DIRECTIVES: |-
+                anonymous
+                cors_origins http://${COMPOSE_DOMAIN:?} https://${COMPOSE_DOMAIN:?}
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=frontend"
+            - "traefik.http.routers.${COMPOSE_PROJECT_NAME:?}mercure.rule=Host(`mercure-${COMPOSE_DOMAIN:?}`)"
+            - "traefik.http.services.${COMPOSE_PROJECT_NAME:?}mercure.loadbalancer.server.port=80"
+
     # Code checks tools
     markdownlint:
         image: itkdev/markdownlint

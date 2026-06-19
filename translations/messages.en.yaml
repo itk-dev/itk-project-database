@@ -1,6 +1,22 @@
 app:
     name: Project database
 
+autosave:
+    saving: Saving…
+    saved: Saved
+    unsaved: Unsaved changes
+    error: Couldn’t save — check the required fields
+    offline: Save failed — your changes are kept here
+    files_hint: Click Save to upload files
+
+activity:
+    title: Activity
+    live: Live
+    action:
+        created: created
+        updated: updated
+        deleted: deleted
+
 nav:
     dashboard: Overview
     initiatives: Initiatives

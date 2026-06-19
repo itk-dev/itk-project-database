@@ -90,5 +90,24 @@
                 </div>
             </div>
         </div>
+
+        <div class="card">
+            <div class="card__header">
+                <span class="card__title">{{ 'activity.title'|trans }}</span>
+                <span class="activity-live"><span class="activity-live__dot"></span>{{ 'activity.live'|trans }}</span>
+            </div>
+            {{ turbo_stream_from('activities') }}
+            <div id="activity-feed" class="activity-feed">
+                {% for initiative in recent %}
+                    {{ include('activity/_item.html.twig', {
+                        action: 'updated',
+                        title: initiative.title,
+                        url: path('app_initiative_show', {id: initiative.id}),
+                        actor: null,
+                        at: initiative.updatedAt,
+                    }) }}
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}

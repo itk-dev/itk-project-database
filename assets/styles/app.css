@@ -1110,3 +1110,117 @@ textarea {
     gap: var(--itk-space-2);
     margin-top: var(--itk-space-3);
 }
+
+.autosave-status {
+    font-size: var(--itk-text-sm);
+    color: var(--itk-slate-500);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--itk-space-2);
+    margin-left: auto;
+}
+
+.autosave-status--saving {
+    color: var(--itk-slate-500);
+}
+
+.autosave-status--saved {
+    color: var(--itk-green);
+}
+
+.autosave-status--unsaved {
+    color: #b45309;
+}
+
+.autosave-status--error {
+    color: var(--itk-accent);
+}
+
+.activity-live {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--itk-space-2);
+    font-size: var(--itk-text-sm);
+    color: var(--itk-slate-500);
+}
+
+.activity-live__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--itk-green);
+    animation: activity-pulse 2s infinite;
+}
+
+@keyframes activity-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 141, 61, 0.5);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(0, 141, 61, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 141, 61, 0);
+    }
+}
+
+.activity-feed {
+    display: flex;
+    flex-direction: column;
+    gap: var(--itk-space-2);
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--itk-space-3);
+    padding: var(--itk-space-2) 0;
+    border-bottom: 1px solid var(--itk-slate-100);
+}
+
+.activity-item__dot {
+    margin-top: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--itk-slate-300);
+    flex: none;
+}
+
+.activity-item--created .activity-item__dot {
+    background: var(--itk-green);
+}
+
+.activity-item--updated .activity-item__dot {
+    background: var(--itk-blue);
+}
+
+.activity-item--deleted .activity-item__dot {
+    background: var(--itk-accent);
+}
+
+.activity-item__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.activity-item__time {
+    font-size: var(--itk-text-xs);
+    color: var(--itk-slate-500);
+}
+
+@keyframes activity-flash {
+    from {
+        background: var(--itk-slate-50);
+    }
+    to {
+        background: transparent;
+    }
+}
+
+.activity-feed > .activity-item:first-child {
+    animation: activity-flash 1.2s ease-out;
+}
