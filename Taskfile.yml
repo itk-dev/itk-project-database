@@ -1,0 +1,101 @@
+version: '3'
+
+dotenv: ['.env.local', '.env']
+
+vars:
+  DOCKER_COMPOSE: '{{.TASK_DOCKER_COMPOSE | default "docker compose"}}'
+  COMPOSER: '{{.DOCKER_COMPOSE}} exec phpfpm composer'
+  CONSOLE: '{{.DOCKER_COMPOSE}} exec phpfpm bin/console'
+  PHPUNIT: '{{.DOCKER_COMPOSE}} exec phpfpm bin/phpunit'
+  PHP_CS_FIXER: '{{.DOCKER_COMPOSE}} exec phpfpm vendor/bin/php-cs-fixer'
+  PHPSTAN: '{{.DOCKER_COMPOSE}} exec phpfpm vendor/bin/phpstan'
+  TWIG_CS_FIXER: '{{.DOCKER_COMPOSE}} exec phpfpm vendor/bin/twig-cs-fixer'
+  PRETTIER: '{{.DOCKER_COMPOSE}} run --rm prettier'
+  MARKDOWNLINT: '{{.DOCKER_COMPOSE}} run --rm markdownlint markdownlint'
+
+tasks:
+  start:
+    desc: 'Start Docker containers in the background'
+    cmds:
+      - '{{.DOCKER_COMPOSE}} up -d'
+
+  stop:
+    desc: 'Stop Docker containers (preserves data)'
+    cmds:
+      - '{{.DOCKER_COMPOSE}} stop'
+
+  reset:
+    desc: 'Stop and remove containers — wipes the database'
+    cmds:
+      - '{{.DOCKER_COMPOSE}} down'
+
+  install:
+    desc: 'First-time setup: start, install deps, migrate, load fixtures'
+    cmds:
+      - task: start
+      - '{{.COMPOSER}} install'
+      - '{{.CONSOLE}} doctrine:database:create --if-not-exists'
+      - '{{.CONSOLE}} doctrine:migrations:migrate --no-interaction'
+      - '{{.CONSOLE}} doctrine:fixtures:load --no-interaction'
+
+  update:
+    desc: 'Refresh the project after pulling changes'
+    cmds:
+      - '{{.COMPOSER}} install'
+      - '{{.CONSOLE}} doctrine:migrations:migrate --no-interaction'
+
+  console:
+    desc: 'Run a Symfony console command (usage: task console -- <command>)'
+    cmds:
+      - '{{.CONSOLE}} {{.CLI_ARGS}}'
+
+  create-admin:
+    desc: 'Create an admin user (usage: task create-admin -- <email> [<name>])'
+    cmds:
+      - '{{.CONSOLE}} app:create-admin {{.CLI_ARGS}}'
+
+  fixtures:
+    desc: 'Reload the development fixtures (destroys current data)'
+    cmds:
+      - '{{.CONSOLE}} doctrine:fixtures:load --no-interaction'
+
+  test:
+    desc: 'Run the test suite'
+    cmds:
+      - '{{.PHPUNIT}} {{.CLI_ARGS}}'
+
+  coding-standards:check:
+    desc: 'Check coding standards'
+    cmds:
+      - '{{.PHP_CS_FIXER}} fix --dry-run --diff'
+      - '{{.TWIG_CS_FIXER}} lint'
+      - "{{.PRETTIER}} 'assets/**/*.js' --check"
+      - "{{.PRETTIER}} 'assets/**/*.{css,scss}' --check"
+      - "{{.PRETTIER}} '**/*.{yml,yaml}' --check"
+      - "{{.MARKDOWNLINT}} '**/*.md'"
+
+  coding-standards:fix:
+    desc: 'Fix coding standards'
+    cmds:
+      - '{{.PHP_CS_FIXER}} fix'
+      - '{{.TWIG_CS_FIXER}} lint --fix'
+      - "{{.PRETTIER}} 'assets/**/*.js' --write"
+      - "{{.PRETTIER}} 'assets/**/*.{css,scss}' --write"
+      - "{{.PRETTIER}} '**/*.{yml,yaml}' --write"
+
+  static-analysis:
+    desc: 'Run PHPStan static analysis'
+    cmds:
+      - '{{.PHPSTAN}} analyse --memory-limit=1G'
+
+  ci:
+    desc: 'Run everything CI runs (coding standards, static analysis, tests)'
+    cmds:
+      - task: coding-standards:check
+      - task: static-analysis
+      - task: test
+
+  default:
+    cmds:
+      - task --list
+    silent: true
