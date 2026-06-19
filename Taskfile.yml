@@ -14,21 +14,10 @@ vars:
   MARKDOWNLINT: '{{.DOCKER_COMPOSE}} run --rm markdownlint markdownlint'
 
 tasks:
-  start:
-    desc: 'Start Docker containers in the background'
+  compose:
+    desc: "Install Composer dependencies"
     cmds:
-      - '{{.DOCKER_COMPOSE}} up -d'
-
-  stop:
-    desc: 'Stop Docker containers (preserves data)'
-    cmds:
-      - '{{.DOCKER_COMPOSE}} stop'
-
-  reset:
-    desc: 'Stop and remove containers — wipes the database'
-    cmds:
-      - '{{.DOCKER_COMPOSE}} down'
-
+      - "{{.COMPOSER}} {{.CLI_ARGS}}"
   install:
     desc: 'First-time setup: start, install deps, migrate, load fixtures'
     cmds:
@@ -38,31 +27,10 @@ tasks:
       - '{{.CONSOLE}} doctrine:migrations:migrate --no-interaction'
       - '{{.CONSOLE}} doctrine:fixtures:load --no-interaction'
 
-  update:
-    desc: 'Refresh the project after pulling changes'
-    cmds:
-      - '{{.COMPOSER}} install'
-      - '{{.CONSOLE}} doctrine:migrations:migrate --no-interaction'
-
   console:
     desc: 'Run a Symfony console command (usage: task console -- <command>)'
     cmds:
       - '{{.CONSOLE}} {{.CLI_ARGS}}'
-
-  create-admin:
-    desc: 'Create an admin user (usage: task create-admin -- <email> [<name>])'
-    cmds:
-      - '{{.CONSOLE}} app:create-admin {{.CLI_ARGS}}'
-
-  fixtures:
-    desc: 'Reload the development fixtures (destroys current data)'
-    cmds:
-      - '{{.CONSOLE}} doctrine:fixtures:load --no-interaction'
-
-  test:
-    desc: 'Run the test suite'
-    cmds:
-      - '{{.PHPUNIT}} {{.CLI_ARGS}}'
 
   coding-standards:check:
     desc: 'Check coding standards'
@@ -74,8 +42,8 @@ tasks:
       - "{{.PRETTIER}} '**/*.{yml,yaml}' --check"
       - "{{.MARKDOWNLINT}} '**/*.md'"
 
-  coding-standards:fix:
-    desc: 'Fix coding standards'
+  coding-standards:apply:
+    desc: 'Apply coding standards'
     cmds:
       - '{{.PHP_CS_FIXER}} fix'
       - '{{.TWIG_CS_FIXER}} lint --fix'
@@ -87,13 +55,6 @@ tasks:
     desc: 'Run PHPStan static analysis'
     cmds:
       - '{{.PHPSTAN}} analyse --memory-limit=1G'
-
-  ci:
-    desc: 'Run everything CI runs (coding standards, static analysis, tests)'
-    cmds:
-      - task: coding-standards:check
-      - task: static-analysis
-      - task: test
 
   default:
     cmds:
