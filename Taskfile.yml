@@ -50,6 +50,7 @@ tasks:
       - "{{.PRETTIER}} 'assets/**/*.js' --write"
       - "{{.PRETTIER}} 'assets/**/*.{css,scss}' --write"
       - "{{.PRETTIER}} '**/*.{yml,yaml}' --write"
+      - "{{.MARKDOWNLINT}} '**/*.md' --fix"
 
   static-analysis:
     desc: 'Run PHPStan static analysis'
