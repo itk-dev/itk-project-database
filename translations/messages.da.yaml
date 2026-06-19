@@ -1,0 +1,230 @@
+app:
+    name: Projektdatabase
+
+nav:
+    dashboard: Overblik
+    initiatives: Initiativer
+    contacts: Kontaktpersoner
+    api: API
+    users: Brugere
+    admin: Administration
+    language: Sprog
+    signed_in_as: Logget ind som
+    logout: Log ud
+
+action:
+    new: Opret
+    edit: Rediger
+    delete: Slet
+    save: Gem
+    cancel: Annuller
+    create: Opret
+    back: Tilbage
+    view: Vis
+    add: Tilføj
+    filter: Filtrer
+    reset: Nulstil
+    export: Eksportér CSV
+    add_link: Tilføj link
+    add_contact: Tilføj kontaktperson
+    add_image: Tilføj billede
+    add_attachment: Tilføj fil
+    remove: Fjern
+    confirm_delete: Er du sikker på, at du vil slette dette?
+
+common:
+    yes: Ja
+    no: Nej
+    none: Ingen
+    actions: Handlinger
+    created: Oprettet
+    updated: Opdateret
+    optional: valgfri
+
+form:
+    choose: Vælg …
+    terms:
+        invalid: Ugyldige værdier.
+
+filter:
+    search: Søg
+    search_placeholder: Søg i titel, beskrivelse, forfatter …
+    all: Alle
+    yes: "Ja"
+    no: "Nej"
+    published: Offentliggjort
+    draft: Kladde
+    budget_min: Budget fra
+    budget_max: Budget til
+
+dashboard:
+    title: Overblik
+    subtitle: Status på alle initiativer i databasen.
+    total: Initiativer i alt
+    published: Offentliggjorte
+    drafts: Kladder
+    total_budget: Samlet budget (offentliggjorte)
+    by_status: Fordeling på status
+    recent: Senest oprettede
+    no_status: Uden status
+    empty: Der er endnu ikke oprettet nogen initiativer.
+
+initiative:
+    title: Titel
+    category: Kategori
+    description: Kort beskrivelse
+    strategies: Strategier og planer
+    initiative_type: Initiativets karakter
+    status: Status
+    status_additional: Status – supplerende tekst
+    organizational_anchoring: Organisatorisk forankring
+    endorsement: Er initiativet vedtaget
+    endorsement_author: Hvor er det vedtaget
+    budget: Budget (kr.)
+    funding: Fundingkilder
+    stakeholders: Interessenter og samarbejdspartnere
+    tags: Tags
+    time_period_start: Tidshorisont – start
+    time_period_end: Tidshorisont – slut
+    time_period: Tidshorisont
+    links: Relevante links
+    contacts: Kontaktpersoner
+    author: Udfyldt af
+    published: Offentliggjort
+    published_help: Kun offentliggjorte initiativer vises på det offentlige API.
+    terms_help: Adskil flere værdier med komma.
+    images: Billeder
+    attachments: Filer
+    image_file: Billedfil
+    image_alt: Alternativ tekst
+    attachment_file: Fil
+    attachment_invalid_type: "Filtypen er ikke tilladt (tilladt: pdf, doc, docx, xls, xlsx)."
+    index:
+        title: Initiativer
+        subtitle: Søg, filtrér og opret initiativer.
+    new:
+        title: Nyt initiativ
+    edit:
+        title: Rediger initiativ
+    show:
+        details: Detaljer
+        contacts: Kontaktpersoner
+        classification: Klassificering
+        media: Filer og billeder
+        no_contacts: Ingen kontaktpersoner tilknyttet.
+    empty:
+        title: Ingen initiativer fundet
+        hint: Prøv at justere dine filtre, eller opret et nyt initiativ.
+    section:
+        basics: Grundoplysninger
+        classification: Klassificering
+        endorsement: Vedtagelse
+        economy: Økonomi og tid
+        relations: Interessenter og kontakter
+        media: Filer og billeder
+        meta: Øvrigt
+
+contact:
+    name: Navn
+    email: E-mail
+    phone: Telefon
+    department: Afdeling
+    index:
+        title: Kontaktpersoner
+        subtitle: Personer der er tilknyttet initiativer.
+    new:
+        title: Ny kontaktperson
+    edit:
+        title: Rediger kontaktperson
+    empty:
+        title: Ingen kontaktpersoner endnu
+        hint: Opret en kontaktperson, eller tilføj en direkte på et initiativ.
+
+user:
+    email: E-mail
+    name: Navn
+    roles: Roller
+    password: Adgangskode
+    email_duplicate: Der findes allerede en bruger med denne e-mail.
+    password_required: Angiv en adgangskode.
+    password_too_short: Adgangskoden skal være mindst 8 tegn.
+    password_help: Mindst 8 tegn. Lad feltet stå tomt for at beholde den nuværende adgangskode.
+
+role:
+    user: Bruger
+    admin: Administrator
+
+admin:
+    users:
+        title: Brugere
+        subtitle: Administrér hvem der har adgang til platformen.
+        new: Ny bruger
+        edit: Rediger bruger
+
+login:
+    title: Log ind
+    email: E-mail
+    password: Adgangskode
+    submit: Log ind
+    error: Forkert e-mail eller adgangskode.
+
+flash:
+    initiative:
+        created: Initiativet blev oprettet.
+        updated: Initiativet blev opdateret.
+        deleted: Initiativet blev slettet.
+    contact:
+        created: Kontaktpersonen blev oprettet.
+        updated: Kontaktpersonen blev opdateret.
+        deleted: Kontaktpersonen blev slettet.
+    user:
+        created: Brugeren blev oprettet.
+        updated: Brugeren blev opdateret.
+        deleted: Brugeren blev slettet.
+        cannot_delete_self: Du kan ikke slette din egen bruger.
+
+enum:
+    status:
+        idea: Idé
+        planned: Planlagt
+        active: Igangværende
+        on_hold: Sat i bero
+        completed: Afsluttet
+        cancelled: Annulleret
+    category:
+        climate: Klima og miljø
+        mobility: Mobilitet
+        welfare: Velfærd
+        culture: Kultur og fritid
+        education: Uddannelse
+        business: Erhverv
+        digitalisation: Digitalisering
+        urban_development: Byudvikling
+    initiative_type:
+        project: Projekt
+        programme: Program
+        policy: Politik
+        pilot: Pilot
+        operation: Drift
+    organizational_anchoring:
+        mayors_department: Borgmesterens Afdeling
+        technical_and_environment: Teknik og Miljø
+        culture_and_citizens: Kultur og Borgerservice
+        social_and_employment: Sociale Forhold og Beskæftigelse
+        children_and_youth: Børn og Unge
+        health_and_care: Sundhed og Omsorg
+    endorsement_author:
+        city_council: Byrådet
+        magistrate: Magistraten
+        committee: Udvalg
+        department: Afdeling
+    funding:
+        municipal_budget: Kommunalt budget
+        state_grant: Statsligt tilskud
+        eu_funds: EU-midler
+        foundation: Fond
+        external_partner: Ekstern partner
+    vocabulary:
+        tag: Tag
+        stakeholder: Interessent
+        strategy: Strategi

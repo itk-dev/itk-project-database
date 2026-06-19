@@ -1,0 +1,143 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
+
+#[ORM\Entity]
+#[Vich\Uploadable]
+class InitiativeAttachment
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Initiative::class, inversedBy: 'attachments')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?Initiative $initiative = null;
+
+    #[Assert\File(
+        maxSize: '16M',
+        mimeTypes: [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ],
+        mimeTypesMessage: 'initiative.attachment_invalid_type',
+    )]
+    #[Vich\UploadableField(
+        mapping: 'initiative_attachment',
+        fileNameProperty: 'fileName',
+        originalName: 'originalName',
+        mimeType: 'mimeType',
+        size: 'size',
+    )]
+    private ?File $file = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $fileName = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $originalName = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $mimeType = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $size = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getInitiative(): ?Initiative
+    {
+        return $this->initiative;
+    }
+
+    public function setInitiative(?Initiative $initiative): static
+    {
+        $this->initiative = $initiative;
+
+        return $this;
+    }
+
+    public function setFile(?File $file = null): void
+    {
+        $this->file = $file;
+
+        if (null !== $file) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    public function setFileName(?string $fileName): static
+    {
+        $this->fileName = $fileName;
+
+        return $this;
+    }
+
+    public function getOriginalName(): ?string
+    {
+        return $this->originalName;
+    }
+
+    public function setOriginalName(?string $originalName): static
+    {
+        $this->originalName = $originalName;
+
+        return $this;
+    }
+
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+
+    public function setMimeType(?string $mimeType): static
+    {
+        $this->mimeType = $mimeType;
+
+        return $this;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+
+    public function setSize(?int $size): static
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    public function hasFile(): bool
+    {
+        return null !== $this->file || null !== $this->fileName;
+    }
+}

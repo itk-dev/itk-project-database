@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'contact.edit.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="page">
+        <div class="page__header">
+            <div>
+                <div class="breadcrumb"><a href="{{ path('app_contact_index') }}">{{ 'nav.contacts'|trans }}</a></div>
+                <h1 class="page__title">{{ contact.name }}</h1>
+            </div>
+            <div class="page__actions">
+                <form method="post" action="{{ path('app_contact_delete', {id: contact.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete-contact-' ~ contact.id) }}">
+                    <button type="submit" class="btn btn--danger">{{ 'action.delete'|trans }}</button>
+                </form>
+            </div>
+        </div>
+        {{ include('contact/_form.html.twig', {button_label: 'action.save'}) }}
+    </div>
+{% endblock %}
