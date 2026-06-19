@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-2](https://github.com/itk-dev/itk-project-database/pull/2)
+  Add Symfony UX Turbo and stimulus
+
 ### Added
 
 - Initial Symfony 8 rebuild of the project database.
