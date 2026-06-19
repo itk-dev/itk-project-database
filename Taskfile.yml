@@ -15,9 +15,9 @@ vars:
 
 tasks:
   compose:
-    desc: "Install Composer dependencies"
+    desc: 'Install Composer dependencies'
     cmds:
-      - "{{.COMPOSER}} {{.CLI_ARGS}}"
+      - '{{.COMPOSER}} {{.CLI_ARGS}}'
   install:
     desc: 'First-time setup: start, install deps, migrate, load fixtures'
     cmds:
