@@ -6,7 +6,7 @@
 {% else %}
     <div class="recent-list">
         {% for initiative in recent %}
-            <div class="recent-item">
+            <div class="recent-item" data-live-text="recent-{{ initiative.id }}">
                 <div>
                     <a href="{{ path('app_initiative_show', {id: initiative.id}) }}" class="recent-item__title">{{ initiative.title }}</a>
                     <div class="recent-item__meta">

@@ -7,10 +7,10 @@
     <div>
         <div class="status-bar__head">
             <span>{{ status.labelKey|trans }}</span>
-            <span class="muted">{{ count }}</span>
+            <span class="muted" data-live-text="status-{{ status.value }}">{{ count }}</span>
         </div>
         <div class="status-bar__track">
-            <div class="status-bar__fill" style="width: {{ (count / maxCount * 100)|round }}%;"></div>
+            <div class="status-bar__fill" data-live-bar="status-{{ status.value }}" style="width: {{ (count / maxCount * 100)|round }}%;"></div>
         </div>
     </div>
 {% endfor %}

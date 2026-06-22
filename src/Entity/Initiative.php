@@ -69,7 +69,7 @@ class Initiative implements BlameableInterface, TimestampableInterface
     public const array COMPLETION_FIELDS = [
         'title', 'category', 'description', 'initiativeType', 'status',
         'organizationalAnchoring', 'endorsementAuthor',
-        'budget', 'funding', 'timePeriodStart', 'timePeriodEnd', 'links', 'author',
+        'budget', 'funding', 'timePeriodStart', 'timePeriodEnd', 'author',
     ];
 
     #[ORM\Id]
@@ -583,7 +583,6 @@ class Initiative implements BlameableInterface, TimestampableInterface
             [] !== $this->funding,
             null !== $this->timePeriodStart,
             null !== $this->timePeriodEnd,
-            [] !== $this->links,
             null !== $this->author && '' !== $this->author,
         ];
 

@@ -1346,12 +1346,40 @@ textarea {
 @keyframes activity-flash {
     from {
         background: var(--itk-slate-50);
+        opacity: 0.35;
+        transform: translateY(-4px);
     }
     to {
         background: transparent;
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
 .activity-feed > .activity-item:first-child {
     animation: activity-flash 1.2s ease-out;
+}
+
+@keyframes live-flash {
+    0% {
+        background-color: color-mix(in srgb, var(--itk-blue) 22%, transparent);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+.is-live-flash {
+    animation: live-flash 1.1s ease-out;
+    border-radius: var(--itk-radius-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .is-live-flash {
+        animation: none;
+    }
+
+    .activity-feed > .activity-item:first-child {
+        animation: none;
+    }
 }
