@@ -13,7 +13,6 @@ autosave:
 
 activity:
     title: Activity
-    live: Live
     action:
         created: created
         updated: updated

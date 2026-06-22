@@ -1,0 +1,16 @@
+{# One Mercure payload that refreshes every live dashboard region. Streams whose
+   target id is absent on the current page (everything but the dashboard) are ignored
+   by Turbo, so this is safe to broadcast to all subscribers of the topic. #}
+<turbo-stream action="remove" target="activity-item-{{ initiativeId }}"></turbo-stream>
+<turbo-stream action="prepend" target="activity-feed">
+    <template>{{ include('activity/_item.html.twig', {id: initiativeId, action: action, title: title, url: url, actor: actor, at: at}) }}</template>
+</turbo-stream>
+<turbo-stream action="update" target="dashboard-stats">
+    <template>{{ include('dashboard/_stats.html.twig') }}</template>
+</turbo-stream>
+<turbo-stream action="update" target="dashboard-recent">
+    <template>{{ include('dashboard/_recent.html.twig') }}</template>
+</turbo-stream>
+<turbo-stream action="update" target="dashboard-status">
+    <template>{{ include('dashboard/_status_bars.html.twig') }}</template>
+</turbo-stream>

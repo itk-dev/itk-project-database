@@ -13,7 +13,6 @@ autosave:
 
 activity:
     title: Aktivitet
-    live: Live
     action:
         created: oprettede
         updated: opdaterede

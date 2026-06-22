@@ -1,0 +1,16 @@
+{% set maxCount = 1 %}
+{% for status in statuses %}
+    {% set maxCount = max(maxCount, byStatus[status.value]|default(0)) %}
+{% endfor %}
+{% for status in statuses %}
+    {% set count = byStatus[status.value]|default(0) %}
+    <div>
+        <div class="status-bar__head">
+            <span>{{ status.labelKey|trans }}</span>
+            <span class="muted">{{ count }}</span>
+        </div>
+        <div class="status-bar__track">
+            <div class="status-bar__fill" style="width: {{ (count / maxCount * 100)|round }}%;"></div>
+        </div>
+    </div>
+{% endfor %}

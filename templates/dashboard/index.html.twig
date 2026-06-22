@@ -15,98 +15,51 @@
             </div>
         </div>
 
-        <div class="stat-grid">
-            <div class="stat-card">
-                <div class="stat-card__label">{{ 'dashboard.total'|trans }}</div>
-                <div class="stat-card__value">{{ total }}</div>
-            </div>
-            <div class="stat-card stat-card--green">
-                <div class="stat-card__label">{{ 'dashboard.published'|trans }}</div>
-                <div class="stat-card__value">{{ published }}</div>
-            </div>
-            <div class="stat-card stat-card--lime">
-                <div class="stat-card__label">{{ 'dashboard.drafts'|trans }}</div>
-                <div class="stat-card__value">{{ drafts }}</div>
-            </div>
-            <div class="stat-card stat-card--accent">
-                <div class="stat-card__label">{{ 'nav.contacts'|trans }}</div>
-                <div class="stat-card__value">{{ contactCount }}</div>
-            </div>
+        {{ turbo_stream_from('activities') }}
+
+        <div id="dashboard-stats" class="stat-grid">
+            {{ include('dashboard/_stats.html.twig') }}
         </div>
 
         <div class="dashboard-grid">
-            <div class="card">
-                <div class="card__header">
-                    <span class="card__title">{{ 'dashboard.recent'|trans }}</span>
-                    <a href="{{ path('app_initiative_index') }}" class="btn btn--ghost btn--sm">{{ 'action.view'|trans }}</a>
-                </div>
-                {% if recent is empty %}
-                    <div class="empty-state">
-                        <div class="empty-state__title">{{ 'dashboard.empty'|trans }}</div>
-                        <a href="{{ path('app_initiative_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+            <div class="dashboard-col">
+                <div class="card">
+                    <div class="card__header">
+                        <span class="card__title">{{ 'dashboard.recent'|trans }}</span>
                     </div>
-                {% else %}
-                    <div class="recent-list">
+                    <div id="dashboard-recent">
+                        {{ include('dashboard/_recent.html.twig') }}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__header">
+                        <span class="card__title">{{ 'dashboard.by_status'|trans }}</span>
+                    </div>
+                    <div id="dashboard-status" class="status-bars">
+                        {{ include('dashboard/_status_bars.html.twig') }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card--activity">
+                <div class="card__header">
+                    <span class="card__title">{{ 'activity.title'|trans }}</span>
+                </div>
+                <div class="activity-feed-wrap">
+                    <div id="activity-feed" class="activity-feed">
                         {% for initiative in recent %}
-                            <div class="recent-item">
-                                <div>
-                                    <a href="{{ path('app_initiative_show', {id: initiative.id}) }}" class="recent-item__title">{{ initiative.title }}</a>
-                                    <div class="recent-item__meta">
-                                        {%- if initiative.organizationalAnchoring %}{{ initiative.organizationalAnchoring.labelKey|trans }} · {% endif -%}
-                                        {{ initiative.createdAt|date('d.m.Y') }}
-                                    </div>
-                                </div>
-                                <div class="tag-list">
-                                    {% if initiative.status %}<span class="badge badge--status-{{ initiative.status.value }}">{{ initiative.status.labelKey|trans }}</span>{% endif %}
-                                    {% if not initiative.published %}<span class="badge badge--draft">{{ 'filter.draft'|trans }}</span>{% endif %}
-                                </div>
-                            </div>
+                            {{ include('activity/_item.html.twig', {
+                                id: initiative.id,
+                                action: 'updated',
+                                title: initiative.title,
+                                url: path('app_initiative_show', {id: initiative.id}),
+                                actor: initiative.modifiedBy ? initiative.modifiedBy.name : null,
+                                at: initiative.updatedAt,
+                            }) }}
                         {% endfor %}
                     </div>
-                {% endif %}
-            </div>
-
-            <div class="card">
-                <div class="card__header">
-                    <span class="card__title">{{ 'dashboard.by_status'|trans }}</span>
                 </div>
-                <div class="status-bars">
-                    {% set maxCount = 1 %}
-                    {% for status in statuses %}
-                        {% set maxCount = max(maxCount, byStatus[status.value]|default(0)) %}
-                    {% endfor %}
-                    {% for status in statuses %}
-                        {% set count = byStatus[status.value]|default(0) %}
-                        <div>
-                            <div class="status-bar__head">
-                                <span>{{ status.labelKey|trans }}</span>
-                                <span class="muted">{{ count }}</span>
-                            </div>
-                            <div class="status-bar__track">
-                                <div class="status-bar__fill" style="width: {{ (count / maxCount * 100)|round }}%;"></div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card__header">
-                <span class="card__title">{{ 'activity.title'|trans }}</span>
-                <span class="activity-live"><span class="activity-live__dot"></span>{{ 'activity.live'|trans }}</span>
-            </div>
-            {{ turbo_stream_from('activities') }}
-            <div id="activity-feed" class="activity-feed">
-                {% for initiative in recent %}
-                    {{ include('activity/_item.html.twig', {
-                        action: 'updated',
-                        title: initiative.title,
-                        url: path('app_initiative_show', {id: initiative.id}),
-                        actor: null,
-                        at: initiative.updatedAt,
-                    }) }}
-                {% endfor %}
             </div>
         </div>
     </div>

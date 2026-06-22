@@ -182,12 +182,15 @@ class InitiativeController extends AbstractController
             $this->removeEmptyMedia($initiative);
             $entityManager->flush();
 
+            // Autosave is now the only save path on this form (the Save button is
+            // gone), so it must drive the live feed and dashboard too. Repeated
+            // autosaves of the same initiative don't flood the feed: each row is
+            // keyed by id and bumped in place rather than stacked.
+            $activityPublisher->publish('updated', $initiative, $this->currentUser());
+
             if ($isAutosave) {
                 return new Response(null, Response::HTTP_NO_CONTENT);
             }
-
-            // Only explicit saves reach the feed; autosave returned above, so it never floods it.
-            $activityPublisher->publish('updated', $initiative, $this->currentUser());
 
             $this->addFlash('success', 'flash.initiative.updated');
 
@@ -209,11 +212,15 @@ class InitiativeController extends AbstractController
     public function delete(Request $request, Initiative $initiative, EntityManagerInterface $entityManager, ActivityPublisher $activityPublisher): Response
     {
         if ($this->isCsrfTokenValid('delete-initiative-'.$initiative->getId(), (string) $request->request->get('_token'))) {
-            // Publish before removal so the title is still available for the feed.
-            $activityPublisher->publish('deleted', $initiative, $this->currentUser());
+            $actor = $this->currentUser();
 
             $entityManager->remove($initiative);
             $entityManager->flush();
+
+            // Publish after removal so the live dashboard counts are already up to
+            // date; the detached entity still holds its title for the feed line.
+            $activityPublisher->publish('deleted', $initiative, $actor);
+
             $this->addFlash('success', 'flash.initiative.deleted');
         }
 

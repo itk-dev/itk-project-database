@@ -482,8 +482,17 @@ h3 {
     display: grid;
     grid-template-columns: 1.4fr 1fr;
     gap: var(--itk-space-5);
-    align-items: start;
-    margin-bottom: var(--itk-space-6);
+}
+
+.dashboard-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--itk-space-5);
+}
+
+.card--activity {
+    display: flex;
+    flex-direction: column;
 }
 
 @media (max-width: 900px) {
@@ -1276,38 +1285,17 @@ textarea {
     }
 }
 
-.activity-live {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--itk-space-2);
-    font-size: var(--itk-text-sm);
-    color: var(--itk-slate-500);
-}
-
-.activity-live__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--itk-green);
-    animation: activity-pulse 2s infinite;
-}
-
-@keyframes activity-pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(0, 141, 61, 0.5);
-    }
-    70% {
-        box-shadow: 0 0 0 6px rgba(0, 141, 61, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(0, 141, 61, 0);
-    }
+.activity-feed-wrap {
+    position: relative;
+    flex: 1;
+    min-height: 16rem;
 }
 
 .activity-feed {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
-    max-height: 360px;
     overflow-y: auto;
 }
 
