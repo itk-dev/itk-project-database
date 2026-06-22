@@ -1,16 +1,16 @@
 import { Controller } from "@hotwired/stimulus";
 
 /*
- * Debounced autosave for the initiative edit form.
+ * Debounced autosave for the initiative form.
  *
- * A short moment after the last change it posts the form to the same edit
- * endpoint and reports the result in a small status line — without re-rendering
- * the form, so focus and caret are never lost. File uploads are skipped on
- * autosave and left for an explicit Save, which keeps the request equivalent to
- * a manual save that touches no files.
+ * On the edit form it posts changes to the edit endpoint without re-rendering,
+ * so focus and caret are never lost. On the new form (isNew) the first valid
+ * save creates the initiative and the controller swaps to editing that record
+ * in place (URL + action). File uploads are skipped on autosave and left for an
+ * explicit Save, which keeps the request equivalent to a manual save.
  */
 export default class extends Controller {
-    static targets = ["status"];
+    static targets = ["status", "statusText", "save"];
 
     static values = {
         debounce: { type: Number, default: 800 },
@@ -26,11 +26,13 @@ export default class extends Controller {
             default: "Save failed — your changes are kept here",
         },
         filesHintText: { type: String, default: "Click Save to upload files" },
+        isNew: { type: Boolean, default: false },
     };
 
     initialize() {
         this.timer = null;
         this.inFlight = null;
+        this.creating = false;
     }
 
     disconnect() {
@@ -39,11 +41,15 @@ export default class extends Controller {
     }
 
     schedule(event) {
+        // Picking a file can't autosave, but it reveals the Save button to upload it.
+        this.revealSaveForFiles();
+
         // Files are uploaded only on an explicit Save.
         if (event?.target?.type === "file") {
             return;
         }
-        this.setStatus(this.unsavedTextValue, "unsaved");
+        // No "unsaved" text — the animated pen icon carries that state.
+        this.setStatus("", "unsaved");
         window.clearTimeout(this.timer);
         this.timer = window.setTimeout(() => this.save(), this.debounceValue);
     }
@@ -55,9 +61,26 @@ export default class extends Controller {
             return;
         }
 
-        this.inFlight?.abort();
+        // Hold off while a brand-new initiative is being created so we never
+        // POST the create twice; the next change saves it once it exists.
+        if (this.creating) {
+            return;
+        }
+
+        // Edits can supersede an in-flight request; a create must run to completion.
+        const creating = this.isNewValue;
+        if (!creating) {
+            this.inFlight?.abort();
+        }
         this.inFlight = new AbortController();
-        this.setStatus(this.savingTextValue, "saving");
+        this.creating = creating;
+
+        // Reveal the saving spinner only for slow saves (> 2s); a quick save jumps
+        // straight to "Gemt" with no flicker.
+        const savingTimer = window.setTimeout(
+            () => this.setStatus(this.savingTextValue, "saving"),
+            2000,
+        );
 
         try {
             const response = await fetch(this.element.action, {
@@ -71,7 +94,24 @@ export default class extends Controller {
                 signal: this.inFlight.signal,
             });
 
-            if (204 === response.status) {
+            if (201 === response.status) {
+                // The draft now exists — edit it in place from here on.
+                const location = response.headers.get("X-Initiative-Location");
+                if (location) {
+                    this.element.action = location;
+                    this.isNewValue = false;
+                    window.history.replaceState({}, "", location);
+                    // Show URL = edit URL minus the trailing /edit; lets the
+                    // breadcrumb turn the title into a link to the new record.
+                    this.dispatch("created", {
+                        detail: { showUrl: location.replace(/\/edit$/, "") },
+                    });
+                }
+                this.setStatus(
+                    `${this.savedTextValue} · ${this.timestamp()}`,
+                    "saved",
+                );
+            } else if (204 === response.status) {
                 this.setStatus(
                     `${this.savedTextValue} · ${this.timestamp()}`,
                     "saved",
@@ -85,6 +125,9 @@ export default class extends Controller {
             if ("AbortError" !== error.name) {
                 this.setStatus(this.offlineTextValue, "error");
             }
+        } finally {
+            window.clearTimeout(savingTimer);
+            this.creating = false;
         }
     }
 
@@ -94,12 +137,21 @@ export default class extends Controller {
         ).some((input) => input.files && input.files.length > 0);
     }
 
+    // Files only upload on an explicit Save, so surface that button while one is staged.
+    revealSaveForFiles() {
+        if (this.hasSaveTarget) {
+            this.saveTarget.hidden = !this.hasPendingFile();
+        }
+    }
+
     setStatus(text, state) {
         if (!this.hasStatusTarget) {
             return;
         }
-        this.statusTarget.textContent = text;
         this.statusTarget.className = `autosave-status autosave-status--${state}`;
+        if (this.hasStatusTextTarget) {
+            this.statusTextTarget.textContent = text;
+        }
     }
 
     timestamp() {

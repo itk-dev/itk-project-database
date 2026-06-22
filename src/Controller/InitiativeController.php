@@ -111,8 +111,16 @@ class InitiativeController extends AbstractController
     #[Route('/initiatives/new', name: 'app_initiative_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, ActivityPublisher $activityPublisher): Response
     {
+        // Autosave creates the initiative as soon as the form is valid; the page
+        // then switches to editing it in place, so a new form saves like an edit.
+        // Same guard as edit(): the mandatory X-Autosave header stands in for CSRF.
+        $isAutosave = $request->headers->has('X-Autosave');
+
         $initiative = new Initiative();
-        $form = $this->createForm(InitiativeType::class, $initiative);
+        $form = $this->createForm(InitiativeType::class, $initiative, [
+            'csrf_protection' => !$isAutosave,
+            'allow_extra_fields' => $isAutosave,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -122,9 +130,22 @@ class InitiativeController extends AbstractController
 
             $activityPublisher->publish('created', $initiative, $this->currentUser());
 
+            if ($isAutosave) {
+                // Hand back the edit URL so the form keeps autosaving in place.
+                $response = new Response(null, Response::HTTP_CREATED);
+                $response->headers->set('X-Initiative-Location', $this->generateUrl('app_initiative_edit', ['id' => $initiative->getId()]));
+
+                return $response;
+            }
+
             $this->addFlash('success', 'flash.initiative.created');
 
             return $this->redirectToRoute('app_initiative_show', ['id' => $initiative->getId()]);
+        }
+
+        if ($isAutosave) {
+            // Not valid yet (e.g. no title): report it without creating anything.
+            return new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('initiative/new.html.twig', [

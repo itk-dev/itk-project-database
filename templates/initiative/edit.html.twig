@@ -3,12 +3,12 @@
 {% block title %}{{ 'initiative.edit.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
 
 {% block body %}
-    <div class="page">
+    <div class="page" data-controller="title-mirror">
         <div class="page__header">
             <div>
                 <div class="breadcrumb">
                     <a href="{{ path('app_initiative_index') }}">{{ 'nav.initiatives'|trans }}</a>
-                    / <a href="{{ path('app_initiative_show', {id: initiative.id}) }}">{{ initiative.title }}</a>
+                    / <a href="{{ path('app_initiative_show', {id: initiative.id}) }}" data-title-mirror-target="crumb">{{ initiative.title }}</a>
                 </div>
                 <h1 class="page__title">{{ 'initiative.edit.title'|trans }}</h1>
             </div>

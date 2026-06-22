@@ -7,7 +7,9 @@ autosave:
     unsaved: Unsaved changes
     error: Couldn’t save — check the required fields
     offline: Save failed — your changes are kept here
-    files_hint: Click Save to upload files
+    files_hint: Click Upload to add the files
+    completion: Form completion
+    upload_files: Upload files
 
 activity:
     title: Activity

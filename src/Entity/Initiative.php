@@ -55,6 +55,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(OrderFilter::class, properties: ['title', 'budget', 'createdAt', 'timePeriodStart'])]
 class Initiative
 {
+    /**
+     * Fields that count toward {@see getCompletionPercentage()} and the client-side
+     * progress bar. Limited to the initiative's own columns so list rendering stays
+     * query-free; the booleans and the relational lists are intentionally excluded.
+     *
+     * @var list<string>
+     */
+    public const array COMPLETION_FIELDS = [
+        'title', 'category', 'description', 'initiativeType', 'status',
+        'organizationalAnchoring', 'endorsementAuthor',
+        'budget', 'funding', 'timePeriodStart', 'timePeriodEnd', 'links', 'author',
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -572,6 +585,31 @@ class Initiative
     public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * Share of {@see COMPLETION_FIELDS} that are filled in, as a 0–100 percentage.
+     * Reads only own columns, so it is safe to call per row in a listing.
+     */
+    public function getCompletionPercentage(): int
+    {
+        $checks = [
+            null !== $this->title && '' !== $this->title,
+            null !== $this->category,
+            null !== $this->description && '' !== $this->description,
+            null !== $this->initiativeType,
+            null !== $this->status,
+            null !== $this->organizationalAnchoring,
+            null !== $this->endorsementAuthor,
+            null !== $this->budget,
+            [] !== $this->funding,
+            null !== $this->timePeriodStart,
+            null !== $this->timePeriodEnd,
+            [] !== $this->links,
+            null !== $this->author && '' !== $this->author,
+        ];
+
+        return (int) round(\count(array_filter($checks)) / \count($checks) * 100);
     }
 
     public function __toString(): string
