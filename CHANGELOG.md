@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-4](https://github.com/itk-dev/itk-project-database/pull/4)
+  Add Chart.js graphs to the dashboard
 * [PR-3](https://github.com/itk-dev/itk-project-database/pull/3)
   Add real-time activity feed with autosave
 * [PR-2](https://github.com/itk-dev/itk-project-database/pull/2)
