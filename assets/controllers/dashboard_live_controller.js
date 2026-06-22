@@ -9,12 +9,18 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
     connect() {
         this.beforeStreamRender = this.beforeStreamRender.bind(this);
-        document.addEventListener("turbo:before-stream-render", this.beforeStreamRender);
+        document.addEventListener(
+            "turbo:before-stream-render",
+            this.beforeStreamRender,
+        );
         this.countUp();
     }
 
     disconnect() {
-        document.removeEventListener("turbo:before-stream-render", this.beforeStreamRender);
+        document.removeEventListener(
+            "turbo:before-stream-render",
+            this.beforeStreamRender,
+        );
     }
 
     beforeStreamRender(event) {

@@ -11,21 +11,64 @@ import Chart from "chart.js/auto";
  */
 // Palette from the itk-workspace prototype-ds v1 tokens (teal-led brand), with
 // variations where more distinct hues were needed.
-const DEPT_COLORS = ["#007ba6", "#89bd23", "#ee0043", "#f5b800", "#00a5cd", "#73bc99"];
-const STATUS_COLORS = ["#adb5bd", "#00a5cd", "#008d3d", "#f5b800", "#005876", "#e44930"];
+const DEPT_COLORS = [
+    "#007ba6",
+    "#89bd23",
+    "#ee0043",
+    "#f5b800",
+    "#00a5cd",
+    "#73bc99",
+];
+const STATUS_COLORS = [
+    "#adb5bd",
+    "#00a5cd",
+    "#008d3d",
+    "#f5b800",
+    "#005876",
+    "#e44930",
+];
 const FUNDING_COLORS = ["#007ba6", "#008d3d", "#f5b800", "#ee0043", "#adb5bd"];
 const TEAL = "#007ba6";
 // borderWidth must have a numeric base: it is not in the bar animation group,
 // so Chart.js animates it from its current value on hover — undefined would
 // crash the interpolator ("this._fn is not a function").
-const BAR_HOVER = { borderWidth: 0, hoverBorderColor: "rgba(15, 19, 21, .35)", hoverBorderWidth: 2 };
-const MONTHS = ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
+const BAR_HOVER = {
+    borderWidth: 0,
+    hoverBorderColor: "rgba(15, 19, 21, .35)",
+    hoverBorderWidth: 2,
+};
+const MONTHS = [
+    "jan",
+    "feb",
+    "mar",
+    "apr",
+    "maj",
+    "jun",
+    "jul",
+    "aug",
+    "sep",
+    "okt",
+    "nov",
+    "dec",
+];
 
 export default class extends Controller {
-    static targets = ["source", "heatmap", "collab", "statusByDept", "statusDist", "funding", "budget", "reach", "timeline"];
+    static targets = [
+        "source",
+        "heatmap",
+        "collab",
+        "statusByDept",
+        "statusDist",
+        "funding",
+        "budget",
+        "reach",
+        "timeline",
+    ];
 
     connect() {
-        this.reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        this.reduce = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
         Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
         Chart.defaults.font.size = 12;
         Chart.defaults.color = "#52606e";
@@ -60,11 +103,17 @@ export default class extends Controller {
         // Heatmap and collaboration render eagerly, so hold their entrance
         // animation until they actually scroll into view (otherwise it plays
         // off-screen at load and is never seen).
-        this.revealOnView(this.heatmapTarget, () => this.heatmapTarget.classList.remove("heat--paused"));
+        this.revealOnView(this.heatmapTarget, () =>
+            this.heatmapTarget.classList.remove("heat--paused"),
+        );
         this.revealOnView(this.collabTarget, () => this.revealCollab());
 
         this.observer = new MutationObserver(() => this.refresh());
-        this.observer.observe(this.sourceTarget, { childList: true, characterData: true, subtree: true });
+        this.observer.observe(this.sourceTarget, {
+            childList: true,
+            characterData: true,
+            subtree: true,
+        });
     }
 
     disconnect() {
@@ -82,14 +131,17 @@ export default class extends Controller {
             fn();
             return;
         }
-        const obs = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    fn();
-                    obs.unobserve(entry.target);
-                }
-            });
-        }, { rootMargin: "0px 0px -12% 0px", threshold: 0.15 });
+        const obs = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        fn();
+                        obs.unobserve(entry.target);
+                    }
+                });
+            },
+            { rootMargin: "0px 0px -12% 0px", threshold: 0.15 },
+        );
         obs.observe(el);
         (this.revealObservers = this.revealObservers || []).push(obs);
     }
@@ -116,7 +168,11 @@ export default class extends Controller {
     // ---- Lazy chart building (animate on scroll into view) -------------
     lazyCharts() {
         const specs = [
-            ["statusByDept", this.statusByDeptTarget, () => this.buildStatusByDept()],
+            [
+                "statusByDept",
+                this.statusByDeptTarget,
+                () => this.buildStatusByDept(),
+            ],
             ["statusDist", this.statusDistTarget, () => this.buildStatusDist()],
             ["funding", this.fundingTarget, () => this.buildFunding()],
             ["budget", this.budgetTarget, () => this.buildBudget()],
@@ -130,7 +186,10 @@ export default class extends Controller {
             try {
                 spec[2]();
             } catch (e) {
-                console.error(`dashboard-viz: chart "${spec[0]}" failed to render`, e);
+                console.error(
+                    `dashboard-viz: chart "${spec[0]}" failed to render`,
+                    e,
+                );
             }
         };
 
@@ -139,18 +198,21 @@ export default class extends Controller {
             return;
         }
 
-        this.chartObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (!entry.isIntersecting) {
-                    return;
-                }
-                const spec = specs.find((s) => s[1] === entry.target);
-                if (spec) {
-                    build(spec);
-                    this.chartObserver.unobserve(entry.target);
-                }
-            });
-        }, { rootMargin: "0px 0px -10% 0px", threshold: 0.18 });
+        this.chartObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    }
+                    const spec = specs.find((s) => s[1] === entry.target);
+                    if (spec) {
+                        build(spec);
+                        this.chartObserver.unobserve(entry.target);
+                    }
+                });
+            },
+            { rootMargin: "0px 0px -10% 0px", threshold: 0.18 },
+        );
 
         specs.forEach((s) => this.chartObserver.observe(s[1]));
     }
@@ -193,29 +255,39 @@ export default class extends Controller {
     updateHeatmap(initial = false) {
         const d = this.viz;
         let max = 1;
-        d.heatmap.forEach((row) => row.forEach((v) => { if (v > max) max = v; }));
+        d.heatmap.forEach((row) =>
+            row.forEach((v) => {
+                if (v > max) max = v;
+            }),
+        );
 
-        d.heatmap.forEach((row, di) => row.forEach((v, ci) => {
-            const cell = this.heatCells[di][ci];
-            cell.textContent = v === 0 ? "·" : v;
-            cell.title = `${d.departments[di].label} · ${d.categories[ci].label}: ${v}`;
-            const col = this.colorFor(v, max);
-            if (col) {
-                cell.classList.remove("is-zero");
-                cell.style.background = col.bg;
-                cell.style.color = col.fg;
-            } else {
-                cell.classList.add("is-zero");
-                cell.style.background = "";
-                cell.style.color = "";
-            }
-            if (initial && !this.reduce) {
-                cell.style.animationDelay = ((di * d.categories.length + ci) * 14) + "ms";
-            }
-        }));
+        d.heatmap.forEach((row, di) =>
+            row.forEach((v, ci) => {
+                const cell = this.heatCells[di][ci];
+                cell.textContent = v === 0 ? "·" : v;
+                cell.title = `${d.departments[di].label} · ${d.categories[ci].label}: ${v}`;
+                const col = this.colorFor(v, max);
+                if (col) {
+                    cell.classList.remove("is-zero");
+                    cell.style.background = col.bg;
+                    cell.style.color = col.fg;
+                } else {
+                    cell.classList.add("is-zero");
+                    cell.style.background = "";
+                    cell.style.color = "";
+                }
+                if (initial && !this.reduce) {
+                    cell.style.animationDelay =
+                        (di * d.categories.length + ci) * 14 + "ms";
+                }
+            }),
+        );
 
         d.categories.forEach((c, ci) => {
-            const depts = d.heatmap.reduce((n, row) => n + (row[ci] > 0 ? 1 : 0), 0);
+            const depts = d.heatmap.reduce(
+                (n, row) => n + (row[ci] > 0 ? 1 : 0),
+                0,
+            );
             const head = this.heatColHeads[ci];
             head.classList.toggle("is-synergy", depts >= 3);
             head.querySelector(".heat__synbadge").hidden = depts < 3;
@@ -235,20 +307,26 @@ export default class extends Controller {
         const el = this.collabTarget;
         el.innerHTML = "";
         if (!this.viz.collaboration.length) {
-            el.innerHTML = '<p class="collab-empty">Ingen tværgående temaer endnu — kategorisér initiativer for at finde sammenfald.</p>';
+            el.innerHTML =
+                '<p class="collab-empty">Ingen tværgående temaer endnu — kategorisér initiativer for at finde sammenfald.</p>';
             return;
         }
         // Hold the entrance paused until the panel scrolls into view; once seen,
         // (re)renders from live updates animate immediately.
         const pause = !this.reduce && !this.collabSeen;
         this.viz.collaboration.forEach((o) => {
-            const chips = o.inits.map((i) =>
-                `<span class="chip"><span class="dot" style="background:${this.deptColor(i.deptKey)}"></span><b>${this.esc(i.title)}</b> <span>· ${this.esc(i.deptLabel)}</span></span>`
-            ).join("");
+            const chips = o.inits
+                .map(
+                    (i) =>
+                        `<span class="chip"><span class="dot" style="background:${this.deptColor(i.deptKey)}"></span><b>${this.esc(i.title)}</b> <span>· ${this.esc(i.deptLabel)}</span></span>`,
+                )
+                .join("");
             const div = document.createElement("div");
-            div.className = "opp" + (this.reduce ? "" : " opp--in") + (pause ? " opp--paused" : "");
-            div.innerHTML =
-                `<div class="opp__top">
+            div.className =
+                "opp" +
+                (this.reduce ? "" : " opp--in") +
+                (pause ? " opp--paused" : "");
+            div.innerHTML = `<div class="opp__top">
                     <span class="opp__theme">${this.esc(o.theme)}</span>
                     <span class="opp__rank ${o.rank === "high" ? "rank-high" : "rank-med"}">${o.rank === "high" ? "Højt potentiale" : "Muligt"}</span>
                 </div>
@@ -264,7 +342,9 @@ export default class extends Controller {
 
     revealCollab() {
         this.collabSeen = true;
-        this.collabTarget.querySelectorAll(".opp--paused").forEach((o) => o.classList.remove("opp--paused"));
+        this.collabTarget
+            .querySelectorAll(".opp--paused")
+            .forEach((o) => o.classList.remove("opp--paused"));
         this.fillMeters();
     }
 
@@ -272,9 +352,15 @@ export default class extends Controller {
         if (this.reduce) {
             return;
         }
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-            this.collabTarget.querySelectorAll(".meter > i").forEach((i) => { i.style.width = i.dataset.w + "%"; });
-        }));
+        requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+                this.collabTarget
+                    .querySelectorAll(".meter > i")
+                    .forEach((i) => {
+                        i.style.width = i.dataset.w + "%";
+                    });
+            }),
+        );
     }
 
     deptIndex(key) {
@@ -300,15 +386,28 @@ export default class extends Controller {
             data: {
                 labels: d.departments.map((x) => x.label),
                 datasets: d.statuses.map((s, i) => ({
-                    label: s.label, data: d.statusByDept[i],
-                    backgroundColor: STATUS_COLORS[i % STATUS_COLORS.length], borderRadius: 4, borderSkipped: false,
+                    label: s.label,
+                    data: d.statusByDept[i],
+                    backgroundColor: STATUS_COLORS[i % STATUS_COLORS.length],
+                    borderRadius: 4,
+                    borderSkipped: false,
                     ...BAR_HOVER,
                 })),
             },
             options: {
-                indexAxis: "y", responsive: true, maintainAspectRatio: false,
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
                 interaction: { mode: "index", intersect: false, axis: "y" },
-                scales: { x: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: "#f1f4f8" } }, y: { stacked: true, grid: { display: false } } },
+                scales: {
+                    x: {
+                        stacked: true,
+                        beginAtZero: true,
+                        ticks: { precision: 0 },
+                        grid: { color: "#f1f4f8" },
+                    },
+                    y: { stacked: true, grid: { display: false } },
+                },
                 plugins: { legend: { position: "bottom" } },
             },
         });
@@ -318,8 +417,34 @@ export default class extends Controller {
         const d = this.viz;
         this.charts.statusDist = new Chart(this.statusDistTarget, {
             type: "polarArea",
-            data: { labels: d.statuses.map((s) => s.label), datasets: [{ data: d.statusDistribution, backgroundColor: d.statuses.map((_, i) => STATUS_COLORS[i % STATUS_COLORS.length]), borderColor: "#fff", borderWidth: 1, hoverOffset: 12, hoverBorderColor: "#fff", hoverBorderWidth: 2 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "right" } }, scales: { r: { ticks: { display: false, backdropColor: "transparent" }, grid: { color: "#e9ecef" }, angleLines: { color: "#e9ecef" } } } },
+            data: {
+                labels: d.statuses.map((s) => s.label),
+                datasets: [
+                    {
+                        data: d.statusDistribution,
+                        backgroundColor: d.statuses.map(
+                            (_, i) => STATUS_COLORS[i % STATUS_COLORS.length],
+                        ),
+                        borderColor: "#fff",
+                        borderWidth: 1,
+                        hoverOffset: 12,
+                        hoverBorderColor: "#fff",
+                        hoverBorderWidth: 2,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: "right" } },
+                scales: {
+                    r: {
+                        ticks: { display: false, backdropColor: "transparent" },
+                        grid: { color: "#e9ecef" },
+                        angleLines: { color: "#e9ecef" },
+                    },
+                },
+            },
         });
     }
 
@@ -327,21 +452,73 @@ export default class extends Controller {
         const d = this.viz;
         this.charts.funding = new Chart(this.fundingTarget, {
             type: "doughnut",
-            data: { labels: d.fundings.map((f) => f.label), datasets: [{ data: d.fundingCount, backgroundColor: d.fundings.map((_, i) => FUNDING_COLORS[i % FUNDING_COLORS.length]), borderWidth: 3, borderColor: "#fff", hoverOffset: 12, hoverBorderWidth: 3 }] },
-            options: { responsive: true, maintainAspectRatio: false, cutout: "60%", plugins: { legend: { position: "right" } } },
+            data: {
+                labels: d.fundings.map((f) => f.label),
+                datasets: [
+                    {
+                        data: d.fundingCount,
+                        backgroundColor: d.fundings.map(
+                            (_, i) => FUNDING_COLORS[i % FUNDING_COLORS.length],
+                        ),
+                        borderWidth: 3,
+                        borderColor: "#fff",
+                        hoverOffset: 12,
+                        hoverBorderWidth: 3,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "60%",
+                plugins: { legend: { position: "right" } },
+            },
         });
     }
 
     buildBudget() {
         const d = this.viz;
-        const kr = new Intl.NumberFormat("da-DK", { notation: "compact", maximumFractionDigits: 1 });
+        const kr = new Intl.NumberFormat("da-DK", {
+            notation: "compact",
+            maximumFractionDigits: 1,
+        });
         this.charts.budget = new Chart(this.budgetTarget, {
             type: "bar",
-            data: { labels: d.departments.map((x) => x.label), datasets: [{ label: "Budget", data: d.budgetByDept, backgroundColor: d.departments.map((_, i) => DEPT_COLORS[i % DEPT_COLORS.length]), borderRadius: 6, borderSkipped: false, ...BAR_HOVER }] },
+            data: {
+                labels: d.departments.map((x) => x.label),
+                datasets: [
+                    {
+                        label: "Budget",
+                        data: d.budgetByDept,
+                        backgroundColor: d.departments.map(
+                            (_, i) => DEPT_COLORS[i % DEPT_COLORS.length],
+                        ),
+                        borderRadius: 6,
+                        borderSkipped: false,
+                        ...BAR_HOVER,
+                    },
+                ],
+            },
             options: {
-                indexAxis: "y", responsive: true, maintainAspectRatio: false,
-                scales: { x: { beginAtZero: true, grid: { color: "#f1f4f8" }, ticks: { callback: (v) => kr.format(v) + " kr" } }, y: { grid: { display: false } } },
-                plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => kr.format(c.parsed.x) + " kr" } } },
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: "#f1f4f8" },
+                        ticks: { callback: (v) => kr.format(v) + " kr" },
+                    },
+                    y: { grid: { display: false } },
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (c) => kr.format(c.parsed.x) + " kr",
+                        },
+                    },
+                },
             },
         });
     }
@@ -350,11 +527,50 @@ export default class extends Controller {
         const d = this.viz;
         this.charts.reach = new Chart(this.reachTarget, {
             type: "radar",
-            data: { labels: d.reach.map((r) => r.label), datasets: [{ label: "Afdelinger", data: d.reach.map((r) => r.depts), backgroundColor: "rgba(0, 123, 166, .18)", borderColor: TEAL, borderWidth: 2, pointBackgroundColor: TEAL, pointBorderColor: "#fff", pointRadius: 3, pointHitRadius: 12, pointHoverRadius: 9, pointHoverBackgroundColor: "#fff", pointHoverBorderColor: TEAL, pointHoverBorderWidth: 2, hoverBorderWidth: 3 }] },
+            data: {
+                labels: d.reach.map((r) => r.label),
+                datasets: [
+                    {
+                        label: "Afdelinger",
+                        data: d.reach.map((r) => r.depts),
+                        backgroundColor: "rgba(0, 123, 166, .18)",
+                        borderColor: TEAL,
+                        borderWidth: 2,
+                        pointBackgroundColor: TEAL,
+                        pointBorderColor: "#fff",
+                        pointRadius: 3,
+                        pointHitRadius: 12,
+                        pointHoverRadius: 9,
+                        pointHoverBackgroundColor: "#fff",
+                        pointHoverBorderColor: TEAL,
+                        pointHoverBorderWidth: 2,
+                        hoverBorderWidth: 3,
+                    },
+                ],
+            },
             options: {
-                responsive: true, maintainAspectRatio: false,
-                scales: { r: { beginAtZero: true, suggestedMax: d.departments.length, ticks: { stepSize: 1, showLabelBackdrop: false, color: "#868e96" }, grid: { color: "#e9ecef" }, angleLines: { color: "#e9ecef" }, pointLabels: { font: { size: 11 }, color: "#495057" } } },
-                plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.parsed.r + " afdelinger" } } },
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        suggestedMax: d.departments.length,
+                        ticks: {
+                            stepSize: 1,
+                            showLabelBackdrop: false,
+                            color: "#868e96",
+                        },
+                        grid: { color: "#e9ecef" },
+                        angleLines: { color: "#e9ecef" },
+                        pointLabels: { font: { size: 11 }, color: "#495057" },
+                    },
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: { label: (c) => c.parsed.r + " afdelinger" },
+                    },
+                },
             },
         });
     }
@@ -363,35 +579,88 @@ export default class extends Controller {
         const t = this.timelineData();
         this.charts.timeline = new Chart(this.timelineTarget, {
             type: "bar",
-            data: { labels: t.labels, datasets: [{ data: t.spans, backgroundColor: t.colors, borderRadius: 5, borderSkipped: false, barThickness: 16, ...BAR_HOVER }] },
+            data: {
+                labels: t.labels,
+                datasets: [
+                    {
+                        data: t.spans,
+                        backgroundColor: t.colors,
+                        borderRadius: 5,
+                        borderSkipped: false,
+                        barThickness: 16,
+                        ...BAR_HOVER,
+                    },
+                ],
+            },
             options: {
-                indexAxis: "y", responsive: true, maintainAspectRatio: false,
-                scales: { x: { min: 0, max: t.max, ticks: { stepSize: 2, callback: (v) => this.monthLabel(t.base, v) }, grid: { color: "#f1f4f8" } }, y: { grid: { display: false } } },
-                plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${t.depts[c.dataIndex]} · ${this.monthLabel(t.base, c.raw[0])} – ${this.monthLabel(t.base, c.raw[1])}` } } },
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        min: 0,
+                        max: t.max,
+                        ticks: {
+                            stepSize: 2,
+                            callback: (v) => this.monthLabel(t.base, v),
+                        },
+                        grid: { color: "#f1f4f8" },
+                    },
+                    y: { grid: { display: false } },
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (c) =>
+                                `${t.depts[c.dataIndex]} · ${this.monthLabel(t.base, c.raw[0])} – ${this.monthLabel(t.base, c.raw[1])}`,
+                        },
+                    },
+                },
             },
         });
     }
 
     timelineData() {
-        const toMonth = (s) => { const p = s.split("-").map(Number); return p[0] * 12 + (p[1] - 1); };
-        const items = this.viz.timeline.map((x) => ({ s: toMonth(x.start), e: toMonth(x.end), title: x.title, dept: x.dept }));
-        let base = Infinity, maxEnd = 0;
-        items.forEach((i) => { if (i.s < base) base = i.s; });
+        const toMonth = (s) => {
+            const p = s.split("-").map(Number);
+            return p[0] * 12 + (p[1] - 1);
+        };
+        const items = this.viz.timeline.map((x) => ({
+            s: toMonth(x.start),
+            e: toMonth(x.end),
+            title: x.title,
+            dept: x.dept,
+        }));
+        let base = Infinity,
+            maxEnd = 0;
+        items.forEach((i) => {
+            if (i.s < base) base = i.s;
+        });
         if (!isFinite(base)) base = 0;
-        items.forEach((i) => { if (i.e - base > maxEnd) maxEnd = i.e - base; });
+        items.forEach((i) => {
+            if (i.e - base > maxEnd) maxEnd = i.e - base;
+        });
         return {
             base,
             max: Math.max(maxEnd + 1, 6),
             labels: items.map((i) => i.title),
             spans: items.map((i) => [i.s - base, i.e - base]),
             colors: items.map((i) => this.deptColor(i.dept)),
-            depts: items.map((i) => { const idx = this.deptIndex(i.dept); return idx >= 0 ? this.viz.departments[idx].label : ""; }),
+            depts: items.map((i) => {
+                const idx = this.deptIndex(i.dept);
+                return idx >= 0 ? this.viz.departments[idx].label : "";
+            }),
         };
     }
 
     monthLabel(base, offset) {
         const m = base + Math.round(offset);
-        return MONTHS[((m % 12) + 12) % 12] + " " + String(Math.floor(m / 12)).slice(2);
+        return (
+            MONTHS[((m % 12) + 12) % 12] +
+            " " +
+            String(Math.floor(m / 12)).slice(2)
+        );
     }
 
     // ---- Live updates: feed new data, let Chart.js animate the delta ---
@@ -399,12 +668,23 @@ export default class extends Controller {
         const d = this.viz;
         const c = this.charts;
         if (c.statusByDept) {
-            d.statuses.forEach((s, i) => { c.statusByDept.data.datasets[i].data = d.statusByDept[i]; });
+            d.statuses.forEach((s, i) => {
+                c.statusByDept.data.datasets[i].data = d.statusByDept[i];
+            });
             c.statusByDept.update();
         }
-        if (c.statusDist) { c.statusDist.data.datasets[0].data = d.statusDistribution; c.statusDist.update(); }
-        if (c.funding) { c.funding.data.datasets[0].data = d.fundingCount; c.funding.update(); }
-        if (c.budget) { c.budget.data.datasets[0].data = d.budgetByDept; c.budget.update(); }
+        if (c.statusDist) {
+            c.statusDist.data.datasets[0].data = d.statusDistribution;
+            c.statusDist.update();
+        }
+        if (c.funding) {
+            c.funding.data.datasets[0].data = d.fundingCount;
+            c.funding.update();
+        }
+        if (c.budget) {
+            c.budget.data.datasets[0].data = d.budgetByDept;
+            c.budget.update();
+        }
         if (c.reach) {
             c.reach.data.labels = d.reach.map((r) => r.label);
             c.reach.data.datasets[0].data = d.reach.map((r) => r.depts);
@@ -416,7 +696,8 @@ export default class extends Controller {
             c.timeline.data.datasets[0].data = t.spans;
             c.timeline.data.datasets[0].backgroundColor = t.colors;
             c.timeline.options.scales.x.max = t.max;
-            c.timeline.options.scales.x.ticks.callback = (v) => this.monthLabel(t.base, v);
+            c.timeline.options.scales.x.ticks.callback = (v) =>
+                this.monthLabel(t.base, v);
             c.timeline.update();
         }
     }
