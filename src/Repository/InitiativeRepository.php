@@ -123,4 +123,24 @@ class InitiativeRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function dashboardRows(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->select(
+                'i.title',
+                'i.category',
+                'i.status',
+                'i.organizationalAnchoring',
+                'i.budget',
+                'i.funding',
+                'i.timePeriodStart',
+                'i.timePeriodEnd',
+            )
+            ->getQuery()
+            ->getArrayResult();
+    }
 }
