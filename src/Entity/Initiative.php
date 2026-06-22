@@ -13,6 +13,8 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use App\Entity\Trait\BlameableTrait;
+use App\Entity\Trait\TimestampableTrait;
 use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
@@ -28,11 +30,10 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: InitiativeRepository::class)]
-#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     shortName: 'Initiative',
     operations: [new GetCollection(), new Get()],
-    normalizationContext: ['groups' => ['initiative:read']],
+    normalizationContext: ['groups' => ['initiative:read', 'timestampable:read']],
     paginationItemsPerPage: 50,
     paginationClientItemsPerPage: true,
     order: ['createdAt' => 'DESC'],
@@ -53,8 +54,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(RangeFilter::class, properties: ['budget'])]
 #[ApiFilter(DateFilter::class, properties: ['timePeriodStart', 'timePeriodEnd', 'createdAt'])]
 #[ApiFilter(OrderFilter::class, properties: ['title', 'budget', 'createdAt', 'timePeriodStart'])]
-class Initiative
+class Initiative implements BlameableInterface, TimestampableInterface
 {
+    use BlameableTrait;
+    use TimestampableTrait;
+
     /**
      * Fields that count toward {@see getCompletionPercentage()} and the client-side
      * progress bar. Limited to the initiative's own columns so list rendering stays
@@ -177,14 +181,6 @@ class Initiative
     #[Groups(['initiative:read'])]
     private bool $published = true;
 
-    #[ORM\Column]
-    #[Groups(['initiative:read'])]
-    private \DateTimeImmutable $createdAt;
-
-    #[ORM\Column]
-    #[Groups(['initiative:read'])]
-    private \DateTimeImmutable $updatedAt;
-
     public function __construct()
     {
         $this->strategies = new ArrayCollection();
@@ -193,14 +189,6 @@ class Initiative
         $this->tags = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->attachments = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    #[ORM\PreUpdate]
-    public function touch(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -575,16 +563,6 @@ class Initiative
         $this->published = $published;
 
         return $this;
-    }
-
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): \DateTimeImmutable
-    {
-        return $this->updatedAt;
     }
 
     /**
