@@ -76,8 +76,15 @@ filter:
 
 dashboard:
     title: Overblik
-    subtitle: Status på alle initiativer i databasen.
+    subtitle: Status på alle initiativer
     total: Initiativer i alt
+    total_hint: registrerede i alt
+    in_progress: Igangværende
+    in_progress_hint: aktive lige nu
+    departments_involved: Afdelinger involveret
+    departments_involved_hint: med mindst ét initiativ
+    collaboration_count: Mulige samarbejder
+    collaboration_count_hint: temaer på tværs af afdelinger
     published: Offentliggjorte
     drafts: Kladder
     total_budget: Samlet budget (offentliggjorte)
@@ -85,6 +92,15 @@ dashboard:
     recent: Senest oprettede
     no_status: Uden status
     empty: Der er endnu ikke oprettet nogen initiativer.
+    themes_heatmap: Temaer på tværs af afdelinger
+    themes_heatmap_sub: Mørkere = flere initiativer. Markerede temaer går på tværs af mindst tre afdelinger.
+    collaboration: Muligt samarbejde
+    collaboration_sub: Initiativer i forskellige afdelinger med fælles tema.
+    status_by_dept: Status pr. afdeling
+    funding_sources: Finansieringskilder
+    budget_by_dept: Budget pr. afdeling
+    reach: Temaer med flest afdelinger
+    timeline: Tidslinje
 
 initiative:
     title: Titel

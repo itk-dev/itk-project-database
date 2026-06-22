@@ -6,9 +6,6 @@ namespace App\Service;
 
 use App\Entity\Initiative;
 use App\Entity\User;
-use App\Enum\Status;
-use App\Repository\ContactRepository;
-use App\Repository\InitiativeRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
@@ -18,8 +15,8 @@ use Twig\Environment;
 /**
  * Pushes a single Mercure payload describing an initiative change to every
  * connected client: a Turbo Stream that prepends the change to the live activity
- * feed and refreshes the dashboard's stats, recent list and status bars. The
- * counts are recomputed here so the broadcast reflects the state after flush.
+ * feed and refreshes the dashboard's KPIs and visualisations. The aggregates are
+ * recomputed here so the broadcast reflects the state after flush.
  */
 final class ActivityPublisher
 {
@@ -32,8 +29,7 @@ final class ActivityPublisher
         private readonly HubInterface $hub,
         private readonly Environment $twig,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly InitiativeRepository $initiatives,
-        private readonly ContactRepository $contacts,
+        private readonly DashboardData $dashboardData,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -52,13 +48,7 @@ final class ActivityPublisher
             'url' => $url,
             'actor' => $actor?->getName(),
             'at' => new \DateTimeImmutable(),
-            'total' => $this->initiatives->countAll(),
-            'published' => $this->initiatives->countPublished(true),
-            'drafts' => $this->initiatives->countPublished(false),
-            'byStatus' => $this->initiatives->countByStatus(),
-            'statuses' => Status::cases(),
-            'recent' => $this->initiatives->findRecent(8),
-            'contactCount' => $this->contacts->count([]),
+            'viz' => $this->dashboardData->build(),
         ]);
 
         try {
