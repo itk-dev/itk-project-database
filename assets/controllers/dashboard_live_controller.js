@@ -57,7 +57,9 @@ export default class extends Controller {
 
     animate(region, before) {
         for (const el of region.querySelectorAll("[data-live-text]")) {
-            if (before.texts.get(el.dataset.liveText) !== el.textContent.trim()) {
+            if (
+                before.texts.get(el.dataset.liveText) !== el.textContent.trim()
+            ) {
                 el.classList.add("is-live-flash");
             }
         }
