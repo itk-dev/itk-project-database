@@ -4,43 +4,25 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata\ApiFilter;
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
 use App\Enum\Vocabulary;
 use App\Repository\TermRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TermRepository::class)]
 #[ORM\UniqueConstraint(name: 'uniq_term_name_vocabulary', columns: ['name', 'vocabulary'])]
-#[ApiResource(
-    operations: [new GetCollection(), new Get()],
-    normalizationContext: ['groups' => ['term:read']],
-    paginationItemsPerPage: 50,
-    order: ['name' => 'ASC'],
-)]
-#[ApiFilter(SearchFilter::class, properties: ['vocabulary' => 'exact', 'name' => 'partial'])]
-#[ApiFilter(OrderFilter::class, properties: ['name'])]
 class Term
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['term:read', 'initiative:read'])]
     private ?int $id = null;
 
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
-    #[Groups(['term:read', 'initiative:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 32, enumType: Vocabulary::class)]
-    #[Groups(['term:read'])]
     private Vocabulary $vocabulary;
 
     #[ORM\Column]
