@@ -126,6 +126,7 @@ initiative:
     published: Offentliggjort
     published_help: Kun offentliggjorte initiativer vises på det offentlige API.
     terms_help: Adskil flere værdier med komma.
+    completion_field_hint: Dette felt tæller med i udfyldningsgraden.
     images: Billeder
     attachments: Filer
     image_file: Billedfil

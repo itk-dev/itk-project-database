@@ -126,6 +126,7 @@ initiative:
     published: Published
     published_help: Only published initiatives are exposed on the public API.
     terms_help: Separate multiple values with commas.
+    completion_field_hint: This field counts towards the completion rate.
     images: Images
     attachments: Files
     image_file: Image file

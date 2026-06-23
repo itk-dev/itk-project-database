@@ -1052,6 +1052,25 @@ h3 {
     color: var(--itk-slate-700);
 }
 
+.completion-star {
+    display: inline-block;
+    margin-left: var(--itk-space-1);
+    color: gold;
+    font-size: 1.1em;
+    line-height: 1;
+    vertical-align: text-top;
+    -webkit-text-stroke: 0.75px #000;
+    paint-order: stroke fill;
+    cursor: help;
+}
+
+.completion-star--gone {
+    width: 0;
+    margin-left: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
 .form-row .help-text,
 .form-row .form-help {
     font-size: var(--itk-text-xs);

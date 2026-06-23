@@ -22,6 +22,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -178,6 +180,19 @@ class InitiativeType extends AbstractType
                 'required' => false,
                 'help' => 'initiative.published_help',
             ]);
+    }
+
+    /**
+     * Flag the fields that count towards {@see Initiative::getCompletionPercentage()}
+     * so the form theme can mark them. Keeps the list in one place.
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options): void
+    {
+        foreach (Initiative::COMPLETION_FIELDS as $field) {
+            if (isset($view[$field])) {
+                $view[$field]->vars['completion_field'] = true;
+            }
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
