@@ -40,7 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'title' => 'partial',
-    'author' => 'partial',
+    'createdBy.name' => 'partial',
     'status' => 'exact',
     'category' => 'exact',
     'initiativeType' => 'exact',
@@ -69,7 +69,7 @@ class Initiative implements BlameableInterface, TimestampableInterface
     public const array COMPLETION_FIELDS = [
         'title', 'category', 'description', 'initiativeType', 'status',
         'organizationalAnchoring', 'endorsementAuthor',
-        'budget', 'funding', 'timePeriodStart', 'timePeriodEnd', 'author',
+        'budget', 'funding', 'timePeriodStart', 'timePeriodEnd',
     ];
 
     #[ORM\Id]
@@ -172,10 +172,6 @@ class Initiative implements BlameableInterface, TimestampableInterface
     #[ORM\Column]
     #[Groups(['initiative:read'])]
     private array $links = [];
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['initiative:read'])]
-    private ?string $author = null;
 
     #[ORM\Column]
     #[Groups(['initiative:read'])]
@@ -541,18 +537,6 @@ class Initiative implements BlameableInterface, TimestampableInterface
         return $this;
     }
 
-    public function getAuthor(): ?string
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(?string $author): static
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
     public function isPublished(): bool
     {
         return $this->published;
@@ -583,7 +567,6 @@ class Initiative implements BlameableInterface, TimestampableInterface
             [] !== $this->funding,
             null !== $this->timePeriodStart,
             null !== $this->timePeriodEnd,
-            null !== $this->author && '' !== $this->author,
         ];
 
         return (int) round(\count(array_filter($checks)) / \count($checks) * 100);
