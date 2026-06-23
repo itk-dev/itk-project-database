@@ -131,16 +131,6 @@ class InitiativeRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countPublished(bool $published = true): int
-    {
-        return (int) $this->createQueryBuilder('i')
-            ->select('COUNT(i.id)')
-            ->andWhere('i.published = :published')
-            ->setParameter('published', $published)
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
-
     /**
      * @return array<string, int> count keyed by status value (skips initiatives without a status)
      */

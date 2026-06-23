@@ -4,15 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata\ApiFilter;
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Trait\BlameableTrait;
 use App\Entity\Trait\TimestampableTrait;
 use App\Enum\Category;
@@ -26,34 +17,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: InitiativeRepository::class)]
-#[ApiResource(
-    shortName: 'Initiative',
-    operations: [new GetCollection(), new Get()],
-    normalizationContext: ['groups' => ['initiative:read', 'timestampable:read']],
-    paginationItemsPerPage: 50,
-    paginationClientItemsPerPage: true,
-    order: ['createdAt' => 'DESC'],
-)]
-#[ApiFilter(SearchFilter::class, properties: [
-    'title' => 'partial',
-    'createdBy.name' => 'partial',
-    'status' => 'exact',
-    'category' => 'exact',
-    'initiativeType' => 'exact',
-    'organizationalAnchoring' => 'exact',
-    'endorsementAuthor' => 'exact',
-    'tags.name' => 'exact',
-    'stakeholders.name' => 'exact',
-    'contacts.name' => 'partial',
-])]
-#[ApiFilter(BooleanFilter::class, properties: ['endorsement', 'published'])]
-#[ApiFilter(RangeFilter::class, properties: ['budget'])]
-#[ApiFilter(DateFilter::class, properties: ['timePeriodStart', 'timePeriodEnd', 'createdAt'])]
-#[ApiFilter(OrderFilter::class, properties: ['title', 'budget', 'createdAt', 'timePeriodStart'])]
 class Initiative implements BlameableInterface, TimestampableInterface
 {
     use BlameableTrait;
@@ -75,50 +41,39 @@ class Initiative implements BlameableInterface, TimestampableInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['initiative:read'])]
     private ?int $id = null;
 
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
-    #[Groups(['initiative:read'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 32, nullable: true, enumType: Category::class)]
-    #[Groups(['initiative:read'])]
     private ?Category $category = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['initiative:read'])]
     private ?string $description = null;
 
     /** @var Collection<int, Term> */
     #[ORM\ManyToMany(targetEntity: Term::class, cascade: ['persist'])]
     #[ORM\JoinTable(name: 'initiative_strategy')]
-    #[Groups(['initiative:read'])]
     private Collection $strategies;
 
     #[ORM\Column(length: 32, nullable: true, enumType: InitiativeType::class)]
-    #[Groups(['initiative:read'])]
     private ?InitiativeType $initiativeType = null;
 
     #[ORM\Column(length: 32, nullable: true, enumType: Status::class)]
-    #[Groups(['initiative:read'])]
     private ?Status $status = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['initiative:read'])]
     private ?string $statusAdditional = null;
 
     #[ORM\Column(length: 64, nullable: true, enumType: OrganizationalAnchoring::class)]
-    #[Groups(['initiative:read'])]
     private ?OrganizationalAnchoring $organizationalAnchoring = null;
 
     #[ORM\Column]
-    #[Groups(['initiative:read'])]
     private bool $endorsement = true;
 
     #[ORM\Column(length: 32, nullable: true, enumType: EndorsementAuthor::class)]
-    #[Groups(['initiative:read'])]
     private ?EndorsementAuthor $endorsementAuthor = null;
 
     /** @var Collection<int, Contact> */
@@ -137,12 +92,10 @@ class Initiative implements BlameableInterface, TimestampableInterface
     /** @var Collection<int, Term> */
     #[ORM\ManyToMany(targetEntity: Term::class, cascade: ['persist'])]
     #[ORM\JoinTable(name: 'initiative_stakeholder')]
-    #[Groups(['initiative:read'])]
     private Collection $stakeholders;
 
     #[Assert\PositiveOrZero]
     #[ORM\Column(nullable: true)]
-    #[Groups(['initiative:read'])]
     private ?int $budget = null;
 
     /**
@@ -151,31 +104,22 @@ class Initiative implements BlameableInterface, TimestampableInterface
      * @var list<string>
      */
     #[ORM\Column]
-    #[Groups(['initiative:read'])]
     private array $funding = [];
 
     /** @var Collection<int, Term> */
     #[ORM\ManyToMany(targetEntity: Term::class, cascade: ['persist'])]
     #[ORM\JoinTable(name: 'initiative_tag')]
-    #[Groups(['initiative:read'])]
     private Collection $tags;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    #[Groups(['initiative:read'])]
     private ?\DateTimeImmutable $timePeriodStart = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    #[Groups(['initiative:read'])]
     private ?\DateTimeImmutable $timePeriodEnd = null;
 
     /** @var list<string> */
     #[ORM\Column]
-    #[Groups(['initiative:read'])]
     private array $links = [];
-
-    #[ORM\Column]
-    #[Groups(['initiative:read'])]
-    private bool $published = true;
 
     public function __construct()
     {
@@ -533,18 +477,6 @@ class Initiative implements BlameableInterface, TimestampableInterface
     public function setLinks(array $links): static
     {
         $this->links = array_values(array_filter($links, static fn (?string $link): bool => null !== $link && '' !== trim($link)));
-
-        return $this;
-    }
-
-    public function isPublished(): bool
-    {
-        return $this->published;
-    }
-
-    public function setPublished(bool $published): static
-    {
-        $this->published = $published;
 
         return $this;
     }

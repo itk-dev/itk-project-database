@@ -168,11 +168,6 @@ class InitiativeType extends AbstractType
                 'by_reference' => false,
                 'required' => false,
                 'prototype' => true,
-            ])
-            ->add('published', CheckboxType::class, [
-                'label' => 'initiative.published',
-                'required' => false,
-                'help' => 'initiative.published_help',
             ]);
     }
 
