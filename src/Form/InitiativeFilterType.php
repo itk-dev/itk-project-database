@@ -67,13 +67,6 @@ class InitiativeFilterType extends AbstractType
                 'choices' => ['filter.yes' => true, 'filter.no' => false],
                 'choice_value' => $boolChoiceValue,
             ])
-            ->add('published', ChoiceType::class, [
-                'label' => 'initiative.published',
-                'required' => false,
-                'placeholder' => 'filter.all',
-                'choices' => ['filter.published' => true, 'filter.draft' => false],
-                'choice_value' => $boolChoiceValue,
-            ])
             ->add('budgetMin', IntegerType::class, [
                 'label' => 'filter.budget_min',
                 'required' => false,

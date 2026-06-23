@@ -5,7 +5,6 @@ nav:
     dashboard: Overview
     initiatives: Initiatives
     contacts: Contacts
-    api: API
     users: Users
     admin: Administration
     language: Language
@@ -52,8 +51,6 @@ filter:
     all: All
     yes: "Yes"
     no: "No"
-    published: Published
-    draft: Draft
     budget_min: Budget from
     budget_max: Budget to
 
@@ -61,9 +58,6 @@ dashboard:
     title: Overview
     subtitle: The status of every initiative in the database.
     total: Total initiatives
-    published: Published
-    drafts: Drafts
-    total_budget: Total budget (published)
     by_status: By status
     recent: Recently created
     no_status: No status
@@ -90,8 +84,6 @@ initiative:
     links: Relevant links
     contacts: Contacts
     author: Filled out by
-    published: Published
-    published_help: Only published initiatives are exposed on the public API.
     terms_help: Separate multiple values with commas.
     images: Images
     attachments: Files

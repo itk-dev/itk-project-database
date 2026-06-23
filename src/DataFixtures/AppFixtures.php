@@ -108,8 +108,7 @@ class AppFixtures extends Fixture
                 ->setDescription('Initiativet arbejder med '.mb_strtolower($title).' gennem en tværgående indsats med fokus på borgernes hverdag og kommunens strategiske mål.')
                 ->setEndorsement(0 === $index % 3 ? false : true)
                 ->setBudget(mt_rand(1, 40) * 50000)
-                ->setAuthor($firstNames[array_rand($firstNames)].' '.$lastNames[array_rand($lastNames)])
-                ->setPublished(0 !== $index % 7);
+                ->setAuthor($firstNames[array_rand($firstNames)].' '.$lastNames[array_rand($lastNames)]);
 
             if (0 !== $index % 4) {
                 $initiative->setEndorsementAuthor($endorsers[array_rand($endorsers)]);
