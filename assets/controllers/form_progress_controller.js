@@ -46,8 +46,9 @@ export default class extends Controller {
             if (!starForKey.has(key)) {
                 starForKey.set(
                     key,
-                    el.closest(".form-row")?.querySelector(".completion-star") ??
-                        null,
+                    el
+                        .closest(".form-row")
+                        ?.querySelector(".completion-star") ?? null,
                 );
             }
             if (this.isFilled(el)) {
@@ -62,7 +63,10 @@ export default class extends Controller {
             this.shownCount = filled.size;
             this.render();
             for (const [key, star] of starForKey) {
-                star?.classList.toggle("completion-star--gone", filled.has(key));
+                star?.classList.toggle(
+                    "completion-star--gone",
+                    filled.has(key),
+                );
             }
             this.filledKeys = filled;
 
