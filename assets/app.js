@@ -1,4 +1,6 @@
 import "./styles/app.css";
+import TomSelect from "tom-select";
+import "tom-select/dist/css/tom-select.default.min.css";
 
 function initUserMenu() {
     const toggle = document.getElementById("userMenuToggle");
@@ -61,7 +63,18 @@ function initCollections() {
     });
 }
 
+function initContactSelect() {
+    document.querySelectorAll("[data-contact-select]").forEach((select) => {
+        new TomSelect(select, {
+            plugins: ["remove_button"],
+            hideSelected: true,
+            maxOptions: null,
+        });
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initUserMenu();
     initCollections();
+    initContactSelect();
 });
