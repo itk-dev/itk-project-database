@@ -1487,6 +1487,31 @@ textarea {
     font-variant-numeric: tabular-nums;
 }
 
+.form-progress__star {
+    flex: none;
+    display: inline-block;
+    position: relative;
+    top: -0.1em;
+    margin-left: calc(-1 * var(--itk-space-2));
+    font-size: var(--itk-text-md);
+    line-height: 1;
+    color: gold;
+    -webkit-text-stroke: 0.75px #000;
+    paint-order: stroke fill;
+    transition: font-size 240ms ease;
+}
+
+.flying-star {
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+    color: gold;
+    font-size: var(--itk-text-lg);
+    line-height: 1;
+    -webkit-text-stroke: 0.75px #000;
+    paint-order: stroke fill;
+}
+
 .completion {
     display: flex;
     align-items: center;
