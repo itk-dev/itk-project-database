@@ -109,8 +109,7 @@ class AppFixtures extends Fixture
                 ->setOrganizationalAnchoring($anchorings[array_rand($anchorings)])
                 ->setDescription('Initiativet arbejder med '.mb_strtolower($title).' gennem en tværgående indsats med fokus på borgernes hverdag og kommunens strategiske mål.')
                 ->setEndorsement(0 === $index % 3 ? false : true)
-                ->setBudget(mt_rand(1, 40) * 50000)
-                ->setPublished(0 !== $index % 7);
+                ->setBudget(mt_rand(1, 40) * 50000);
             $initiative->setCreatedBy($users[array_rand($users)]);
 
             if (0 !== $index % 4) {

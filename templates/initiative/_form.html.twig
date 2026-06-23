@@ -160,11 +160,6 @@
         </div>
     </div>
 
-    <div class="form-section">
-        <div class="form-section__title">{{ 'initiative.section.meta'|trans }}</div>
-        {{ form_row(form.published) }}
-    </div>
-
     <div class="form-actions">
         {% if autosave|default(false) %}
             <button type="submit" class="btn btn--primary" data-autosave-target="save" hidden>{{ 'autosave.upload_files'|trans }}</button>

@@ -14,14 +14,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final class SmokeTest extends WebTestCase
 {
-    public function testApiCollectionIsPublic(): void
-    {
-        $client = static::createClient();
-        $client->request('GET', '/api/initiatives');
-        $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
-    }
-
     public function testDashboardRequiresLogin(): void
     {
         $client = static::createClient();

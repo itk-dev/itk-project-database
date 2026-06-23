@@ -19,7 +19,6 @@
                 <h1 class="page__title">{{ initiative.title }}</h1>
                 <p class="page__subtitle">
                     {% if initiative.status %}<span class="badge badge--status-{{ initiative.status.value }}">{{ initiative.status.labelKey|trans }}</span>{% endif %}
-                    {% if initiative.published %}<span class="badge badge--published">{{ 'filter.published'|trans }}</span>{% else %}<span class="badge badge--draft">{{ 'filter.draft'|trans }}</span>{% endif %}
                 </p>
             </div>
             <div class="page__actions">
