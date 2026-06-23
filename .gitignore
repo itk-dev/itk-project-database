@@ -33,3 +33,6 @@ phpstan.neon
 /.phpunit.cache/
 ###< phpunit/phpunit ###
 /.idea/
+
+# Auto-generated config reference (IDE type hints); regenerated on cache warmup.
+/config/reference.php
