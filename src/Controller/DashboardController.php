@@ -18,8 +18,6 @@ class DashboardController extends AbstractController
     {
         return $this->render('dashboard/index.html.twig', [
             'total' => $initiatives->countAll(),
-            'published' => $initiatives->countPublished(true),
-            'drafts' => $initiatives->countPublished(false),
             'byStatus' => $initiatives->countByStatus(),
             'statuses' => Status::cases(),
             'recent' => $initiatives->findRecent(8),

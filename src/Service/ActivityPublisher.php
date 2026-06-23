@@ -53,8 +53,6 @@ final class ActivityPublisher
             'actor' => $actor?->getName(),
             'at' => new \DateTimeImmutable(),
             'total' => $this->initiatives->countAll(),
-            'published' => $this->initiatives->countPublished(true),
-            'drafts' => $this->initiatives->countPublished(false),
             'byStatus' => $this->initiatives->countByStatus(),
             'statuses' => Status::cases(),
             'recent' => $this->initiatives->findRecent(8),

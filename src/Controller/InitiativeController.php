@@ -72,7 +72,6 @@ class InitiativeController extends AbstractController
                 $translator->trans('initiative.strategies'), $translator->trans('initiative.tags'),
                 $translator->trans('initiative.time_period_start'), $translator->trans('initiative.time_period_end'),
                 $translator->trans('initiative.contacts'), $translator->trans('initiative.author'),
-                $translator->trans('initiative.published'),
             ]);
 
             $names = static fn (iterable $items): string => implode(', ', array_map('strval', \is_array($items) ? $items : iterator_to_array($items)));
@@ -96,7 +95,6 @@ class InitiativeController extends AbstractController
                     $row->getTimePeriodEnd()?->format('Y-m-d'),
                     $names($row->getContacts()),
                     $row->getCreatedBy()?->getName(),
-                    $row->isPublished() ? $translator->trans('filter.published') : $translator->trans('filter.draft'),
                 ]);
             }
         });

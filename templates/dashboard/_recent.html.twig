@@ -16,7 +16,6 @@
                 </div>
                 <div class="tag-list">
                     {% if initiative.status %}<span class="badge badge--status-{{ initiative.status.value }}">{{ initiative.status.labelKey|trans }}</span>{% endif %}
-                    {% if not initiative.published %}<span class="badge badge--draft">{{ 'filter.draft'|trans }}</span>{% endif %}
                 </div>
             </div>
         {% endfor %}
