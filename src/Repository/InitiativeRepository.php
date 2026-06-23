@@ -28,7 +28,8 @@ class InitiativeRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('i');
 
         if (null !== $filter->q && '' !== trim($filter->q)) {
-            $qb->andWhere('LOWER(i.title) LIKE :q OR LOWER(i.description) LIKE :q OR LOWER(i.author) LIKE :q OR LOWER(i.statusAdditional) LIKE :q')
+            $qb->leftJoin('i.createdBy', 'createdBy')
+                ->andWhere('LOWER(i.title) LIKE :q OR LOWER(i.description) LIKE :q OR LOWER(createdBy.name) LIKE :q OR LOWER(i.statusAdditional) LIKE :q')
                 ->setParameter('q', '%'.mb_strtolower(trim($filter->q)).'%');
         }
 

@@ -169,10 +169,6 @@ class InitiativeType extends AbstractType
                 'required' => false,
                 'prototype' => true,
             ])
-            ->add('author', TextType::class, [
-                'label' => 'initiative.author',
-                'required' => false,
-            ])
             ->add('published', CheckboxType::class, [
                 'label' => 'initiative.published',
                 'required' => false,
