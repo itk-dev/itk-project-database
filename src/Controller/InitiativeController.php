@@ -95,7 +95,7 @@ class InitiativeController extends AbstractController
                     $row->getTimePeriodStart()?->format('Y-m-d'),
                     $row->getTimePeriodEnd()?->format('Y-m-d'),
                     $names($row->getContacts()),
-                    $row->getAuthor(),
+                    $row->getCreatedBy()?->getName(),
                     $row->isPublished() ? $translator->trans('filter.published') : $translator->trans('filter.draft'),
                 ]);
             }

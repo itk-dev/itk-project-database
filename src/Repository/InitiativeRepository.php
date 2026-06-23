@@ -41,10 +41,10 @@ class InitiativeRepository extends ServiceEntityRepository
             $ors = [
                 'LOWER(i.title) LIKE :q',
                 'LOWER(i.description) LIKE :q',
-                'LOWER(i.author) LIKE :q',
                 'LOWER(i.statusAdditional) LIKE :q',
                 // Related names, matched without joining the root query so the
                 // paginator's count stays correct.
+                sprintf('i.id IN (SELECT icrt.id FROM %s icrt JOIN icrt.createdBy cb WHERE LOWER(cb.name) LIKE :q)', Initiative::class),
                 sprintf('i.id IN (SELECT itag.id FROM %s itag JOIN itag.tags tg WHERE LOWER(tg.name) LIKE :q)', Initiative::class),
                 sprintf('i.id IN (SELECT istr.id FROM %s istr JOIN istr.strategies st WHERE LOWER(st.name) LIKE :q)', Initiative::class),
                 sprintf('i.id IN (SELECT isth.id FROM %s isth JOIN isth.stakeholders sh WHERE LOWER(sh.name) LIKE :q)', Initiative::class),
