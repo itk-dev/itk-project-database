@@ -26,6 +26,7 @@ tasks:
       - '{{.CONSOLE}} doctrine:database:create --if-not-exists'
       - '{{.CONSOLE}} doctrine:migrations:migrate --no-interaction'
       - '{{.CONSOLE}} doctrine:fixtures:load --no-interaction'
+      - '{{.CONSOLE}} asset-map:compile'
 
   console:
     desc: 'Run a Symfony console command (usage: task console -- <command>)'
