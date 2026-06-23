@@ -1,13 +1,12 @@
 {
     "name": "itk-dev/itk-project-database",
-    "description": "Symfony app for registering and browsing municipal initiatives, with a read-only API Platform API.",
+    "description": "Symfony app for registering and browsing municipal initiatives.",
     "license": "proprietary",
     "type": "project",
     "require": {
         "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "api-platform/core": "^4.3",
         "doctrine/doctrine-bundle": "^3.2",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.6",

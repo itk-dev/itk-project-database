@@ -34,7 +34,6 @@
                 {{ form_row(form.initiativeType) }}
                 {{ form_row(form.organizationalAnchoring) }}
                 {{ form_row(form.endorsement) }}
-                {{ form_row(form.published) }}
                 {{ form_row(form.budgetMin) }}
                 {{ form_row(form.budgetMax) }}
             </div>
@@ -61,7 +60,6 @@
                                 <th>{{ 'initiative.organizational_anchoring'|trans }}</th>
                                 <th class="is-numeric">{{ h.sortlink('budget', 'initiative.budget', sort, direction) }}</th>
                                 <th>{{ h.sortlink('timePeriodStart', 'initiative.time_period', sort, direction) }}</th>
-                                <th>{{ 'initiative.published'|trans }}</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -85,13 +83,6 @@
                                         {% if initiative.timePeriodStart %}
                                             {{ initiative.timePeriodStart|date('d.m.Y') }}{% if initiative.timePeriodEnd %} – {{ initiative.timePeriodEnd|date('d.m.Y') }}{% endif %}
                                         {% else %}—{% endif %}
-                                    </td>
-                                    <td>
-                                        {% if initiative.published %}
-                                            <span class="badge badge--published">{{ 'filter.published'|trans }}</span>
-                                        {% else %}
-                                            <span class="badge badge--draft">{{ 'filter.draft'|trans }}</span>
-                                        {% endif %}
                                     </td>
                                     <td>
                                         <div class="cell-actions">

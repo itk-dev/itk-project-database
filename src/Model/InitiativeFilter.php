@@ -31,8 +31,6 @@ class InitiativeFilter
 
     public ?int $budgetMax = null;
 
-    public ?bool $published = null;
-
     public string $sort = 'createdAt';
 
     public string $direction = 'DESC';

@@ -5,7 +5,6 @@ nav:
     dashboard: Overblik
     initiatives: Initiativer
     contacts: Kontaktpersoner
-    api: API
     users: Brugere
     admin: Administration
     language: Sprog
@@ -52,8 +51,6 @@ filter:
     all: Alle
     yes: "Ja"
     no: "Nej"
-    published: Offentliggjort
-    draft: Kladde
     budget_min: Budget fra
     budget_max: Budget til
 
@@ -61,9 +58,6 @@ dashboard:
     title: Overblik
     subtitle: Status på alle initiativer i databasen.
     total: Initiativer i alt
-    published: Offentliggjorte
-    drafts: Kladder
-    total_budget: Samlet budget (offentliggjorte)
     by_status: Fordeling på status
     recent: Senest oprettede
     no_status: Uden status
@@ -90,8 +84,6 @@ initiative:
     links: Relevante links
     contacts: Kontaktpersoner
     author: Udfyldt af
-    published: Offentliggjort
-    published_help: Kun offentliggjorte initiativer vises på det offentlige API.
     terms_help: Adskil flere værdier med komma.
     images: Billeder
     attachments: Filer

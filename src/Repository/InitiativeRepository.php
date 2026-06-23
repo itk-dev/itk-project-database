@@ -52,10 +52,6 @@ class InitiativeRepository extends ServiceEntityRepository
             $qb->andWhere('i.endorsement = :endorsement')->setParameter('endorsement', $filter->endorsement);
         }
 
-        if (null !== $filter->published) {
-            $qb->andWhere('i.published = :published')->setParameter('published', $filter->published);
-        }
-
         if (null !== $filter->budgetMin) {
             $qb->andWhere('i.budget >= :budgetMin')->setParameter('budgetMin', $filter->budgetMin);
         }
@@ -74,16 +70,6 @@ class InitiativeRepository extends ServiceEntityRepository
     {
         return (int) $this->createQueryBuilder('i')
             ->select('COUNT(i.id)')
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
-
-    public function countPublished(bool $published = true): int
-    {
-        return (int) $this->createQueryBuilder('i')
-            ->select('COUNT(i.id)')
-            ->andWhere('i.published = :published')
-            ->setParameter('published', $published)
             ->getQuery()
             ->getSingleScalarResult();
     }

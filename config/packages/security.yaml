@@ -28,8 +28,6 @@ security:
                 interval: '1 minute'
 
     access_control:
-        # The public, read-only API and its documentation are open to anyone.
-        - { path: ^/api, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/locale, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
