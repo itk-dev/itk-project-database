@@ -16,6 +16,7 @@ use App\Model\InitiativeFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -129,6 +130,44 @@ class InitiativeRepository extends ServiceEntityRepository
             ->select('COUNT(i.id)')
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function countByCreator(UserInterface $user): int
+    {
+        return (int) $this->createQueryBuilder('i')
+            ->select('COUNT(i.id)')
+            ->andWhere('i.createdBy = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * The creator's least-complete initiative that isn't fully filled in yet, or
+     * null if none are outstanding. Completion is computed in PHP (not a stored
+     * column), so this scans only the creator's 50 most recent initiatives.
+     */
+    public function findUnfinishedByCreator(UserInterface $user): ?Initiative
+    {
+        $initiatives = $this->createQueryBuilder('i')
+            ->andWhere('i.createdBy = :user')
+            ->setParameter('user', $user)
+            ->orderBy('i.createdAt', 'DESC')
+            ->setMaxResults(50)
+            ->getQuery()
+            ->getResult();
+
+        $unfinished = array_filter(
+            $initiatives,
+            static fn (Initiative $initiative): bool => $initiative->getCompletionPercentage() < 100,
+        );
+
+        usort(
+            $unfinished,
+            static fn (Initiative $a, Initiative $b): int => $a->getCompletionPercentage() <=> $b->getCompletionPercentage(),
+        );
+
+        return $unfinished[0] ?? null;
     }
 
     /**

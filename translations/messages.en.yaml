@@ -1,6 +1,30 @@
 app:
     name: Project database
 
+mascot:
+    label: Your creative buddy
+    close: Close
+    cta: Create a new initiative
+    praise: "{1}You've created one initiative — nice start! 🌟|]1,Inf[You've created %count% initiatives — great work! 🌟"
+    finish: "“%title%” isn't quite done — want to finish it?"
+    finish_cta: Finish it
+    msg:
+        idea: "Got a fresh idea? Let’s give it a home. ✨"
+        roll: "You’re on a roll — what’s next?"
+        bold: "Every great initiative starts with one bold line."
+        finish: "Halfway is the hardest part. Go finish it! 💪"
+        creativity: "Your creativity makes all the difference. 🌟"
+        another: "Another initiative? Yes please!"
+        draft: "Don’t let that draft gather dust — wrap it up."
+        future: "Look at you, shaping the future."
+    play:
+        invite: "Psst… up for a game of catch? 🌟"
+        start: "Play catch"
+        caught: "Haha, you got me! Now it's my turn 😈"
+        gotcha: "Gotcha! That was fun. Anyway, back to work. 🎉"
+        giveup: "Phew… let's call it a draw. 😅"
+        escaped: "Argh, you got away! Too quick for me. 🏳️"
+
 autosave:
     saving: Saving…
     saved: Saved

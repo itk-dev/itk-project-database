@@ -1,6 +1,30 @@
 app:
     name: Projektdatabase
 
+mascot:
+    label: Din kreative makker
+    close: Luk
+    cta: Opret nyt initiativ
+    praise: "{1}Du har skabt ét initiativ — godt begyndt! 🌟|]1,Inf[Du har skabt %count% initiativer — flot arbejde! 🌟"
+    finish: "“%title%” mangler lidt endnu — gør den helt færdig?"
+    finish_cta: Gør færdig
+    msg:
+        idea: "Har du en ny idé? Lad os give den et hjem. ✨"
+        roll: "Du er i gang — hvad bliver det næste?"
+        bold: "Ethvert godt initiativ starter med én modig linje."
+        finish: "Halvvejs er det sværeste. Kom nu — gør det færdigt! 💪"
+        creativity: "Din kreativitet gør hele forskellen. 🌟"
+        another: "Endnu et initiativ? Ja tak!"
+        draft: "Lad ikke kladden samle støv — få den i mål."
+        future: "Se dig lige — du former fremtiden."
+    play:
+        invite: "Pssst… har du tid til en omgang fangeleg? 🌟"
+        start: "Leg fangeleg"
+        caught: "Haha, du fangede mig! Nu er det min tur 😈"
+        gotcha: "Fanget! Det var sjovt. Nå, tilbage til arbejdet. 🎉"
+        giveup: "Pyha… vi kalder det uafgjort. 😅"
+        escaped: "Argh, du slap væk! Du er for hurtig. 🏳️"
+
 autosave:
     saving: Gemmer…
     saved: Gemt
