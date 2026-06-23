@@ -57,7 +57,6 @@
                                 {{ initiative.timePeriodStart|date('d.m.Y') }}{% if initiative.timePeriodEnd %} – {{ initiative.timePeriodEnd|date('d.m.Y') }}{% endif %}
                             {% else %}—{% endif %}
                         </td>
-                        <td>{{ initiative.author ?: '—' }}</td>
                         <td>
                             <div class="cell-actions">
                                 <a href="{{ path('app_initiative_show', {id: initiative.id}) }}" class="btn-icon" data-turbo-frame="_top" title="{{ 'action.view'|trans }}" aria-label="{{ 'action.view'|trans }}">{{ h.icon('eye') }}</a>
