@@ -8,18 +8,18 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Auto-generated Migration: Please modify to your needs!
+ * Initial schema: initiatives, contacts, terms, users, media and the
+ * many-to-many join tables linking them.
  */
 final class Version20260623093956 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Initial schema: initiatives, contacts, terms, users, media and join tables.';
     }
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE contact (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, email VARCHAR(255) DEFAULT NULL, phone VARCHAR(64) DEFAULT NULL, department VARCHAR(255) DEFAULT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE initiative (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(255) NOT NULL, category VARCHAR(32) DEFAULT NULL, description LONGTEXT DEFAULT NULL, initiative_type VARCHAR(32) DEFAULT NULL, status VARCHAR(32) DEFAULT NULL, status_additional LONGTEXT DEFAULT NULL, organizational_anchoring VARCHAR(64) DEFAULT NULL, endorsement TINYINT NOT NULL, endorsement_author VARCHAR(32) DEFAULT NULL, budget INT DEFAULT NULL, funding JSON NOT NULL, time_period_start DATE DEFAULT NULL, time_period_end DATE DEFAULT NULL, links JSON NOT NULL, author VARCHAR(255) DEFAULT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE initiative_strategy (initiative_id INT NOT NULL, term_id INT NOT NULL, INDEX IDX_9FDB07E5AB7D9771 (initiative_id), INDEX IDX_9FDB07E5E2C35FC (term_id), PRIMARY KEY (initiative_id, term_id)) DEFAULT CHARACTER SET utf8mb4');
@@ -44,7 +44,6 @@ final class Version20260623093956 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE initiative_strategy DROP FOREIGN KEY FK_9FDB07E5AB7D9771');
         $this->addSql('ALTER TABLE initiative_strategy DROP FOREIGN KEY FK_9FDB07E5E2C35FC');
         $this->addSql('ALTER TABLE initiative_contact DROP FOREIGN KEY FK_6F980462AB7D9771');

@@ -12,8 +12,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Vich\UploaderBundle\Handler\DownloadHandler;
 
 /**
- * Serves privately stored uploads. Sits under the ROLE_USER firewall, so
- * files are never publicly reachable.
+ * Serves privately stored uploads. Sits under the ROLE_USER firewall, so the
+ * files are not publicly reachable — but, like everything else in the app,
+ * they are readable by any authenticated user (see "Access control" in the
+ * README).
  */
 class MediaController extends AbstractController
 {

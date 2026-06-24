@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Enum;
 
+/**
+ * New cases' backing values must stay within the column length mapped on
+ * {@see \App\Entity\Initiative}, or they will be truncated when persisted.
+ */
 enum Category: string implements TranslatableEnum
 {
     case Climate = 'climate';
