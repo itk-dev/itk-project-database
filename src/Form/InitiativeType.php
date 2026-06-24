@@ -196,9 +196,10 @@ class InitiativeType extends AbstractType
         // built in the unmapped "newContacts" collection and merged in here.
         $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event): void {
             $initiative = $event->getData();
-            \assert($initiative instanceof Initiative);
-            foreach ($event->getForm()->get('newContacts')->getData() as $contact) {
-                $initiative->addContact($contact);
+            if ($initiative instanceof Initiative) {
+                foreach ($event->getForm()->get('newContacts')->getData() as $contact) {
+                    $initiative->addContact($contact);
+                }
             }
         });
     }

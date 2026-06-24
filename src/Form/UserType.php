@@ -23,6 +23,14 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $passwordConstraints = [];
+        if ($options['require_password']) {
+            $passwordConstraints = [
+                new NotBlank(message: 'user.password_required'),
+                new Length(min: 8, minMessage: 'user.password_too_short'),
+            ];
+        }
+
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'user.email',
@@ -52,10 +60,7 @@ class UserType extends AbstractType
                 'label' => 'user.password',
                 'mapped' => false,
                 'required' => $options['require_password'],
-                'constraints' => $options['require_password'] ? [
-                    new NotBlank(message: 'user.password_required'),
-                    new Length(min: 8, minMessage: 'user.password_too_short'),
-                ] : [],
+                'constraints' => $passwordConstraints,
                 'help' => 'user.password_help',
             ]);
     }

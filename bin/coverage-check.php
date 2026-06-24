@@ -41,6 +41,20 @@ printf("Coverage: %.2f%% (%d/%d elements), threshold %.2f%%\n", $coverage, $cove
 
 if ($coverage + 1.0E-9 < $threshold) {
     fwrite(\STDERR, sprintf("FAIL: coverage %.2f%% is below the required %.2f%%.\n", $coverage, $threshold));
+
+    fwrite(\STDERR, "Uncovered lines:\n");
+    foreach ($xml->xpath('//file') ?: [] as $file) {
+        $uncovered = [];
+        foreach ($file->line as $line) {
+            if (0 === (int) $line['count']) {
+                $uncovered[] = (string) $line['num'];
+            }
+        }
+        if ([] !== $uncovered) {
+            fwrite(\STDERR, sprintf("  %s: %s\n", (string) $file['name'], implode(', ', $uncovered)));
+        }
+    }
+
     exit(1);
 }
 

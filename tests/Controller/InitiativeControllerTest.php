@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\Entity\Initiative;
+use App\Entity\InitiativeAttachment;
 use App\Tests\FunctionalTestCase;
 
 final class InitiativeControllerTest extends FunctionalTestCase
@@ -20,9 +21,8 @@ final class InitiativeControllerTest extends FunctionalTestCase
             'initiative' => [
                 'title' => 'Coverage initiative',
                 'newContacts' => [['name' => 'Coverage Contact']],
-                // Empty media rows exercise InitiativeController::removeEmptyMedia().
+                // An empty image row exercises the image branch of removeEmptyMedia().
                 'images' => [['alt' => 'empty image row']],
-                'attachments' => [[]],
                 '_token' => $token,
             ],
         ]);
@@ -95,6 +95,37 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $this->assertResponseRedirects('/initiatives');
         $this->entityManager()->clear();
         self::assertNotNull($this->initiatives()->find($id));
+
+        $this->removeInitiative($id);
+    }
+
+    public function testEditDropsAttachmentsLeftWithoutAFile(): void
+    {
+        $this->loginAsAdmin();
+        $initiative = $this->createInitiative('Has empty attachment');
+        $initiative->addAttachment(new InitiativeAttachment());
+        $em = $this->entityManager();
+        $em->flush();
+        $id = (int) $initiative->getId();
+
+        $crawler = $this->client->request('GET', sprintf('/initiatives/%d/edit', $id));
+        $token = (string) $crawler->filter('input[name="initiative[_token]"]')->attr('value');
+        $this->client->request('POST', sprintf('/initiatives/%d/edit', $id), [
+            'initiative' => [
+                'title' => 'Has empty attachment',
+                // Re-submit the file-less attachment (empty file, no upload) so the
+                // form keeps it; the controller's removeEmptyMedia() then drops it.
+                'attachments' => [['file' => '']],
+                '_token' => $token,
+            ],
+        ]);
+
+        $this->assertResponseRedirects(sprintf('/initiatives/%d', $id));
+
+        $this->entityManager()->clear();
+        $reloaded = $this->initiatives()->find($id);
+        self::assertNotNull($reloaded);
+        self::assertCount(0, $reloaded->getAttachments(), 'A file-less attachment should be dropped.');
 
         $this->removeInitiative($id);
     }
