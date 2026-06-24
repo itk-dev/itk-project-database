@@ -298,6 +298,10 @@ h3 {
     color: #fff;
 }
 
+.user-menu__section .lang-toggle {
+    margin-top: 6px;
+}
+
 .page {
     max-width: var(--itk-container);
     margin: 0 auto;
@@ -893,6 +897,15 @@ textarea {
     white-space: pre-wrap;
 }
 
+.detail-subhead {
+    font-size: var(--itk-text-sm);
+    margin-top: var(--itk-space-4);
+}
+
+.link-list {
+    list-style: none;
+}
+
 .contact-card {
     border: 1px solid var(--itk-slate-200);
     border-radius: var(--itk-radius-2);
@@ -915,6 +928,7 @@ textarea {
     justify-content: space-between;
     gap: var(--itk-space-3);
     margin-top: var(--itk-space-5);
+    padding: var(--itk-space-4) var(--itk-space-5);
     flex-wrap: wrap;
 }
 

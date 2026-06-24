@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ 'app.name'|trans }}{% endblock %}</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23007ba6%22/></svg>">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     {% block stylesheets %}{% endblock %}
     {% block javascripts %}
         {% block importmap %}{{ importmap('app') }}{% endblock %}
@@ -41,7 +38,7 @@
                             </div>
                             <div class="user-menu__section">
                                 <div class="user-menu__eyebrow">{{ 'nav.language'|trans }}</div>
-                                <div class="lang-toggle" style="margin-top: 6px;">
+                                <div class="lang-toggle">
                                     <a href="{{ path('app_locale', {locale: 'da', return: app.request.requestUri}) }}" class="lang-toggle__option {{ app.request.locale == 'da' ? 'lang-toggle__option--active' }}">DA</a>
                                     <a href="{{ path('app_locale', {locale: 'en', return: app.request.requestUri}) }}" class="lang-toggle__option {{ app.request.locale == 'en' ? 'lang-toggle__option--active' }}">EN</a>
                                 </div>
