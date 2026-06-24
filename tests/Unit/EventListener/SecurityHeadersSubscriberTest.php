@@ -47,7 +47,7 @@ final class SecurityHeadersSubscriberTest extends TestCase
     private function handle(SecurityHeadersSubscriber $subscriber, int $requestType): Response
     {
         $response = new Response();
-        $event = new ResponseEvent($this->createMock(HttpKernelInterface::class), new Request(), $requestType, $response);
+        $event = new ResponseEvent($this->createStub(HttpKernelInterface::class), new Request(), $requestType, $response);
 
         $subscriber->onKernelResponse($event);
 

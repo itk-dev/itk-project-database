@@ -65,7 +65,7 @@ final class LocaleSubscriberTest extends TestCase
 
     private function dispatch(Request $request): void
     {
-        $event = new RequestEvent($this->createMock(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST);
+        $event = new RequestEvent($this->createStub(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST);
 
         (new LocaleSubscriber())->onKernelRequest($event);
     }

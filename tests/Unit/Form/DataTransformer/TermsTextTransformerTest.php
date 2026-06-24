@@ -52,6 +52,6 @@ final class TermsTextTransformerTest extends TestCase
 
     private function transformer(): TermsTextTransformer
     {
-        return new TermsTextTransformer($this->createMock(TermRepository::class), Vocabulary::Tag);
+        return new TermsTextTransformer($this->createStub(TermRepository::class), Vocabulary::Tag);
     }
 }
