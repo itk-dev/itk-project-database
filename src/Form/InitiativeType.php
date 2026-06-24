@@ -27,6 +27,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @extends AbstractType<Initiative>
@@ -138,6 +139,8 @@ class InitiativeType extends AbstractType
                     'required' => false,
                     'default_protocol' => 'https',
                     'label' => false,
+                    // Reject non-http(s) URLs (e.g. javascript:) to prevent stored XSS.
+                    'constraints' => [new Assert\Url(protocols: ['http', 'https'])],
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -193,9 +196,7 @@ class InitiativeType extends AbstractType
         // built in the unmapped "newContacts" collection and merged in here.
         $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event): void {
             $initiative = $event->getData();
-            if (!$initiative instanceof Initiative) {
-                return;
-            }
+            \assert($initiative instanceof Initiative);
             foreach ($event->getForm()->get('newContacts')->getData() as $contact) {
                 $initiative->addContact($contact);
             }

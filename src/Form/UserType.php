@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -30,6 +31,11 @@ class UserType extends AbstractType
                 'label' => 'user.name',
                 'required' => false,
             ])
+            // Mapped onto User::$roles, so this field can grant ROLE_ADMIN. It
+            // relies on UserController being gated by #[IsGranted('ROLE_ADMIN')];
+            // do not reuse this form for self-service profile editing without
+            // removing this field. The Choice constraint limits submissions to
+            // the known roles so a tampered request cannot inject arbitrary ones.
             ->add('roles', ChoiceType::class, [
                 'label' => 'user.roles',
                 'choices' => [
@@ -38,6 +44,9 @@ class UserType extends AbstractType
                 ],
                 'multiple' => true,
                 'expanded' => true,
+                'constraints' => [
+                    new Choice(choices: ['ROLE_USER', 'ROLE_ADMIN'], multiple: true),
+                ],
             ])
             ->add('plainPassword', PasswordType::class, [
                 'label' => 'user.password',
