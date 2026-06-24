@@ -38,6 +38,7 @@
         "phpstan/phpstan-doctrine": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
         "phpunit/phpunit": "^13.2",
+        "rregeer/phpunit-coverage-check": "^0.3.1",
         "symfony/browser-kit": "~8.1.0",
         "symfony/css-selector": "~8.1.0",
         "symfony/debug-bundle": "~8.1.0",
@@ -105,7 +106,7 @@
         "test-coverage": [
             "@putenv XDEBUG_MODE=coverage",
             "vendor/bin/phpunit --coverage-clover=coverage/clover.xml",
-            "@php bin/coverage-check.php coverage/clover.xml 100"
+            "vendor/bin/coverage-check coverage/clover.xml 100"
         ],
         "test-setup": [
             "@php bin/console doctrine:database:drop --force --if-exists --env=test",
