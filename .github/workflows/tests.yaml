@@ -16,23 +16,14 @@ env:
 jobs:
     phpunit:
         runs-on: ubuntu-latest
-        strategy:
-            # Don't cancel the 11.4 leg if 10.11 fails (or vice versa); we want
-            # version-specific failures, not one masking the other.
-            fail-fast: false
-            matrix:
-                mariadb:
-                    - image: mariadb:10.11
-                      version: 10.11.13-MariaDB
-                    - image: mariadb:11.4
-                      version: 11.4.4-MariaDB
-        name: PHPUnit + coverage gate (${{ matrix.mariadb.image }})
+        name: PHPUnit + coverage gate
         env:
+            # Test against the production MariaDB version (also pinned in .env).
             # Picked up by docker-compose.yml's `image: ${MARIADB_IMAGE:-…}`.
-            MARIADB_IMAGE: ${{ matrix.mariadb.image }}
+            MARIADB_IMAGE: mariadb:10.11
             # Forwarded into phpfpm via `-e MARIADB_VERSION`; .env.test interpolates
             # it into Doctrine's serverVersion URL parameter.
-            MARIADB_VERSION: ${{ matrix.mariadb.version }}
+            MARIADB_VERSION: 10.11.13-MariaDB
         steps:
             - name: Checkout
               uses: actions/checkout@v6
