@@ -1,42 +1,60 @@
-name: Tests
-
-env:
-    COMPOSE_USER: runner
-    # Consumed by docker-compose.yml (${PHP_XDEBUG_MODE:-off}); enables Xdebug
-    # in coverage mode so PHPUnit can produce the Clover report.
-    PHP_XDEBUG_MODE: coverage
+name: Test
 
 on:
     pull_request:
-        paths: &paths
-            - "**/*.php"
-            - "composer.json"
-            - "composer.lock"
-            - "docker-compose.yml"
-            - "phpunit.dist.xml"
     push:
         branches:
             - main
             - develop
-        paths: *paths
+
+env:
+    COMPOSE_USER: runner
+    # Consumed by docker-compose.yml (${PHP_XDEBUG_MODE:-off}); loads Xdebug in
+    # coverage mode so PHPUnit can produce the Clover report.
+    PHP_XDEBUG_MODE: coverage
 
 jobs:
     phpunit:
-        name: PHPUnit + coverage gate (100%)
         runs-on: ubuntu-latest
+        strategy:
+            # Don't cancel the 11.4 leg if 10.11 fails (or vice versa); we want
+            # version-specific failures, not one masking the other.
+            fail-fast: false
+            matrix:
+                mariadb:
+                    - image: mariadb:10.11
+                      version: 10.11.13-MariaDB
+                    - image: mariadb:11.4
+                      version: 11.4.4-MariaDB
+        name: PHPUnit + coverage gate (${{ matrix.mariadb.image }})
+        env:
+            # Picked up by docker-compose.yml's `image: ${MARIADB_IMAGE:-…}`.
+            MARIADB_IMAGE: ${{ matrix.mariadb.image }}
+            # Forwarded into phpfpm via `-e MARIADB_VERSION`; .env.test interpolates
+            # it into Doctrine's serverVersion URL parameter.
+            MARIADB_VERSION: ${{ matrix.mariadb.version }}
         steps:
-            - uses: actions/checkout@v6
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Cache vendor
+              uses: actions/cache@v4
+              with:
+                  path: vendor
+                  key: vendor-php8.4-${{ hashFiles('composer.lock') }}
+                  restore-keys: vendor-php8.4-
 
             - name: Create docker network
               run: docker network create frontend
 
-            - name: Install dependencies, prepare the test database and run tests
-              run: |
-                  docker compose run --rm phpfpm composer install
-                  docker compose run --rm phpfpm bin/console doctrine:database:create --if-not-exists --env=test
-                  docker compose run --rm phpfpm bin/console doctrine:migrations:migrate --no-interaction --env=test
-                  docker compose run --rm phpfpm bin/console doctrine:fixtures:load --no-interaction --env=test
-                  docker compose run --rm phpfpm vendor/bin/phpunit --coverage-clover=coverage/clover.xml
+            - name: Pull container images
+              run: docker compose pull --quiet phpfpm mariadb
 
-            - name: Enforce 100% coverage
-              run: docker compose run --rm phpfpm php bin/coverage-check.php coverage/clover.xml 100
+            - name: Install dependencies
+              run: docker compose run --rm phpfpm composer install
+
+            - name: Prepare the test database
+              run: docker compose run --rm -e MARIADB_VERSION phpfpm composer run test-setup
+
+            - name: Run tests and enforce 100% coverage
+              run: docker compose run --rm -e MARIADB_VERSION phpfpm composer run test-coverage
