@@ -52,8 +52,7 @@ class InitiativeController extends AbstractController
         $filter->sort = (string) $request->query->get('sort', 'createdAt');
         $filter->direction = (string) $request->query->get('direction', 'DESC');
 
-        /** @var Initiative[] $rows */
-        $rows = $initiatives->search($filter)->getQuery()->getResult();
+        $rows = $initiatives->findForExport($filter);
 
         $translate = static fn (?object $enum): string => $enum instanceof \App\Enum\TranslatableEnum
             ? $translator->trans($enum->labelKey())
