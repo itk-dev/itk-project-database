@@ -57,6 +57,29 @@ tasks:
     cmds:
       - '{{.PHPSTAN}} analyse --memory-limit=1G'
 
+  test:
+    desc: 'Run the PHPUnit test suite'
+    cmds:
+      - '{{.PHPUNIT}} {{.CLI_ARGS}}'
+
+  test:coverage:
+    desc: 'Run tests with coverage and enforce the 100% gate'
+    cmds:
+      - '{{.DOCKER_COMPOSE}} exec -e XDEBUG_MODE=coverage phpfpm bin/phpunit --coverage-clover=coverage/clover.xml'
+      - '{{.DOCKER_COMPOSE}} exec phpfpm php bin/coverage-check.php coverage/clover.xml 100'
+
+  create-admin:
+    desc: 'Create (or update) an administrator (usage: task create-admin -- you@example.com "Your Name")'
+    cmds:
+      - '{{.CONSOLE}} app:create-admin {{.CLI_ARGS}}'
+
+  ci:
+    desc: 'Run everything CI runs'
+    cmds:
+      - task: coding-standards:check
+      - task: static-analysis
+      - task: test:coverage
+
   default:
     cmds:
       - task --list

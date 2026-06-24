@@ -32,6 +32,13 @@
             <directory>src</directory>
         </include>
 
+        <!-- Framework scaffolding with no meaningful logic to cover. -->
+        <exclude>
+            <file>src/Kernel.php</file>
+            <directory>src/DataFixtures</directory>
+            <directory>src/Story</directory>
+        </exclude>
+
         <deprecationTrigger>
             <method>Doctrine\Deprecations\Deprecation::trigger</method>
             <method>Doctrine\Deprecations\Deprecation::delegateTriggerToBackend</method>

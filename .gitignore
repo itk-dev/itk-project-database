@@ -32,6 +32,8 @@ phpstan.neon
 /phpunit.xml
 /.phpunit.cache/
 ###< phpunit/phpunit ###
+
+/coverage/
 /.idea/
 
 # Auto-generated config reference (IDE type hints); regenerated on cache warmup.

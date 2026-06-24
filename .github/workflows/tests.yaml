@@ -1,0 +1,42 @@
+name: Tests
+
+env:
+    COMPOSE_USER: runner
+    # Consumed by docker-compose.yml (${PHP_XDEBUG_MODE:-off}); enables Xdebug
+    # in coverage mode so PHPUnit can produce the Clover report.
+    PHP_XDEBUG_MODE: coverage
+
+on:
+    pull_request:
+        paths: &paths
+            - "**/*.php"
+            - "composer.json"
+            - "composer.lock"
+            - "docker-compose.yml"
+            - "phpunit.dist.xml"
+    push:
+        branches:
+            - main
+            - develop
+        paths: *paths
+
+jobs:
+    phpunit:
+        name: PHPUnit + coverage gate (100%)
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+
+            - name: Create docker network
+              run: docker network create frontend
+
+            - name: Install dependencies, prepare the test database and run tests
+              run: |
+                  docker compose run --rm phpfpm composer install
+                  docker compose run --rm phpfpm bin/console doctrine:database:create --if-not-exists --env=test
+                  docker compose run --rm phpfpm bin/console doctrine:migrations:migrate --no-interaction --env=test
+                  docker compose run --rm phpfpm bin/console doctrine:fixtures:load --no-interaction --env=test
+                  docker compose run --rm phpfpm vendor/bin/phpunit --coverage-clover=coverage/clover.xml
+
+            - name: Enforce 100% coverage
+              run: docker compose run --rm phpfpm php bin/coverage-check.php coverage/clover.xml 100
