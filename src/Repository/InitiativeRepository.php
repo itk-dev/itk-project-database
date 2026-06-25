@@ -87,14 +87,12 @@ class InitiativeRepository extends ServiceEntityRepository
             return [];
         }
 
-        $ids = array_map(static fn (Initiative $initiative): int => (int) $initiative->getId(), $initiatives);
-
         foreach (['strategies', 'stakeholders', 'tags', 'contacts'] as $association) {
             $this->createQueryBuilder('i')
                 ->addSelect('rel')
                 ->leftJoin('i.'.$association, 'rel')
-                ->andWhere('i.id IN (:ids)')
-                ->setParameter('ids', $ids)
+                ->andWhere('i IN (:initiatives)')
+                ->setParameter('initiatives', $initiatives)
                 ->getQuery()
                 ->getResult();
         }

@@ -22,7 +22,6 @@ final class InitiativeImageTest extends TestCase
             ->setSize(1234)
             ->setAlt('A sample');
 
-        self::assertNull($image->getId());
         self::assertSame($initiative, $image->getInitiative());
         self::assertSame('stored.png', $image->getImageName());
         self::assertSame('sample.png', $image->getOriginalName());

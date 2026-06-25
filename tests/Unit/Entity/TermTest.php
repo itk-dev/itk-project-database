@@ -14,7 +14,6 @@ final class TermTest extends TestCase
     {
         $term = new Term();
 
-        self::assertNull($term->getId());
         self::assertNull($term->getName());
         self::assertSame(Vocabulary::Tag, $term->getVocabulary());
         self::assertInstanceOf(\DateTimeImmutable::class, $term->getCreatedAt());

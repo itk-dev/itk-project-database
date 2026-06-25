@@ -6,17 +6,13 @@ namespace App\Entity;
 
 use App\Repository\ContactRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ITKDev\EntityBundle\Entity\AbstractITKDevEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Contact
+class Contact extends AbstractITKDevEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -39,6 +35,7 @@ class Contact
 
     public function __construct()
     {
+        parent::__construct();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
     }
@@ -47,11 +44,6 @@ class Contact
     public function touch(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string

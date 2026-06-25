@@ -7,17 +7,13 @@ namespace App\Entity;
 use App\Enum\Vocabulary;
 use App\Repository\TermRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ITKDev\EntityBundle\Entity\AbstractITKDevEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TermRepository::class)]
 #[ORM\UniqueConstraint(name: 'uniq_term_name_vocabulary', columns: ['name', 'vocabulary'])]
-class Term
+class Term extends AbstractITKDevEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -30,13 +26,9 @@ class Term
 
     public function __construct(Vocabulary $vocabulary = Vocabulary::Tag)
     {
+        parent::__construct();
         $this->vocabulary = $vocabulary;
         $this->createdAt = new \DateTimeImmutable();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string

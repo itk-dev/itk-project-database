@@ -13,7 +13,6 @@ final class ContactTest extends TestCase
     {
         $contact = new Contact();
 
-        self::assertNull($contact->getId());
         self::assertNull($contact->getName());
         self::assertNull($contact->getEmail());
         self::assertNull($contact->getPhone());

@@ -21,7 +21,6 @@ final class InitiativeAttachmentTest extends TestCase
             ->setMimeType('application/pdf')
             ->setSize(4096);
 
-        self::assertNull($attachment->getId());
         self::assertSame($initiative, $attachment->getInitiative());
         self::assertSame('stored.pdf', $attachment->getFileName());
         self::assertSame('report.pdf', $attachment->getOriginalName());
