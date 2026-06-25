@@ -73,7 +73,11 @@ export default class extends Controller {
 
     speak() {
         // Now and then, nudge the user to finish their least-complete initiative.
-        if (this.hasFinishTarget && this.finishTextValue && Math.random() < 0.4) {
+        if (
+            this.hasFinishTarget &&
+            this.finishTextValue &&
+            Math.random() < 0.4
+        ) {
             this.say(this.finishTextValue, "finish");
 
             return;
