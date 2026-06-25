@@ -140,6 +140,7 @@ initiative:
     time_period: Tidshorisont
     links: Relevante links
     contacts: Kontaktpersoner
+    new_contacts: Opret nye kontaktpersoner
     author: Udfyldt af
     terms_help: Adskil flere værdier med komma.
     completion_field_hint: Dette felt tæller med i udfyldningsgraden.
