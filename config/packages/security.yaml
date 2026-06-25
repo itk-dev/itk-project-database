@@ -36,8 +36,8 @@ security:
 when@test:
     security:
         password_hashers:
+            # Pin a single, fast, deterministic hasher for the test suite so only
+            # the relevant knob (bcrypt cost) applies.
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-                algorithm: auto
+                algorithm: bcrypt
                 cost: 4
-                time_cost: 3
-                memory_cost: 10

@@ -1,5 +1,7 @@
 import "./stimulus_bootstrap.js";
 import "./styles/app.css";
+import TomSelect from "tom-select";
+import "tom-select/dist/css/tom-select.default.min.css";
 
 function initUserMenu() {
     const toggle = document.getElementById("userMenuToggle");
@@ -61,6 +63,20 @@ function initCollections() {
     });
 }
 
+function initContactSelect() {
+    document.querySelectorAll("[data-contact-select]").forEach((select) => {
+        if (select.dataset.bound) {
+            return;
+        }
+        select.dataset.bound = "1";
+        new TomSelect(select, {
+            plugins: ["remove_button"],
+            hideSelected: true,
+            maxOptions: null,
+        });
+    });
+}
+
 // The document survives Turbo navigations, so the outside-click handler is
 // registered once here rather than re-added on every page.
 document.addEventListener("click", (event) => {
@@ -76,4 +92,5 @@ document.addEventListener("click", (event) => {
 document.addEventListener("turbo:load", () => {
     initUserMenu();
     initCollections();
+    initContactSelect();
 });

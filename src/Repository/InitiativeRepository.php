@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Initiative;
-use App\Enum\Status;
 use App\Model\InitiativeFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -28,8 +27,12 @@ class InitiativeRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('i');
 
         if (null !== $filter->q && '' !== trim($filter->q)) {
+            // Escape LIKE wildcards so a user-typed % or _ is matched literally
+            // instead of acting as a wildcard. Backslash is MariaDB's default
+            // LIKE escape character.
+            $term = addcslashes(mb_strtolower(trim($filter->q)), '%_\\');
             $qb->andWhere('LOWER(i.title) LIKE :q OR LOWER(i.description) LIKE :q OR LOWER(i.author) LIKE :q OR LOWER(i.statusAdditional) LIKE :q')
-                ->setParameter('q', '%'.mb_strtolower(trim($filter->q)).'%');
+                ->setParameter('q', '%'.$term.'%');
         }
 
         if (null !== $filter->status) {
@@ -66,6 +69,38 @@ class InitiativeRepository extends ServiceEntityRepository
         return $qb->orderBy('i.'.$sort, $direction);
     }
 
+    /**
+     * Returns the filtered initiatives with every to-many collection primed, so
+     * a CSV export can read them without firing a query per row (N+1). Each
+     * association is loaded in its own query; fetch-joining them all at once
+     * would multiply rows (a cartesian product) instead of cutting queries.
+     *
+     * @return Initiative[]
+     */
+    public function findForExport(InitiativeFilter $filter): array
+    {
+        /** @var Initiative[] $initiatives */
+        $initiatives = $this->search($filter)->getQuery()->getResult();
+
+        if ([] === $initiatives) {
+            return [];
+        }
+
+        $ids = array_map(static fn (Initiative $initiative): int => (int) $initiative->getId(), $initiatives);
+
+        foreach (['strategies', 'stakeholders', 'tags', 'contacts'] as $association) {
+            $this->createQueryBuilder('i')
+                ->addSelect('rel')
+                ->leftJoin('i.'.$association, 'rel')
+                ->andWhere('i.id IN (:ids)')
+                ->setParameter('ids', $ids)
+                ->getQuery()
+                ->getResult();
+        }
+
+        return $initiatives;
+    }
+
     public function countAll(): int
     {
         return (int) $this->createQueryBuilder('i')
@@ -87,12 +122,12 @@ class InitiativeRepository extends ServiceEntityRepository
 
         $counts = [];
         foreach ($rows as $row) {
-            $status = $row['status'];
-            if (null === $status) {
+            // getScalarResult() returns the raw column value, so $row['status']
+            // is the enum's backing string (or null), never a Status instance.
+            if (null === $row['status']) {
                 continue;
             }
-            $key = $status instanceof Status ? $status->value : (string) $status;
-            $counts[$key] = (int) $row['cnt'];
+            $counts[(string) $row['status']] = (int) $row['cnt'];
         }
 
         return $counts;

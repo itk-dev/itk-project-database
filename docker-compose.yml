@@ -8,7 +8,7 @@ networks:
 
 services:
     mariadb:
-        image: itkdev/mariadb:latest
+        image: ${MARIADB_IMAGE:-itkdev/mariadb:latest}
         networks:
             - app
         ports:
@@ -21,6 +21,9 @@ services:
             retries: 3
         environment:
             - MYSQL_ROOT_PASSWORD=password
+            # Allow root to connect over the network so the test suite can create
+            # the ephemeral test database (dev/CI only).
+            - MYSQL_ROOT_HOST=%
             - MYSQL_USER=db
             - MYSQL_PASSWORD=db
             - MYSQL_DATABASE=db
