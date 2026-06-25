@@ -6,7 +6,6 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity]
@@ -22,17 +21,6 @@ class InitiativeAttachment
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Initiative $initiative = null;
 
-    #[Assert\File(
-        maxSize: '16M',
-        mimeTypes: [
-            'application/pdf',
-            'application/msword',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/vnd.ms-excel',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ],
-        mimeTypesMessage: 'initiative.attachment_invalid_type',
-    )]
     #[Vich\UploadableField(
         mapping: 'initiative_attachment',
         fileNameProperty: 'fileName',

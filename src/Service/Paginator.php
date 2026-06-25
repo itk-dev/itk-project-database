@@ -16,19 +16,23 @@ final readonly class Paginator
      */
     public function paginate(QueryBuilder $queryBuilder, int $page, int $perPage = self::PER_PAGE): PaginationResult
     {
-        $page = max(1, $page);
+        $query = $queryBuilder->getQuery();
+        $paginator = new DoctrinePaginator($query, fetchJoinCollection: true);
 
-        $query = $queryBuilder->getQuery()
+        // Count first so the requested page can be clamped to the valid range
+        // *before* the offset query runs — otherwise ?page=999 issues a query
+        // with a huge offset and returns an empty page.
+        $total = \count($paginator);
+        $pages = (int) max(1, ceil($total / $perPage));
+        $page = min(max(1, $page), $pages);
+
+        $query
             ->setFirstResult(($page - 1) * $perPage)
             ->setMaxResults($perPage);
 
-        $paginator = new DoctrinePaginator($query, fetchJoinCollection: true);
-        $total = \count($paginator);
-        $pages = (int) max(1, ceil($total / $perPage));
-
         return new PaginationResult(
             items: array_values(iterator_to_array($paginator)),
-            page: min($page, $pages),
+            page: $page,
             pages: $pages,
             total: $total,
             perPage: $perPage,

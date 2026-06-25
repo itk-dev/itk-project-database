@@ -6,7 +6,6 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity]
@@ -22,7 +21,6 @@ class InitiativeImage
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Initiative $initiative = null;
 
-    #[Assert\Image(maxSize: '8M')]
     #[Vich\UploadableField(
         mapping: 'initiative_image',
         fileNameProperty: 'imageName',
