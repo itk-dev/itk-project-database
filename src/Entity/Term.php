@@ -11,13 +11,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TermRepository::class)]
 #[ORM\UniqueConstraint(name: 'uniq_term_name_vocabulary', columns: ['name', 'vocabulary'])]
-class Term
+class Term extends AbstractEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -32,11 +27,6 @@ class Term
     {
         $this->vocabulary = $vocabulary;
         $this->createdAt = new \DateTimeImmutable();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string

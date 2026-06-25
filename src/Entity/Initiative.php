@@ -22,7 +22,7 @@ use ITKDev\EntityBundle\Entity\Trait\TimestampableTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: InitiativeRepository::class)]
-class Initiative implements BlameableInterface, TimestampableInterface
+class Initiative extends AbstractEntity implements BlameableInterface, TimestampableInterface
 {
     use BlameableTrait;
     use TimestampableTrait;
@@ -39,11 +39,6 @@ class Initiative implements BlameableInterface, TimestampableInterface
         'organizationalAnchoring', 'endorsementAuthor',
         'budget', 'funding', 'timePeriodStart', 'timePeriodEnd',
     ];
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
 
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
@@ -131,11 +126,6 @@ class Initiative implements BlameableInterface, TimestampableInterface
         $this->tags = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->attachments = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getTitle(): ?string

@@ -10,13 +10,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Contact
+class Contact extends AbstractEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -47,11 +42,6 @@ class Contact
     public function touch(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string
