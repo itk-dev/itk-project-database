@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Trait\BlameableTrait;
-use App\Entity\Trait\TimestampableTrait;
 use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
@@ -17,6 +15,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ITKDev\EntityBundle\Entity\Contract\BlameableInterface;
+use ITKDev\EntityBundle\Entity\Contract\TimestampableInterface;
+use ITKDev\EntityBundle\Entity\Trait\BlameableTrait;
+use ITKDev\EntityBundle\Entity\Trait\TimestampableTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: InitiativeRepository::class)]
@@ -141,7 +143,7 @@ class Initiative implements BlameableInterface, TimestampableInterface
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 
@@ -476,7 +478,18 @@ class Initiative implements BlameableInterface, TimestampableInterface
     /** @param list<string> $links */
     public function setLinks(array $links): static
     {
-        $this->links = array_values(array_filter($links, static fn (?string $link): bool => null !== $link && '' !== trim($link)));
+        $this->links = array_values(array_filter(
+            array_map(static fn (?string $link): string => trim((string) $link), $links),
+            // Keep only non-empty http(s) URLs; drop schemes like javascript: that enable stored XSS.
+            static function (string $link): bool {
+                if ('' === $link) {
+                    return false;
+                }
+                $scheme = strtolower((string) parse_url($link, \PHP_URL_SCHEME));
+
+                return 'http' === $scheme || 'https' === $scheme;
+            },
+        ));
 
         return $this;
     }

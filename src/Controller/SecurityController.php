@@ -25,6 +25,11 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    /**
+     * Intercepted by the logout key on the firewall, so the body never runs.
+     *
+     * @codeCoverageIgnore
+     */
     #[Route('/logout', name: 'app_logout')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function logout(): never

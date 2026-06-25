@@ -33,13 +33,13 @@
                     <div class="card__body">
                         {% if initiative.description %}<p class="prose">{{ initiative.description }}</p>{% else %}<p class="muted">—</p>{% endif %}
                         {% if initiative.statusAdditional %}
-                            <h3 style="font-size: var(--itk-text-sm); margin-top: var(--itk-space-4);">{{ 'initiative.status_additional'|trans }}</h3>
+                            <h3 class="detail-subhead">{{ 'initiative.status_additional'|trans }}</h3>
                             <p class="prose">{{ initiative.statusAdditional }}</p>
                         {% endif %}
                         {% if initiative.links|length > 0 %}
-                            <h3 style="font-size: var(--itk-text-sm); margin-top: var(--itk-space-4);">{{ 'initiative.links'|trans }}</h3>
-                            <ul style="list-style: none;">
-                                {% for link in initiative.links %}<li><a href="{{ link }}" target="_blank" rel="noopener">{{ link }}</a></li>{% endfor %}
+                            <h3 class="detail-subhead">{{ 'initiative.links'|trans }}</h3>
+                            <ul class="link-list">
+                                {% for link in initiative.links %}<li>{% if link starts with 'http://' or link starts with 'https://' %}<a href="{{ link }}" target="_blank" rel="noopener">{{ link }}</a>{% else %}{{ link }}{% endif %}</li>{% endfor %}
                             </ul>
                         {% endif %}
                     </div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Contact;
 use App\Entity\Initiative;
 use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
@@ -12,6 +13,7 @@ use App\Enum\InitiativeType as InitiativeTypeEnum;
 use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
 use App\Enum\Vocabulary;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -22,9 +24,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @extends AbstractType<Initiative>
@@ -136,6 +141,8 @@ class InitiativeType extends AbstractType
                     'required' => false,
                     'default_protocol' => 'https',
                     'label' => false,
+                    // Reject non-http(s) URLs (e.g. javascript:) to prevent stored XSS.
+                    'constraints' => [new Assert\Url(protocols: ['http', 'https'])],
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -144,14 +151,25 @@ class InitiativeType extends AbstractType
                 'required' => false,
                 'prototype' => true,
             ])
-            ->add('contacts', CollectionType::class, [
+            ->add('contacts', EntityType::class, [
                 'label' => 'initiative.contacts',
+                'class' => Contact::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'required' => false,
+                'by_reference' => false,
+                'attr' => ['data-contact-select' => true],
+            ])
+            ->add('newContacts', CollectionType::class, [
+                'label' => 'initiative.new_contacts',
                 'entry_type' => ContactType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
+                'delete_empty' => static fn (?Contact $contact): bool => null === $contact || null === $contact->getName() || '' === trim((string) $contact->getName()),
                 'by_reference' => false,
                 'required' => false,
                 'prototype' => true,
+                'mapped' => false,
             ])
             ->add('images', CollectionType::class, [
                 'label' => 'initiative.images',
@@ -171,6 +189,17 @@ class InitiativeType extends AbstractType
                 'required' => false,
                 'prototype' => true,
             ]);
+
+        // Existing contacts bind directly through the select; brand-new ones are
+        // built in the unmapped "newContacts" collection and merged in here.
+        $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event): void {
+            $initiative = $event->getData();
+            if ($initiative instanceof Initiative) {
+                foreach ($event->getForm()->get('newContacts')->getData() as $contact) {
+                    $initiative->addContact($contact);
+                }
+            }
+        });
     }
 
     /**
