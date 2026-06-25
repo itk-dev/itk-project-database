@@ -1,9 +1,9 @@
 # Project database
 
 A Symfony application for registering and browsing municipal **initiatives** and
-their **contacts**, with a public read-only [API Platform](https://api-platform.com/)
-API. It is a rebuild of the previous Drupal-based project database, focused on a
-friendlier interface for creating and getting an overview of initiatives.
+their **contacts**. It is a rebuild of the previous Drupal-based project
+database, focused on a friendlier interface for creating and getting an overview
+of initiatives.
 
 The project follows the itk-dev
 [`symfony` Docker template](https://github.com/itk-dev/devops_itkdev-docker) and
@@ -18,7 +18,6 @@ runs on PHP 8.4 / Symfony 8.
   free-tagging of tags, stakeholders and strategies, and image/file uploads.
 - Contact management.
 - Private file/image uploads, served only to signed-in users.
-- Read-only public API (`/api`) with Swagger UI and ReDoc documentation.
 - Local username/password login with user administration for administrators.
 - Bilingual interface (Danish and English).
 
@@ -62,18 +61,26 @@ Create an administrator manually with:
 task create-admin -- you@example.com "Your Name"
 ```
 
-## API
+## Access control
 
-The read-only API is available under `/api`:
+The application uses a single, flat trust model: authentication is required for
+everything (the firewall protects `^/`), and **every authenticated user is fully
+trusted**. Any signed-in user (`ROLE_USER`) can create, view, edit and delete any
+initiative or contact, and can download any uploaded image or attachment by id.
 
-- `GET /api/initiatives` — list published initiatives (filterable, paginated).
-- `GET /api/initiatives/{id}` — a single published initiative.
-- `GET /api/terms` — the classification terms (tags, stakeholders, strategies).
-- Interactive documentation (Swagger UI / ReDoc) is served at `/api`.
+The only elevated capability is **user administration** (`/admin/**`), which
+requires `ROLE_ADMIN`.
 
-Only published initiatives are exposed; drafts are managed in the web interface.
-Contacts and uploaded files are **not** exposed on the API — contacts contain
-personal data, and files are served only through the authenticated web UI.
+This is intentional: the project database is an internal tool for a small,
+trusted group of municipal editors, so per-record ownership or per-action
+authorization would add complexity without a real security benefit. Uploaded
+files are stored outside the web root and served only through the authenticated
+`MediaController`, so they are never anonymously reachable — but they are not
+restricted between authenticated users.
+
+If a future requirement calls for restricting who may edit/delete a given record
+(or read a given file), introduce a Symfony [Voter](https://symfony.com/doc/current/security/voters.html)
+rather than loosening or working around the flat model.
 
 ## Development
 

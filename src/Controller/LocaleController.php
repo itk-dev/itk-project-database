@@ -14,14 +14,23 @@ class LocaleController extends AbstractController
     #[Route('/locale/{locale}', name: 'app_locale', requirements: ['locale' => 'en|da'])]
     public function switch(string $locale, Request $request): Response
     {
-        if ($request->hasSession()) {
+        // Persist the choice only when a session already exists, so an
+        // anonymous hit to this public route does not allocate one. The
+        // language switcher is only shown to authenticated users, who always
+        // carry a session.
+        if ($request->hasPreviousSession()) {
             $request->getSession()->set('_locale', $locale);
         }
 
         $return = (string) $request->query->get('return', '');
 
         // Only follow local, relative return paths to avoid open redirects.
-        if ('' !== $return && str_starts_with($return, '/') && !str_starts_with($return, '//')) {
+        // Reject protocol-relative (//host) and backslash variants (/\host),
+        // which some browsers normalise to //host.
+        if ('' !== $return
+            && str_starts_with($return, '/')
+            && !str_starts_with($return, '//')
+            && !str_contains($return, '\\')) {
             return $this->redirect($return);
         }
 

@@ -298,6 +298,10 @@ h3 {
     color: #fff;
 }
 
+.user-menu__section .lang-toggle {
+    margin-top: 6px;
+}
+
 .page {
     max-width: var(--itk-container);
     margin: 0 auto;
@@ -903,6 +907,15 @@ textarea {
     white-space: pre-wrap;
 }
 
+.detail-subhead {
+    font-size: var(--itk-text-sm);
+    margin-top: var(--itk-space-4);
+}
+
+.link-list {
+    list-style: none;
+}
+
 .contact-card {
     border: 1px solid var(--itk-slate-200);
     border-radius: var(--itk-radius-2);
@@ -925,6 +938,7 @@ textarea {
     justify-content: space-between;
     gap: var(--itk-space-3);
     margin-top: var(--itk-space-5);
+    padding: var(--itk-space-4) var(--itk-space-5);
     flex-wrap: wrap;
 }
 
@@ -1382,4 +1396,97 @@ textarea {
     .activity-feed > .activity-item:first-child {
         animation: none;
     }
+}
+
+.ts-wrapper .ts-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--itk-space-1);
+    width: 100%;
+    min-height: 38px;
+    padding: 3px var(--itk-space-3);
+    font-size: var(--itk-text-sm);
+    color: var(--itk-ink);
+    background-color: var(--itk-paper);
+    border: 1px solid var(--itk-slate-300);
+    border-radius: var(--itk-radius-2);
+    box-shadow: none;
+    transition:
+        border-color 0.15s,
+        box-shadow 0.15s;
+}
+
+.ts-wrapper.focus .ts-control {
+    border-color: var(--itk-blue);
+    box-shadow: var(--itk-focus);
+}
+
+.ts-wrapper .ts-control > input {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 6rem;
+    margin: 0;
+    padding: var(--itk-space-1) 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    font: inherit;
+    font-size: var(--itk-text-sm);
+    color: var(--itk-ink);
+}
+
+.ts-wrapper .ts-control > input:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.ts-wrapper .ts-control .item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--itk-space-1);
+    padding: 2px var(--itk-space-2);
+    font-size: var(--itk-text-xs);
+    font-weight: 500;
+    color: var(--itk-blue);
+    background-color: color-mix(in srgb, var(--itk-blue) 12%, transparent);
+    border-radius: var(--itk-radius-pill);
+}
+
+.ts-wrapper .ts-control .item .remove {
+    padding: 0 2px;
+    border: none;
+    color: inherit;
+    opacity: 0.6;
+}
+
+.ts-wrapper .ts-control .item .remove:hover {
+    background: transparent;
+    opacity: 1;
+}
+
+.ts-dropdown {
+    margin-top: var(--itk-space-1);
+    border: 1px solid var(--itk-slate-200);
+    border-radius: var(--itk-radius-2);
+    background-color: var(--itk-paper);
+    box-shadow: var(--itk-shadow-2);
+    font-size: var(--itk-text-sm);
+    color: var(--itk-ink);
+    overflow: hidden;
+}
+
+.ts-dropdown .option {
+    padding: var(--itk-space-2) var(--itk-space-3);
+}
+
+.ts-dropdown .active {
+    background-color: color-mix(in srgb, var(--itk-blue) 10%, transparent);
+    color: var(--itk-ink);
+}
+
+.ts-dropdown .no-results {
+    padding: var(--itk-space-2) var(--itk-space-3);
+    color: var(--itk-slate-500);
 }
