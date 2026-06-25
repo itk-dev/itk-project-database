@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Trait\BlameableTrait;
-use App\Entity\Trait\TimestampableTrait;
 use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
@@ -17,6 +15,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ITKDev\EntityBundle\Entity\Contract\BlameableInterface;
+use ITKDev\EntityBundle\Entity\Contract\TimestampableInterface;
+use ITKDev\EntityBundle\Entity\Trait\BlameableTrait;
+use ITKDev\EntityBundle\Entity\Trait\TimestampableTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: InitiativeRepository::class)]
