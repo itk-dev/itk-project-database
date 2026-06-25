@@ -26,6 +26,7 @@ tasks:
       - '{{.CONSOLE}} doctrine:database:create --if-not-exists'
       - '{{.CONSOLE}} doctrine:migrations:migrate --no-interaction'
       - '{{.CONSOLE}} doctrine:fixtures:load --no-interaction'
+      - '{{.CONSOLE}} asset-map:compile'
 
   console:
     desc: 'Run a Symfony console command (usage: task console -- <command>)'
@@ -56,6 +57,34 @@ tasks:
     desc: 'Run PHPStan static analysis'
     cmds:
       - '{{.PHPSTAN}} analyse --memory-limit=1G'
+
+  test:setup:
+    desc: 'Create the test database, run migrations and load fixtures'
+    cmds:
+      - '{{.DOCKER_COMPOSE}} exec phpfpm composer run test-setup'
+
+  test:
+    desc: 'Run the PHPUnit test suite'
+    cmds:
+      - '{{.PHPUNIT}} {{.CLI_ARGS}}'
+
+  test:coverage:
+    desc: 'Run tests with coverage and enforce the 100% gate'
+    cmds:
+      - '{{.DOCKER_COMPOSE}} exec -e XDEBUG_MODE=coverage phpfpm composer run test-coverage'
+
+  create-admin:
+    desc: 'Create (or update) an administrator (usage: task create-admin -- you@example.com "Your Name")'
+    cmds:
+      - '{{.CONSOLE}} app:create-admin {{.CLI_ARGS}}'
+
+  ci:
+    desc: 'Run everything CI runs'
+    cmds:
+      - task: coding-standards:check
+      - task: static-analysis
+      - task: test:setup
+      - task: test:coverage
 
   default:
     cmds:

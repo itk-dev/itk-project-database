@@ -31,6 +31,8 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        // The 'password' credential below is for local dev/test only; fixtures
+        // are a require-dev bundle and are never loaded in production.
         $admin = (new User())
             ->setEmail('admin@example.com')
             ->setName('Administrator')

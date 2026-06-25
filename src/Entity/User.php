@@ -53,6 +53,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * Display name, falling back to the e-mail when no name is set. This is a
+     * convenience accessor, not a pure getter: callers needing the raw stored
+     * value should not rely on it.
+     */
     public function getName(): string
     {
         return '' !== $this->name ? $this->name : (string) $this->email;
