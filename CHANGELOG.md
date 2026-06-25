@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-9](https://github.com/itk-dev/itk-project-database/pull/9)
+  Make department a managed entity and move it and contacts to the admin section
 * [PR-7](https://github.com/itk-dev/itk-project-database/pull/7)
   Add a mascot motivating users to create and complete initiatives
 * [PR-6](https://github.com/itk-dev/itk-project-database/pull/6)
