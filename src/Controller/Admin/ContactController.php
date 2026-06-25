@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/contacts')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_USER')]
 class ContactController extends AbstractController
 {
     #[Route('', name: 'admin_contacts', methods: ['GET'])]

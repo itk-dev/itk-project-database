@@ -42,9 +42,7 @@
                                     <a href="{{ path('app_locale', {locale: 'en', return: app.request.requestUri}) }}" class="lang-toggle__option {{ app.request.locale == 'en' ? 'lang-toggle__option--active' }}">EN</a>
                                 </div>
                             </div>
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path('admin_users') }}" class="user-menu__link">{{ 'nav.admin'|trans }}</a>
-                            {% endif %}
+                            <a href="{{ path(is_granted('ROLE_ADMIN') ? 'admin_users' : 'admin_contacts') }}" class="user-menu__link">{{ 'nav.admin'|trans }}</a>
                             <a href="{{ path('app_logout') }}" class="user-menu__logout">{{ 'nav.logout'|trans }}</a>
                         </div>
                     </div>

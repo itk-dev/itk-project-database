@@ -9,12 +9,12 @@ use App\Tests\FunctionalTestCase;
 
 final class ContactControllerTest extends FunctionalTestCase
 {
-    public function testIndexIsForbiddenForNonAdmins(): void
+    public function testIndexIsAccessibleToEditors(): void
     {
         $this->loginAsEditor();
         $this->client->request('GET', '/admin/contacts');
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseIsSuccessful();
     }
 
     public function testNewCreatesContact(): void
