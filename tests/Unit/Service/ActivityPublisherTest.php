@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Entity\Initiative;
+use App\Repository\DepartmentRepository;
 use App\Repository\InitiativeRepository;
 use App\Service\ActivityPublisher;
 use App\Service\DashboardData;
@@ -31,9 +32,11 @@ final class ActivityPublisherTest extends TestCase
         // DashboardData is final (can't be doubled), so build a real one from stubs.
         $initiatives = $this->createStub(InitiativeRepository::class);
         $initiatives->method('dashboardRows')->willReturn([]);
+        $departments = $this->createStub(DepartmentRepository::class);
+        $departments->method('findAllOrdered')->willReturn([]);
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
-        $dashboardData = new DashboardData($initiatives, $translator);
+        $dashboardData = new DashboardData($initiatives, $departments, $translator);
 
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects(self::once())->method('warning');

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Model;
 
+use App\Entity\Department;
 use App\Enum\Category;
 use App\Enum\InitiativeType;
-use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
 use App\Model\InitiativeFilter;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +34,7 @@ final class InitiativeFilterTest extends TestCase
         $filter->status = Status::Active;
         $filter->category = Category::Climate;
         $filter->initiativeType = InitiativeType::Project;
-        $filter->organizationalAnchoring = OrganizationalAnchoring::HealthAndCare;
+        $filter->organizationalAnchoring = (new Department())->setName('Sundhed og Omsorg');
         $filter->endorsement = true;
         $filter->sort = 'title';
         $filter->direction = 'ASC';

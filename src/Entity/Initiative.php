@@ -8,7 +8,6 @@ use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
-use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
 use App\Repository\InitiativeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -69,8 +68,9 @@ class Initiative implements BlameableInterface, TimestampableInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $statusAdditional = null;
 
-    #[ORM\Column(length: 64, nullable: true, enumType: OrganizationalAnchoring::class)]
-    private ?OrganizationalAnchoring $organizationalAnchoring = null;
+    #[ORM\ManyToOne(targetEntity: Department::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Department $organizationalAnchoring = null;
 
     #[ORM\Column]
     private bool $endorsement = true;
@@ -243,12 +243,12 @@ class Initiative implements BlameableInterface, TimestampableInterface
         return $this;
     }
 
-    public function getOrganizationalAnchoring(): ?OrganizationalAnchoring
+    public function getOrganizationalAnchoring(): ?Department
     {
         return $this->organizationalAnchoring;
     }
 
-    public function setOrganizationalAnchoring(?OrganizationalAnchoring $organizationalAnchoring): static
+    public function setOrganizationalAnchoring(?Department $organizationalAnchoring): static
     {
         $this->organizationalAnchoring = $organizationalAnchoring;
 

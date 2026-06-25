@@ -7,9 +7,9 @@ namespace App\Tests\Repository;
 use App\Entity\Initiative;
 use App\Enum\Category;
 use App\Enum\InitiativeType;
-use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
 use App\Model\InitiativeFilter;
+use App\Repository\DepartmentRepository;
 use App\Repository\InitiativeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -28,12 +28,15 @@ final class InitiativeRepositoryTest extends KernelTestCase
 
     public function testSearchAppliesEveryFilterBranch(): void
     {
+        $departments = static::getContainer()->get(DepartmentRepository::class);
+        \assert($departments instanceof DepartmentRepository);
+
         $filter = new InitiativeFilter();
         $filter->q = '100%_'; // also exercises LIKE wildcard escaping
         $filter->status = Status::Active;
         $filter->category = Category::Climate;
         $filter->initiativeType = InitiativeType::Project;
-        $filter->organizationalAnchoring = OrganizationalAnchoring::HealthAndCare;
+        $filter->organizationalAnchoring = $departments->findAllOrdered()[0];
         $filter->endorsement = true;
         $filter->sort = 'title';
         $filter->direction = 'ASC';
@@ -47,6 +50,16 @@ final class InitiativeRepositoryTest extends KernelTestCase
         // "midler" is a substring of the Danish "EU-midler" funding label, so the
         // search maps it to the eu_funds slug and matches it inside the funding JSON.
         $filter->q = 'midler';
+
+        self::assertIsArray($this->repository->search($filter)->getQuery()->getResult());
+    }
+
+    public function testSearchMatchesTranslatedEnumLabel(): void
+    {
+        $filter = new InitiativeFilter();
+        // "projekt" is the Danish label for the Project initiative type, so the
+        // search maps it to the project slug and matches the enum column.
+        $filter->q = 'projekt';
 
         self::assertIsArray($this->repository->search($filter)->getQuery()->getResult());
     }

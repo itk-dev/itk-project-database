@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Entity;
 
 use App\Entity\Contact;
+use App\Entity\Department;
 use App\Entity\Initiative;
 use App\Entity\InitiativeAttachment;
 use App\Entity\InitiativeImage;
@@ -13,7 +14,6 @@ use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
-use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
 use App\Enum\Vocabulary;
 use PHPUnit\Framework\TestCase;
@@ -44,6 +44,7 @@ final class InitiativeTest extends TestCase
     {
         $start = new \DateTimeImmutable('2025-01-01');
         $end = new \DateTimeImmutable('2025-12-31');
+        $department = (new Department())->setName('Teknik og Miljø');
 
         $initiative = (new Initiative())
             ->setTitle('Grøn omstilling')
@@ -52,7 +53,7 @@ final class InitiativeTest extends TestCase
             ->setInitiativeType(InitiativeType::Project)
             ->setStatus(Status::Active)
             ->setStatusAdditional('Igangsat')
-            ->setOrganizationalAnchoring(OrganizationalAnchoring::TechnicalAndEnvironment)
+            ->setOrganizationalAnchoring($department)
             ->setEndorsement(false)
             ->setEndorsementAuthor(EndorsementAuthor::CityCouncil)
             ->setBudget(500000)
@@ -65,7 +66,7 @@ final class InitiativeTest extends TestCase
         self::assertSame(InitiativeType::Project, $initiative->getInitiativeType());
         self::assertSame(Status::Active, $initiative->getStatus());
         self::assertSame('Igangsat', $initiative->getStatusAdditional());
-        self::assertSame(OrganizationalAnchoring::TechnicalAndEnvironment, $initiative->getOrganizationalAnchoring());
+        self::assertSame($department, $initiative->getOrganizationalAnchoring());
         self::assertFalse($initiative->isEndorsement());
         self::assertSame(EndorsementAuthor::CityCouncil, $initiative->getEndorsementAuthor());
         self::assertSame(500000, $initiative->getBudget());
@@ -84,7 +85,7 @@ final class InitiativeTest extends TestCase
             ->setDescription('D')
             ->setInitiativeType(InitiativeType::Project)
             ->setStatus(Status::Active)
-            ->setOrganizationalAnchoring(OrganizationalAnchoring::TechnicalAndEnvironment)
+            ->setOrganizationalAnchoring((new Department())->setName('Teknik og Miljø'))
             ->setEndorsementAuthor(EndorsementAuthor::CityCouncil)
             ->setBudget(1000)
             ->setFunding([Funding::EuFunds])

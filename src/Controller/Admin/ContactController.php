@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Contact;
 use App\Form\ContactType;
@@ -12,18 +12,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('/admin/contacts')]
+#[IsGranted('ROLE_ADMIN')]
 class ContactController extends AbstractController
 {
-    #[Route('/contacts', name: 'app_contact_index', methods: ['GET'])]
+    #[Route('', name: 'admin_contacts', methods: ['GET'])]
     public function index(ContactRepository $contacts): Response
     {
-        return $this->render('contact/index.html.twig', [
+        return $this->render('admin/contacts/index.html.twig', [
             'contacts' => $contacts->findAllOrdered(),
         ]);
     }
 
-    #[Route('/contacts/new', name: 'app_contact_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'admin_contact_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $contact = new Contact();
@@ -35,13 +38,13 @@ class ContactController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'flash.contact.created');
 
-            return $this->redirectToRoute('app_contact_index');
+            return $this->redirectToRoute('admin_contacts');
         }
 
-        return $this->render('contact/new.html.twig', ['form' => $form]);
+        return $this->render('admin/contacts/new.html.twig', ['form' => $form]);
     }
 
-    #[Route('/contacts/{id}/edit', name: 'app_contact_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'admin_contact_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(Request $request, Contact $contact, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ContactType::class, $contact);
@@ -51,16 +54,16 @@ class ContactController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'flash.contact.updated');
 
-            return $this->redirectToRoute('app_contact_index');
+            return $this->redirectToRoute('admin_contacts');
         }
 
-        return $this->render('contact/edit.html.twig', [
+        return $this->render('admin/contacts/edit.html.twig', [
             'form' => $form,
             'contact' => $contact,
         ]);
     }
 
-    #[Route('/contacts/{id}/delete', name: 'app_contact_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'admin_contact_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function delete(Request $request, Contact $contact, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete-contact-'.$contact->getId(), (string) $request->request->get('_token'))) {
@@ -69,6 +72,6 @@ class ContactController extends AbstractController
             $this->addFlash('success', 'flash.contact.deleted');
         }
 
-        return $this->redirectToRoute('app_contact_index');
+        return $this->redirectToRoute('admin_contacts');
     }
 }

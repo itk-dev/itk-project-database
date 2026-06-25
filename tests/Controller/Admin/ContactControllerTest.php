@@ -2,17 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Admin;
 
 use App\Entity\Contact;
 use App\Tests\FunctionalTestCase;
 
 final class ContactControllerTest extends FunctionalTestCase
 {
+    public function testIndexIsForbiddenForNonAdmins(): void
+    {
+        $this->loginAsEditor();
+        $this->client->request('GET', '/admin/contacts');
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
     public function testNewCreatesContact(): void
     {
         $this->loginAsAdmin();
-        $crawler = $this->client->request('GET', '/contacts/new');
+        $crawler = $this->client->request('GET', '/admin/contacts/new');
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->filter('button.btn--primary')->form([
@@ -21,7 +29,7 @@ final class ContactControllerTest extends FunctionalTestCase
         ]);
         $this->client->submit($form);
 
-        $this->assertResponseRedirects('/contacts');
+        $this->assertResponseRedirects('/admin/contacts');
 
         $em = $this->entityManager();
         foreach ($this->contacts()->findBy(['name' => 'Functional Tester']) as $contact) {
@@ -35,13 +43,13 @@ final class ContactControllerTest extends FunctionalTestCase
         $this->loginAsAdmin();
         $id = (int) $this->createContact('Editable Contact')->getId();
 
-        $crawler = $this->client->request('GET', sprintf('/contacts/%d/edit', $id));
+        $crawler = $this->client->request('GET', sprintf('/admin/contacts/%d/edit', $id));
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->filter('button.btn--primary')->form(['contact[name]' => 'Edited Contact']);
         $this->client->submit($form);
 
-        $this->assertResponseRedirects('/contacts');
+        $this->assertResponseRedirects('/admin/contacts');
         $this->removeContact($id);
     }
 
@@ -50,11 +58,11 @@ final class ContactControllerTest extends FunctionalTestCase
         $this->loginAsAdmin();
         $id = (int) $this->createContact('Deletable Contact')->getId();
 
-        $crawler = $this->client->request('GET', sprintf('/contacts/%d/edit', $id));
+        $crawler = $this->client->request('GET', sprintf('/admin/contacts/%d/edit', $id));
         $form = $crawler->filter('form[action$="/delete"]')->form();
         $this->client->submit($form);
 
-        $this->assertResponseRedirects('/contacts');
+        $this->assertResponseRedirects('/admin/contacts');
         $this->entityManager()->clear();
         self::assertNull($this->contacts()->find($id));
     }
@@ -64,9 +72,9 @@ final class ContactControllerTest extends FunctionalTestCase
         $this->loginAsAdmin();
         $id = (int) $this->createContact('Surviving Contact')->getId();
 
-        $this->client->request('POST', sprintf('/contacts/%d/delete', $id), ['_token' => 'invalid']);
+        $this->client->request('POST', sprintf('/admin/contacts/%d/delete', $id), ['_token' => 'invalid']);
 
-        $this->assertResponseRedirects('/contacts');
+        $this->assertResponseRedirects('/admin/contacts');
         $this->entityManager()->clear();
         self::assertNotNull($this->contacts()->find($id));
         $this->removeContact($id);

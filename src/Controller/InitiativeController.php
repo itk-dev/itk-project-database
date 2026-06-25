@@ -82,7 +82,7 @@ class InitiativeController extends AbstractController
                     $translate($row->getStatus()),
                     $translate($row->getCategory()),
                     $translate($row->getInitiativeType()),
-                    $translate($row->getOrganizationalAnchoring()),
+                    $row->getOrganizationalAnchoring()?->getName(),
                     $row->isEndorsement() ? $translator->trans('filter.yes') : $translator->trans('filter.no'),
                     $translate($row->getEndorsementAuthor()),
                     $row->getBudget(),

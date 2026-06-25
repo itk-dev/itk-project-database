@@ -1,0 +1,51 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'department.index.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block admin_content %}
+    <div class="page__header" style="margin-bottom: var(--itk-space-5);">
+        <div>
+            <h1 class="page__title">{{ 'department.index.title'|trans }}</h1>
+            <p class="page__subtitle">{{ 'department.index.subtitle'|trans }}</p>
+        </div>
+        <div class="page__actions">
+            <a href="{{ path('admin_department_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+        </div>
+    </div>
+
+    <div class="card">
+        {% if departments is empty %}
+            <div class="empty-state">
+                <div class="empty-state__title">{{ 'department.empty.title'|trans }}</div>
+                <p>{{ 'department.empty.hint'|trans }}</p>
+            </div>
+        {% else %}
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>{{ 'department.name'|trans }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for department in departments %}
+                            <tr>
+                                <td class="cell-title">{{ department.name }}</td>
+                                <td>
+                                    <div class="cell-actions">
+                                        <a href="{{ path('admin_department_edit', {id: department.id}) }}" class="btn btn--ghost btn--sm">{{ 'action.edit'|trans }}</a>
+                                        <form method="post" action="{{ path('admin_department_delete', {id: department.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete-department-' ~ department.id) }}">
+                                            <button type="submit" class="btn btn--danger btn--sm">{{ 'action.delete'|trans }}</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
