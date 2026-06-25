@@ -24,7 +24,7 @@ class AppFixtures extends Fixture
     private const array TAGS = ['Bæredygtighed', 'Borgerinddragelse', 'Innovation', 'Sundhed', 'Klima', 'Mobilitet', 'Data', 'Tryghed', 'Læring', 'Fællesskab'];
     private const array STAKEHOLDERS = ['Aarhus Kommune', 'Region Midtjylland', 'Aarhus Universitet', 'Erhverv Aarhus', 'Lokale foreninger', 'Boligforeninger', 'VIA University College', 'Business Region Aarhus'];
     private const array STRATEGIES = ['Klimaplan 2030', 'Erhvervsplan', 'Børn- og ungepolitik', 'Mobilitetsplan', 'Digitaliseringsstrategi', 'Sundhedspolitik'];
-    private const array DEPARTMENTS = ['Borgmesterens Afdeling', 'Teknik og Miljø', 'Kultur og Borgerservice', 'Sociale Forhold og Beskæftigelse', 'Børn og Unge', 'Sundhed og Omsorg'];
+    private const array DEPARTMENTS = ['ITK Development', 'CFIA', 'Aarhus CityLab', 'Stab', 'OS2', 'AI Lab', 'IOT Lab', 'GTM', 'Fut Lab'];
 
     public function __construct(private readonly UserPasswordHasherInterface $hasher)
     {
