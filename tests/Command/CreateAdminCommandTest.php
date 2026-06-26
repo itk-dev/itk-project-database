@@ -44,7 +44,7 @@ final class CreateAdminCommandTest extends KernelTestCase
             ->setPassword('old-hash');
         $this->entityManager()->persist($existing);
         $this->entityManager()->flush();
-        $existingId = $existing->getId();
+        $existingId = (string) $existing->getId();
 
         $tester->setInputs(['anothergoodpassword']);
         $tester->execute(['email' => $email]);
@@ -54,7 +54,7 @@ final class CreateAdminCommandTest extends KernelTestCase
         $this->entityManager()->clear();
         $updated = $this->users()->findOneBy(['email' => $email]);
         self::assertInstanceOf(User::class, $updated);
-        self::assertSame($existingId, $updated->getId(), 'The existing user is updated, not duplicated.');
+        self::assertSame($existingId, (string) $updated->getId(), 'The existing user is updated, not duplicated.');
         self::assertSame($email, $updated->getName(), 'Without a name argument the e-mail is used.');
         self::assertContains('ROLE_ADMIN', $updated->getRoles());
 
