@@ -19,11 +19,12 @@ export default class extends Controller {
         gotcha: String,
         giveup: String,
         escaped: String,
-        finishText: String,
+        finishTexts: { type: Array, default: [] },
     };
 
     connect() {
         this.mode = "idle";
+        this.timers = {};
         const state = this.loadState();
         this.lastIndex = state.lastIndex ?? -1;
         this.lastShownAt = state.lastShownAt ?? 0;
@@ -35,15 +36,64 @@ export default class extends Controller {
 
     disconnect() {
         this.endGame();
-        window.clearTimeout(this.cycleTimer);
-        window.clearTimeout(this.hideTimer);
+        this.clearNamedTimer("cycle");
+        this.clearNamedTimer("show");
+        window.clearTimeout(this.fadeTimer);
         window.clearTimeout(this.inviteTimer);
         window.clearTimeout(this.quietTimer);
     }
 
     scheduleNext(delay) {
-        window.clearTimeout(this.cycleTimer);
-        this.cycleTimer = window.setTimeout(() => this.tick(), delay);
+        this.startTimer("cycle", () => this.tick(), delay);
+    }
+
+    // Pausable timers: the cycle to the next message and the bubble's auto-hide.
+    // Hovering the mascot freezes whatever time is left; leaving resumes it, so a
+    // user reading or admiring the bubble is never rushed or interrupted.
+    startTimer(name, callback, delay) {
+        this.clearNamedTimer(name);
+        const timer = { callback, remaining: delay, startedAt: Date.now() };
+        timer.id = window.setTimeout(() => {
+            delete this.timers[name];
+            callback();
+        }, delay);
+        this.timers[name] = timer;
+    }
+
+    clearNamedTimer(name) {
+        const timer = this.timers[name];
+        if (timer) {
+            window.clearTimeout(timer.id);
+            delete this.timers[name];
+        }
+    }
+
+    pause() {
+        const now = Date.now();
+        for (const timer of Object.values(this.timers)) {
+            if (null === timer.id) {
+                continue;
+            }
+            window.clearTimeout(timer.id);
+            timer.id = null;
+            timer.remaining = Math.max(
+                0,
+                timer.remaining - (now - timer.startedAt),
+            );
+        }
+    }
+
+    resume() {
+        for (const [name, timer] of Object.entries(this.timers)) {
+            if (null !== timer.id) {
+                continue;
+            }
+            timer.startedAt = Date.now();
+            timer.id = window.setTimeout(() => {
+                delete this.timers[name];
+                timer.callback();
+            }, timer.remaining);
+        }
     }
 
     tick() {
@@ -72,13 +122,18 @@ export default class extends Controller {
     }
 
     speak() {
-        // Now and then, nudge the user to finish their least-complete initiative.
+        // Now and then, nudge the user to finish their least-complete initiative,
+        // picking one of the finish lines at random for variety.
+        const finishTexts = this.finishTextsValue;
         if (
             this.hasFinishTarget &&
-            this.finishTextValue &&
+            finishTexts.length > 0 &&
             Math.random() < 0.4
         ) {
-            this.say(this.finishTextValue, "finish");
+            this.say(
+                finishTexts[Math.floor(Math.random() * finishTexts.length)],
+                "finish",
+            );
 
             return;
         }
@@ -247,16 +302,16 @@ export default class extends Controller {
         window.requestAnimationFrame(() => {
             this.bubbleTarget.classList.add("is-visible");
         });
-        window.clearTimeout(this.hideTimer);
-        this.hideTimer = window.setTimeout(() => this.hide(), 20000);
+        this.startTimer("show", () => this.hide(), 20000);
         this.lastShownAt = Date.now();
         this.saveState();
     }
 
     hide() {
         this.bubbleTarget.classList.remove("is-visible");
-        window.clearTimeout(this.hideTimer);
-        this.hideTimer = window.setTimeout(() => {
+        this.clearNamedTimer("show");
+        window.clearTimeout(this.fadeTimer);
+        this.fadeTimer = window.setTimeout(() => {
             this.bubbleTarget.hidden = true;
         }, 250);
     }

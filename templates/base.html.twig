@@ -63,22 +63,44 @@
                 'mascot.msg.idea'|trans,
                 'mascot.msg.roll'|trans,
                 'mascot.msg.bold'|trans,
-                'mascot.msg.finish'|trans,
                 'mascot.msg.creativity'|trans,
                 'mascot.msg.another'|trans,
                 'mascot.msg.draft'|trans,
                 'mascot.msg.future'|trans,
+                'mascot.msg.spark'|trans,
+                'mascot.msg.dream'|trans,
+                'mascot.msg.coffee'|trans,
+                'mascot.msg.small'|trans,
+                'mascot.msg.colleague'|trans,
+                'mascot.msg.today'|trans,
+                'mascot.msg.create'|trans,
+                'mascot.msg.thought'|trans,
+                'mascot.msg.momentum'|trans,
+                'mascot.msg.curious'|trans,
             ] %}
             {% if ctx.count > 0 %}
                 {% set messages = messages|merge(['mascot.praise'|trans({'%count%': ctx.count})]) %}
             {% endif %}
+            {% set finishMessages = [] %}
+            {% if ctx.unfinished %}
+                {% set finishParams = {'%title%': ctx.unfinished.title, '%percent%': ctx.unfinished.completionPercentage} %}
+                {% set finishMessages = [
+                    'mascot.finish.almost'|trans(finishParams),
+                    'mascot.finish.touches'|trans(finishParams),
+                    'mascot.finish.close'|trans(finishParams),
+                    'mascot.finish.blanks'|trans(finishParams),
+                    'mascot.finish.ending'|trans(finishParams),
+                    'mascot.finish.strong'|trans(finishParams),
+                ] %}
+            {% endif %}
             <div class="mascot" data-controller="mascot"
+                 data-action="mouseenter->mascot#pause mouseleave->mascot#resume"
                  data-mascot-invite-value="{{ 'mascot.play.invite'|trans }}"
                  data-mascot-caught-value="{{ 'mascot.play.caught'|trans }}"
                  data-mascot-gotcha-value="{{ 'mascot.play.gotcha'|trans }}"
                  data-mascot-giveup-value="{{ 'mascot.play.giveup'|trans }}"
                  data-mascot-escaped-value="{{ 'mascot.play.escaped'|trans }}"
-                 {% if ctx.unfinished %}data-mascot-finish-text-value="{{ 'mascot.finish'|trans({'%title%': ctx.unfinished.title}) }}"{% endif %}
+                 {% if ctx.unfinished %}data-mascot-finish-texts-value="{{ finishMessages|json_encode }}"{% endif %}
                  data-mascot-messages-value="{{ messages|json_encode }}">
                 <div class="mascot__bubble" data-mascot-target="bubble" role="status" aria-live="polite" hidden>
                     <button type="button" class="mascot__close" data-action="mascot#close" aria-label="{{ 'mascot.close'|trans }}">×</button>
