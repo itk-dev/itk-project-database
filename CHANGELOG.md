@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] - 2026-06-26
+
 * [PR-6](https://github.com/itk-dev/itk-project-database/pull/6)
   Mark udfyldningsgrad fields with a star that flies into a progress trophy
 * [PR-5](https://github.com/itk-dev/itk-project-database/pull/5)
@@ -23,3 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Add Symfony UX Turbo and stimulus.
 * [PR-1](https://github.com/itk-dev/itk-project-database/pull/1)
   Initial Symfony 8 rebuild of the project database.
+
+[Unreleased]: https://github.com/itk-dev/itk-project-database/compare/0.0.4...HEAD
+[0.0.4]: https://github.com/itk-dev/itk-project-database/releases/tag/0.0.4
