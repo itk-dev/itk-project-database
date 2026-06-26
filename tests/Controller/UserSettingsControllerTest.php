@@ -11,14 +11,18 @@ final class UserSettingsControllerTest extends FunctionalTestCase
 {
     protected function tearDown(): void
     {
-        // Keep the persisted preference from leaking between tests.
-        $user = $this->users()->findOneBy(['email' => 'editor@example.com']);
-        if ($user instanceof User) {
-            $user->setUserSettings([]);
-            $this->entityManager()->flush();
+        try {
+            // Reset the persisted preference at the SQL level so we don't leak it
+            // between tests. An ORM flush here would trigger the blameable listener
+            // against the logged-in user left over from the client's request cycle,
+            // which is detached from this entity manager once the kernel reboots.
+            $this->entityManager()->getConnection()->executeStatement(
+                'UPDATE `user` SET user_settings = :empty WHERE email = :email',
+                ['empty' => '[]', 'email' => 'editor@example.com'],
+            );
+        } finally {
+            parent::tearDown();
         }
-
-        parent::tearDown();
     }
 
     public function testAjaxToggleReturnsNoContentAndFlipsThePreference(): void

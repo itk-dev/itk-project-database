@@ -1,7 +1,6 @@
 import "./stimulus_bootstrap.js";
 import "./styles/app.css";
 import TomSelect from "tom-select";
-import "tom-select/dist/css/tom-select.default.min.css";
 
 function initCollections() {
     document.querySelectorAll("[data-collection]").forEach((collection) => {

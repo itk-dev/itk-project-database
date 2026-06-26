@@ -27,15 +27,13 @@ jobs:
                   docker compose run --rm -e APP_ENV=prod phpfpm composer install --no-dev --optimize-autoloader
                   docker compose run --rm -e APP_ENV=prod phpfpm composer clear-cache
 
-            #- name: Building assets for the frontend
-            #  run: |
-            #      docker compose run --rm --user=root phpfpm composer asset-map:compile
+            - name: Building assets for the frontend
+              run: |
+                  docker compose run --rm -e APP_ENV=prod phpfpm bin/console asset-map:compile
 
             - name: Clean up
               run: |
                   sudo chown -R runner:runner ./
-                  rm -rf node_modules
-                  rm -rf web/modules/custom/giv_din_stemme/node_modules
 
             - name: Make assets dir
               run: |

@@ -1,46 +1,46 @@
 security:
-    password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+  password_hashers:
+    Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
-    providers:
-        app_user_provider:
-            entity:
-                class: App\Entity\User
-                property: email
+  providers:
+    app_user_provider:
+      entity:
+        class: App\Entity\User
+        property: email
 
-    firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|assets)/
-            security: false
-        main:
-            lazy: true
-            provider: app_user_provider
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                default_target_path: app_dashboard
-                enable_csrf: true
-            logout:
-                path: app_logout
-                target: app_login
-            login_throttling:
-                max_attempts: 5
-                interval: '1 minute'
+  firewalls:
+    dev:
+      pattern: ^/(_(profiler|wdt)|assets)/
+      security: false
+    main:
+      lazy: true
+      provider: app_user_provider
+      form_login:
+        login_path: app_login
+        check_path: app_login
+        default_target_path: app_dashboard
+        enable_csrf: true
+      logout:
+        path: app_logout
+        target: app_login
+      login_throttling:
+        max_attempts: 5
+        interval: '1 minute'
 
-    access_control:
-        - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/locale, roles: PUBLIC_ACCESS }
-        # User management stays admin-only; the rest of the admin panel
-        # (contacts, departments) is open to any signed-in user.
-        - { path: ^/admin/users, roles: ROLE_ADMIN }
-        - { path: ^/admin, roles: ROLE_USER }
-        - { path: ^/, roles: ROLE_USER }
+  access_control:
+    - { path: ^/login, roles: PUBLIC_ACCESS }
+    - { path: ^/locale, roles: PUBLIC_ACCESS }
+    # User management stays admin-only; the rest of the admin panel
+    # (contacts, departments) is open to any signed-in user.
+    - { path: ^/admin/users, roles: ROLE_ADMIN }
+    - { path: ^/admin, roles: ROLE_USER }
+    - { path: ^/, roles: ROLE_USER }
 
 when@test:
-    security:
-        password_hashers:
-            # Pin a single, fast, deterministic hasher for the test suite so only
-            # the relevant knob (bcrypt cost) applies.
-            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-                algorithm: bcrypt
-                cost: 4
+  security:
+    password_hashers:
+      # Pin a single, fast, deterministic hasher for the test suite so only
+      # the relevant knob (bcrypt cost) applies.
+      Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+        algorithm: bcrypt
+        cost: 4
