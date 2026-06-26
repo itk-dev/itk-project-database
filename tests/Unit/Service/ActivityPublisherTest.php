@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\Service;
+
+use App\Entity\Initiative;
+use App\Repository\DepartmentRepository;
+use App\Repository\InitiativeRepository;
+use App\Service\ActivityPublisher;
+use App\Service\DashboardData;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
+
+final class ActivityPublisherTest extends TestCase
+{
+    public function testPublishSwallowsHubFailuresAndLogsThem(): void
+    {
+        $hub = $this->createStub(HubInterface::class);
+        $hub->method('publish')->willThrowException(new \RuntimeException('hub unreachable'));
+
+        $twig = $this->createStub(Environment::class);
+        $twig->method('render')->willReturn('<turbo-stream></turbo-stream>');
+
+        $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
+        $urlGenerator->method('generate')->willReturn('/initiatives/1');
+
+        // DashboardData is final (can't be doubled), so build a real one from stubs.
+        $initiatives = $this->createStub(InitiativeRepository::class);
+        $initiatives->method('dashboardRows')->willReturn([]);
+        $departments = $this->createStub(DepartmentRepository::class);
+        $departments->method('findAllOrdered')->willReturn([]);
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnArgument(0);
+        $dashboardData = new DashboardData($initiatives, $departments, $translator);
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::once())->method('warning');
+
+        $publisher = new ActivityPublisher($hub, $twig, $urlGenerator, $dashboardData, $logger);
+
+        // An unreachable hub must be swallowed and logged, never bubbled up — the
+        // underlying save (autosave) is the primary path and must still succeed.
+        $publisher->publish('created', (new Initiative())->setTitle('Broadcast me'), null);
+    }
+}

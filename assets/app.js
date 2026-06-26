@@ -1,0 +1,89 @@
+import "./stimulus_bootstrap.js";
+import TomSelect from "tom-select";
+
+function initCollections() {
+    document.querySelectorAll("[data-collection]").forEach((collection) => {
+        if (collection.dataset.bound) {
+            return;
+        }
+        const list = collection.querySelector("[data-collection-list]");
+        const addButton = collection.querySelector("[data-collection-add]");
+        if (!list || !addButton) {
+            return;
+        }
+        collection.dataset.bound = "1";
+
+        let index = list.querySelectorAll("[data-collection-item]").length;
+
+        const addRemoveButton = (item) => {
+            if (item.querySelector("[data-collection-remove]")) {
+                return;
+            }
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "btn btn--danger btn--sm";
+            remove.dataset.collectionRemove = "";
+            remove.textContent = collection.dataset.removeLabel || "Remove";
+            remove.addEventListener("click", () => item.remove());
+            item.appendChild(remove);
+        };
+
+        list.querySelectorAll("[data-collection-item]").forEach(
+            addRemoveButton,
+        );
+
+        addButton.addEventListener("click", () => {
+            const prototype = collection.dataset.prototype;
+            const html = prototype.replace(/__name__/g, String(index));
+            index += 1;
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "collection__item";
+            wrapper.dataset.collectionItem = "";
+            wrapper.innerHTML = html;
+            addRemoveButton(wrapper);
+            list.appendChild(wrapper);
+        });
+    });
+}
+
+function initContactSelect() {
+    document.querySelectorAll("[data-contact-select]").forEach((select) => {
+        if (select.dataset.bound) {
+            return;
+        }
+        select.dataset.bound = "1";
+        new TomSelect(select, {
+            plugins: ["remove_button"],
+            hideSelected: true,
+            maxOptions: null,
+        });
+    });
+}
+
+// One delegated handler on the document (which survives Turbo navigations and
+// cache restores) both opens the menu — when the click lands on the toggle —
+// and closes it on any outside click. Delegation avoids per-page binding, which
+// breaks when Turbo restores a cached <body> whose toggle still carries the
+// "bound" marker but has lost its (never-cached) listener.
+document.addEventListener("click", (event) => {
+    const menu = document.getElementById("userMenu");
+    if (!menu) {
+        return;
+    }
+    const toggle = document.getElementById("userMenuToggle");
+    if (toggle && toggle.contains(event.target)) {
+        menu.classList.toggle("is-open");
+        return;
+    }
+    if (!menu.contains(event.target)) {
+        menu.classList.remove("is-open");
+    }
+});
+
+// Turbo Drive swaps <body> on each visit and never fires DOMContentLoaded;
+// turbo:load runs on the first load and on every subsequent visit.
+document.addEventListener("turbo:load", () => {
+    initCollections();
+    initContactSelect();
+});

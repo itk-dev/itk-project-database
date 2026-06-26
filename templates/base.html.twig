@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ 'app.name'|trans }}{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23007ba6%22/></svg>">
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('vendor/tom-select/dist/css/tom-select.default.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+    {% endblock %}
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body>
+    {% block nav %}
+        {% if app.user %}
+            {% set route = app.request.attributes.get('_route') %}
+            <nav class="top-nav">
+                <a href="{{ path('app_dashboard') }}" class="top-nav__brand">
+                    <span class="top-nav__brand-mark"></span>
+                    <span>{{ 'app.name'|trans }}</span>
+                </a>
+                <div class="top-nav__menu">
+                    <a href="{{ path('app_dashboard') }}" class="top-nav__link {{ route == 'app_dashboard' ? 'is-active' }}">{{ 'nav.dashboard'|trans }}</a>
+                    <a href="{{ path('app_initiative_index') }}" class="top-nav__link {{ route starts with 'app_initiative' ? 'is-active' }}">{{ 'nav.initiatives'|trans }}</a>
+                </div>
+                <div class="top-nav__right">
+                    <div class="top-nav__menu-anchor">
+                        <button type="button" id="userMenuToggle" class="user-menu__toggle">
+                            <span>{{ app.user.name }}</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <div id="userMenu" class="user-menu">
+                            <div class="user-menu__header">
+                                <div class="user-menu__eyebrow">{{ 'nav.signed_in_as'|trans }}</div>
+                                <div class="user-menu__name">{{ app.user.name }}</div>
+                                <div class="user-menu__email">{{ app.user.email }}</div>
+                            </div>
+                            <div class="user-menu__section">
+                                <div class="user-menu__eyebrow">{{ 'nav.language'|trans }}</div>
+                                <div class="lang-toggle">
+                                    <a href="{{ path('app_locale', {locale: 'da', return: app.request.requestUri}) }}" class="lang-toggle__option {{ app.request.locale == 'da' ? 'lang-toggle__option--active' }}">DA</a>
+                                    <a href="{{ path('app_locale', {locale: 'en', return: app.request.requestUri}) }}" class="lang-toggle__option {{ app.request.locale == 'en' ? 'lang-toggle__option--active' }}">EN</a>
+                                </div>
+                            </div>
+                            <a href="{{ path(is_granted('ROLE_ADMIN') ? 'admin_users' : 'admin_contacts') }}" class="user-menu__link">{{ 'nav.admin'|trans }}</a>
+                            <form id="mascotToggleForm" method="post" action="{{ path('app_settings_mascot_toggle') }}" class="user-menu__form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle-mascot') }}">
+                                <input type="hidden" name="return" value="{{ app.request.requestUri }}">
+                                <button type="submit" class="user-menu__button">{{ (app.user.mascotEnabled ? 'nav.mascot_disable' : 'nav.mascot_enable')|trans }}</button>
+                            </form>
+                            <a href="{{ path('app_logout') }}" class="user-menu__logout">{{ 'nav.logout'|trans }}</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        {% endif %}
+    {% endblock %}
+
+    {% block body %}{% endblock %}
+
+    {% block mascot %}
+        {% if app.user %}
+            {% set ctx = mascot_context() %}
+            {% set messages = [
+                'mascot.msg.idea'|trans,
+                'mascot.msg.roll'|trans,
+                'mascot.msg.bold'|trans,
+                'mascot.msg.creativity'|trans,
+                'mascot.msg.another'|trans,
+                'mascot.msg.draft'|trans,
+                'mascot.msg.future'|trans,
+                'mascot.msg.spark'|trans,
+                'mascot.msg.dream'|trans,
+                'mascot.msg.coffee'|trans,
+                'mascot.msg.small'|trans,
+                'mascot.msg.colleague'|trans,
+                'mascot.msg.today'|trans,
+                'mascot.msg.create'|trans,
+                'mascot.msg.thought'|trans,
+                'mascot.msg.momentum'|trans,
+                'mascot.msg.curious'|trans,
+            ] %}
+            {% if ctx.count > 0 %}
+                {% set messages = messages|merge(['mascot.praise'|trans({'%count%': ctx.count})]) %}
+            {% endif %}
+            {% set finishMessages = [] %}
+            {% if ctx.unfinished %}
+                {% set finishParams = {'%title%': ctx.unfinished.title, '%percent%': ctx.unfinished.completionPercentage} %}
+                {% set finishMessages = [
+                    'mascot.finish.almost'|trans(finishParams),
+                    'mascot.finish.touches'|trans(finishParams),
+                    'mascot.finish.close'|trans(finishParams),
+                    'mascot.finish.blanks'|trans(finishParams),
+                    'mascot.finish.ending'|trans(finishParams),
+                    'mascot.finish.strong'|trans(finishParams),
+                ] %}
+            {% endif %}
+            <div class="mascot{{ app.user.mascotEnabled ? '' : ' mascot--away' }}" data-controller="mascot"
+                 data-action="mouseenter->mascot#pause mouseleave->mascot#resume"
+                 data-mascot-enabled-value="{{ app.user.mascotEnabled ? 'true' : 'false' }}"
+                 data-mascot-farewell-value="{{ 'mascot.farewell'|trans }}"
+                 data-mascot-welcome-value="{{ 'mascot.welcome'|trans }}"
+                 data-mascot-enable-label-value="{{ 'nav.mascot_enable'|trans }}"
+                 data-mascot-disable-label-value="{{ 'nav.mascot_disable'|trans }}"
+                 data-mascot-invite-value="{{ 'mascot.play.invite'|trans }}"
+                 data-mascot-caught-value="{{ 'mascot.play.caught'|trans }}"
+                 data-mascot-gotcha-value="{{ 'mascot.play.gotcha'|trans }}"
+                 data-mascot-giveup-value="{{ 'mascot.play.giveup'|trans }}"
+                 data-mascot-escaped-value="{{ 'mascot.play.escaped'|trans }}"
+                 {% if ctx.unfinished %}data-mascot-finish-texts-value="{{ finishMessages|json_encode }}"{% endif %}
+                 data-mascot-messages-value="{{ messages|json_encode }}">
+                <div class="mascot__bubble" data-mascot-target="bubble" role="status" aria-live="polite" hidden>
+                    <button type="button" class="mascot__close" data-action="mascot#close" aria-label="{{ 'mascot.close'|trans }}">×</button>
+                    <p class="mascot__text" data-mascot-target="text"></p>
+                    <a class="mascot__cta" data-mascot-target="cta" href="{{ path('app_initiative_new') }}">{{ 'mascot.cta'|trans }} →</a>
+                    {% if ctx.unfinished %}
+                        <a class="mascot__cta" data-mascot-target="finish" href="{{ path('app_initiative_edit', {id: ctx.unfinished.id}) }}" hidden>{{ 'mascot.finish_cta'|trans }} →</a>
+                    {% endif %}
+                    <button type="button" class="mascot__play" data-mascot-target="play" data-action="mascot#startFlee" hidden>{{ 'mascot.play.start'|trans }} →</button>
+                </div>
+                <button type="button" class="mascot__avatar" data-action="mascot#poke" aria-label="{{ 'mascot.label'|trans }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#f5b800" stroke="#1f1300" stroke-width="1.1" stroke-linejoin="round"/>
+                        <circle cx="9.6" cy="10.2" r="0.95" fill="#1f1300"/>
+                        <circle cx="14.4" cy="10.2" r="0.95" fill="#1f1300"/>
+                        <path d="M9.7 12.5c.7.8 3.9.8 4.6 0" fill="none" stroke="#1f1300" stroke-width="1" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        {% endif %}
+    {% endblock %}
+
+    {% block flashes %}
+        {% set all_flashes = app.flashes %}
+        {% if all_flashes|length > 0 %}
+            <div class="flash-messages">
+                {% for type, messages in all_flashes %}
+                    {% for message in messages %}
+                        <div class="flash flash--{{ type == 'success' ? 'success' : 'error' }}">{{ message|trans }}</div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,14 @@
+vich_uploader:
+  db_driver: orm
+
+  # Files are stored outside the web root and served through an
+  # authenticated controller (App\Controller\MediaController).
+  mappings:
+    initiative_image:
+      uri_prefix: /media/initiative-images
+      upload_destination: '%kernel.project_dir%/var/uploads/initiative-images'
+      namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+    initiative_attachment:
+      uri_prefix: /media/initiative-attachments
+      upload_destination: '%kernel.project_dir%/var/uploads/initiative-attachments'
+      namer: Vich\UploaderBundle\Naming\SmartUniqueNamer

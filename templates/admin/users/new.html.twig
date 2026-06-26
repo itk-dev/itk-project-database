@@ -1,0 +1,21 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'admin.users.new'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block admin_content %}
+    <h1 class="page__title" style="margin-bottom: var(--itk-space-5);">{{ 'admin.users.new'|trans }}</h1>
+
+    {{ form_start(form, {attr: {class: 'form'}}) }}
+        <div class="form-section">
+            {{ form_errors(form) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.roles) }}
+            {{ form_row(form.plainPassword) }}
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn--primary">{{ 'action.create'|trans }}</button>
+            <a href="{{ path('admin_users') }}" class="btn btn--ghost">{{ 'action.cancel'|trans }}</a>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'initiative.index.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="page">
+        <div class="page__header">
+            <div>
+                <h1 class="page__title">{{ 'initiative.index.title'|trans }}</h1>
+                <p class="page__subtitle">{{ 'initiative.index.subtitle'|trans }}</p>
+            </div>
+            <div class="page__actions">
+                <button type="submit" form="initiative-filters" formaction="{{ path('app_initiative_export') }}" formmethod="get" formnovalidate class="btn btn--ghost" data-turbo="false">{{ 'action.export'|trans }}</button>
+                <a href="{{ path('app_initiative_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+            </div>
+        </div>
+
+        {{ form_start(form, {attr: {
+            class: 'filters',
+            id: 'initiative-filters',
+            'data-controller': 'live-search',
+            'data-action': 'input->live-search#submit change->live-search#submit',
+            'data-turbo-frame': 'initiative-results',
+        }}) }}
+            <div class="filters__search">
+                {{ form_row(form.q) }}
+                <button type="button" class="btn btn--ghost" data-action="live-search#clear">{{ 'action.reset'|trans }}</button>
+            </div>
+            <div class="filters__grid">
+                {{ form_row(form.status) }}
+                {{ form_row(form.category) }}
+                {{ form_row(form.initiativeType) }}
+                {{ form_row(form.organizationalAnchoring) }}
+                {{ form_row(form.endorsement) }}
+            </div>
+        {{ form_end(form) }}
+
+        <div class="card">
+            <turbo-frame id="initiative-results">
+                {{ include('initiative/_results.html.twig') }}
+            </turbo-frame>
+        </div>
+    </div>
+{% endblock %}

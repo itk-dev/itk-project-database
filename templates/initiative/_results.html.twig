@@ -1,0 +1,95 @@
+{% import _self as h %}
+
+{% macro sortlink(field, label, sort, direction) %}
+    {% set isActive = sort == field %}
+    {% set newDir = (isActive and direction == 'ASC') ? 'DESC' : 'ASC' %}
+    <a class="table__sort {{ isActive ? 'is-active' }}" href="{{ path('app_initiative_index', app.request.query.all|merge({sort: field, direction: newDir, page: 1})) }}">
+        {{ label|trans }}{% if isActive %} {{ direction == 'ASC' ? '▲' : '▼' }}{% endif %}
+    </a>
+{% endmacro %}
+
+{% macro icon(name) %}
+    {% if name == 'eye' %}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    {% elseif name == 'edit' %}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+    {% elseif name == 'trash' %}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+    {% endif %}
+{% endmacro %}
+
+{% if pagination.items is empty %}
+    <div class="empty-state">
+        <div class="empty-state__title">{{ 'initiative.empty.title'|trans }}</div>
+        <p>{{ 'initiative.empty.hint'|trans }}</p>
+    </div>
+{% else %}
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{{ h.sortlink('title', 'initiative.title', sort, direction) }}</th>
+                    <th>{{ 'initiative.status'|trans }}</th>
+                    <th>{{ 'initiative.initiative_type'|trans }}</th>
+                    <th>{{ 'initiative.organizational_anchoring'|trans }}</th>
+                    <th>{{ h.sortlink('timePeriodStart', 'initiative.time_period', sort, direction) }}</th>
+                    <th>{{ 'initiative.author'|trans }}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for initiative in pagination.items %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('app_initiative_show', {id: initiative.id}) }}" class="cell-title" data-turbo-frame="_top">{{ initiative.title }}</a>
+                        </td>
+                        <td>
+                            {% if initiative.status %}
+                                <span class="badge badge--status-{{ initiative.status.value }}">{{ initiative.status.labelKey|trans }}</span>
+                            {% else %}
+                                <span class="muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ initiative.initiativeType ? initiative.initiativeType.labelKey|trans : '—' }}</td>
+                        <td>{{ initiative.organizationalAnchoring ? initiative.organizationalAnchoring.name : '—' }}</td>
+                        <td>
+                            {% if initiative.timePeriodStart %}
+                                {{ initiative.timePeriodStart|date('d.m.Y') }}{% if initiative.timePeriodEnd %} – {{ initiative.timePeriodEnd|date('d.m.Y') }}{% endif %}
+                            {% else %}—{% endif %}
+                        </td>
+                        <td>{{ initiative.createdBy ? initiative.createdBy.name : '—' }}</td>
+                        <td>
+                            <div class="cell-actions">
+                                <a href="{{ path('app_initiative_show', {id: initiative.id}) }}" class="btn-icon" data-turbo-frame="_top" title="{{ 'action.view'|trans }}" aria-label="{{ 'action.view'|trans }}">{{ h.icon('eye') }}</a>
+                                <a href="{{ path('app_initiative_edit', {id: initiative.id}) }}" class="btn-icon" data-turbo-frame="_top" title="{{ 'action.edit'|trans }}" aria-label="{{ 'action.edit'|trans }}">{{ h.icon('edit') }}</a>
+                                <form method="post" action="{{ path('app_initiative_delete', {id: initiative.id}) }}" data-turbo-frame="_top" data-turbo-confirm="{{ 'action.confirm_delete'|trans }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete-initiative-' ~ initiative.id) }}">
+                                    <button type="submit" class="btn-icon btn-icon--danger" title="{{ 'action.delete'|trans }}" aria-label="{{ 'action.delete'|trans }}">{{ h.icon('trash') }}</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <span class="pagination__info">{{ pagination.firstResult }}–{{ pagination.lastResult }} / {{ pagination.total }}</span>
+        {% if pagination.pages > 1 %}
+            <div class="pagination__pages">
+                {% if pagination.hasPrevious %}
+                    <a class="pagination__link" href="{{ path('app_initiative_index', app.request.query.all|merge({page: pagination.page - 1})) }}">‹</a>
+                {% endif %}
+                {% for p in 1..pagination.pages %}
+                    {% if pagination.pages <= 12 or (p <= 2) or (p >= pagination.pages - 1) or (p >= pagination.page - 2 and p <= pagination.page + 2) %}
+                        <a class="pagination__link {{ p == pagination.page ? 'is-active' }}" href="{{ path('app_initiative_index', app.request.query.all|merge({page: p})) }}">{{ p }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if pagination.hasNext %}
+                    <a class="pagination__link" href="{{ path('app_initiative_index', app.request.query.all|merge({page: pagination.page + 1})) }}">›</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+{% endif %}

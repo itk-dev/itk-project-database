@@ -1,0 +1,312 @@
+app:
+    name: Project database
+
+mascot:
+    label: Your creative buddy
+    close: Close
+    cta: Create a new initiative
+    farewell: "See you around — I'm here whenever you need me! 👋"
+    welcome: "Yay, I'm back! Let's make something together. 🌟"
+    praise: "{1}You've created one initiative — nice start! 🌟|]1,Inf[You've created %count% initiatives — great work! 🌟"
+    finish:
+        almost: "“%title%” is %percent%% done — want to finish it off?"
+        touches: "“%title%” is %percent%% there and just needs its final touches. ✏️"
+        close: "You’re %percent%% through “%title%” — shall we wrap it up?"
+        blanks: "“%title%” is %percent%% filled in — a few blanks to go. 📝"
+        ending: "“%title%” is %percent%% done. Give it the ending it deserves! 🏁"
+        strong: "“%title%” is %percent%% there — let’s finish strong! 💪"
+    finish_cta: Finish it
+    msg:
+        idea: "Got a fresh idea? Let’s give it a home. ✨"
+        roll: "You’re on a roll — what’s next?"
+        bold: "Every great initiative starts with one bold line."
+        creativity: "Your creativity makes all the difference. 🌟"
+        another: "Another initiative? Yes please!"
+        draft: "Don’t let that draft gather dust — wrap it up."
+        future: "Look at you, shaping the future."
+        spark: "Every big change needs a first spark — got one? ⚡"
+        dream: "Dream big. The form can take it. 💭"
+        coffee: "A coffee and five minutes is all an idea needs. ☕"
+        small: "No idea is too small to write down."
+        colleague: "Somewhere a colleague needs exactly your idea. 🤝"
+        today: "Today’s a great day to start something new."
+        create: "Be the one who hits the create button. 🚀"
+        thought: "That thought you keep having? Give it a home here. 📝"
+        momentum: "One idea today, momentum tomorrow."
+        curious: "Curious what you’ll come up with next. 👀"
+    play:
+        invite: "Psst… up for a game of catch? 🌟"
+        start: "Play catch"
+        caught: "Haha, you got me! Now it's my turn 😈"
+        gotcha: "Gotcha! That was fun. Anyway, back to work. 🎉"
+        giveup: "Phew… let's call it a draw. 😅"
+        escaped: "Argh, you got away! Too quick for me. 🏳️"
+
+autosave:
+    saving: Saving…
+    saved: Saved
+    unsaved: Unsaved changes
+    error: Couldn’t save — check the required fields
+    offline: Save failed — your changes are kept here
+    files_hint: Click Upload to add the files
+    completion: Form completion
+    upload_files: Upload files
+
+activity:
+    title: Activity
+    action:
+        created: created
+        updated: updated
+        deleted: deleted
+
+nav:
+    dashboard: Overview
+    initiatives: Initiatives
+    contacts: Contacts
+    departments: Departments
+    users: Users
+    admin: Administration
+    language: Language
+    signed_in_as: Signed in as
+    logout: Sign out
+    mascot_disable: Disable mascot
+    mascot_enable: Enable mascot
+
+action:
+    new: New
+    edit: Edit
+    delete: Delete
+    save: Save
+    cancel: Cancel
+    create: Create
+    back: Back
+    view: View
+    add: Add
+    filter: Filter
+    reset: Reset
+    export: Export CSV
+    add_link: Add link
+    add_contact: Add contact
+    add_image: Add image
+    add_attachment: Add file
+    remove: Remove
+    confirm_delete: Are you sure you want to delete this?
+
+common:
+    yes: Yes
+    no: No
+    none: None
+    actions: Actions
+    created: Created
+    updated: Updated
+    optional: optional
+
+form:
+    choose: Choose …
+    terms:
+        invalid: Invalid values.
+
+filter:
+    search: Search
+    search_placeholder: Search title, description, author …
+    all: All
+    yes: "Yes"
+    no: "No"
+    budget_min: Budget from
+    budget_max: Budget to
+
+dashboard:
+    title: Overview
+    subtitle: The status of every initiative
+    total: Total initiatives
+    total_hint: registered in total
+    in_progress: In progress
+    in_progress_hint: active right now
+    departments_involved: Departments involved
+    departments_involved_hint: with at least one initiative
+    collaboration_count: Possible collaborations
+    collaboration_count_hint: themes across departments
+    by_status: By status
+    recent: Recently created
+    no_status: No status
+    empty: No initiatives have been created yet.
+    themes_heatmap: Themes across departments
+    themes_heatmap_sub: Darker = more initiatives. Marked themes span at least three departments.
+    collaboration: Possible collaboration
+    collaboration_sub: Initiatives in different departments sharing a theme.
+    status_by_dept: Status by department
+    funding_sources: Funding sources
+    budget_by_dept: Budget by department
+    reach: Themes by department reach
+    timeline: Timeline
+
+initiative:
+    title: Title
+    category: Category
+    description: Short description
+    strategies: Strategies and plans
+    initiative_type: Type of initiative
+    status: Status
+    status_additional: Status – additional text
+    organizational_anchoring: Department
+    endorsement: Has the initiative been endorsed
+    endorsement_author: Where it was endorsed
+    budget: Budget (DKK)
+    funding: Funding sources
+    stakeholders: Stakeholders and partners
+    tags: Tags
+    time_period_start: Time period – start
+    time_period_end: Time period – end
+    time_period: Time period
+    links: Relevant links
+    contacts: Contacts
+    new_contacts: Add new contacts
+    author: Filled out by
+    terms_help: Separate multiple values with commas.
+    completion_field_hint: This field counts towards the completion rate.
+    images: Images
+    attachments: Files
+    image_file: Image file
+    image_alt: Alternative text
+    attachment_file: File
+    attachment_invalid_type: "The file type is not allowed (allowed: pdf, doc, docx, xls, xlsx)."
+    index:
+        title: Initiatives
+        subtitle: Search, filter and create initiatives.
+    new:
+        title: New initiative
+    edit:
+        title: Edit initiative
+    show:
+        details: Details
+        contacts: Contacts
+        classification: Classification
+        media: Files and images
+        no_contacts: No contacts attached.
+    empty:
+        title: No initiatives found
+        hint: Try adjusting your filters, or create a new initiative.
+    section:
+        basics: Basics
+        classification: Classification
+        endorsement: Endorsement
+        economy: Economy and time
+        relations: Stakeholders and contacts
+        media: Files and images
+        meta: Other
+
+contact:
+    name: Name
+    email: Email
+    phone: Phone
+    department: Department
+    index:
+        title: Contacts
+        subtitle: People attached to initiatives.
+    new:
+        title: New contact
+    edit:
+        title: Edit contact
+    empty:
+        title: No contacts yet
+        hint: Create a contact, or add one directly on an initiative.
+
+department:
+    name: Name
+    name_duplicate: A department with this name already exists.
+    index:
+        title: Departments
+        subtitle: Organisational anchoring that can be chosen on initiatives.
+    new:
+        title: New department
+    edit:
+        title: Edit department
+    empty:
+        title: No departments yet
+        hint: Create a department so it can be chosen on initiatives.
+
+user:
+    email: Email
+    name: Name
+    roles: Roles
+    password: Password
+    email_duplicate: A user with this email already exists.
+    password_required: Please provide a password.
+    password_too_short: The password must be at least 8 characters.
+    password_help: At least 8 characters. Leave blank to keep the current password.
+
+role:
+    user: User
+    admin: Administrator
+
+admin:
+    users:
+        title: Users
+        subtitle: Manage who can access the platform.
+        new: New user
+        edit: Edit user
+
+login:
+    title: Sign in
+    email: Email
+    password: Password
+    submit: Sign in
+    error: Invalid email or password.
+
+flash:
+    initiative:
+        created: The initiative was created.
+        updated: The initiative was updated.
+        deleted: The initiative was deleted.
+    contact:
+        created: The contact was created.
+        updated: The contact was updated.
+        deleted: The contact was deleted.
+    department:
+        created: The department was created.
+        updated: The department was updated.
+        deleted: The department was deleted.
+    user:
+        created: The user was created.
+        updated: The user was updated.
+        deleted: The user was deleted.
+        cannot_delete_self: You cannot delete your own account.
+
+enum:
+    status:
+        idea: Idea
+        planned: Planned
+        active: Active
+        on_hold: On hold
+        completed: Completed
+        cancelled: Cancelled
+    category:
+        climate: Climate and environment
+        mobility: Mobility
+        welfare: Welfare
+        culture: Culture and leisure
+        education: Education
+        business: Business
+        digitalisation: Digitalisation
+        urban_development: Urban development
+    initiative_type:
+        project: Project
+        programme: Programme
+        policy: Policy
+        pilot: Pilot
+        operation: Operation
+    endorsement_author:
+        city_council: City Council
+        magistrate: The Magistrate
+        committee: Committee
+        department: Department
+    funding:
+        municipal_budget: Municipal budget
+        state_grant: State grant
+        eu_funds: EU funds
+        foundation: Foundation
+        external_partner: External partner
+    vocabulary:
+        tag: Tag
+        stakeholder: Stakeholder
+        strategy: Strategy

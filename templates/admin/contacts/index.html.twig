@@ -1,0 +1,57 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'contact.index.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block admin_content %}
+    <div class="page__header" style="margin-bottom: var(--itk-space-5);">
+        <div>
+            <h1 class="page__title">{{ 'contact.index.title'|trans }}</h1>
+            <p class="page__subtitle">{{ 'contact.index.subtitle'|trans }}</p>
+        </div>
+        <div class="page__actions">
+            <a href="{{ path('admin_contact_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+        </div>
+    </div>
+
+    <div class="card">
+        {% if contacts is empty %}
+            <div class="empty-state">
+                <div class="empty-state__title">{{ 'contact.empty.title'|trans }}</div>
+                <p>{{ 'contact.empty.hint'|trans }}</p>
+            </div>
+        {% else %}
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>{{ 'contact.name'|trans }}</th>
+                            <th>{{ 'contact.department'|trans }}</th>
+                            <th>{{ 'contact.email'|trans }}</th>
+                            <th>{{ 'contact.phone'|trans }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contact in contacts %}
+                            <tr>
+                                <td class="cell-title">{{ contact.name }}</td>
+                                <td>{{ contact.department ?: '—' }}</td>
+                                <td>{% if contact.email %}<a href="mailto:{{ contact.email }}">{{ contact.email }}</a>{% else %}—{% endif %}</td>
+                                <td>{{ contact.phone ?: '—' }}</td>
+                                <td>
+                                    <div class="cell-actions">
+                                        <a href="{{ path('admin_contact_edit', {id: contact.id}) }}" class="btn btn--ghost btn--sm">{{ 'action.edit'|trans }}</a>
+                                        <form method="post" action="{{ path('admin_contact_delete', {id: contact.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete-contact-' ~ contact.id) }}">
+                                            <button type="submit" class="btn btn--danger btn--sm">{{ 'action.delete'|trans }}</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

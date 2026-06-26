@@ -1,0 +1,211 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\Entity;
+
+use App\Entity\Contact;
+use App\Entity\Department;
+use App\Entity\Initiative;
+use App\Entity\InitiativeAttachment;
+use App\Entity\InitiativeImage;
+use App\Entity\Term;
+use App\Enum\Category;
+use App\Enum\EndorsementAuthor;
+use App\Enum\Funding;
+use App\Enum\InitiativeType;
+use App\Enum\Status;
+use App\Enum\Vocabulary;
+use PHPUnit\Framework\TestCase;
+
+final class InitiativeTest extends TestCase
+{
+    public function testDefaults(): void
+    {
+        $initiative = new Initiative();
+
+        self::assertNull($initiative->getTitle());
+        self::assertTrue($initiative->isEndorsement());
+        self::assertSame([], $initiative->getFunding());
+        self::assertSame([], $initiative->getLinks());
+        self::assertCount(0, $initiative->getStrategies());
+        self::assertCount(0, $initiative->getStakeholders());
+        self::assertCount(0, $initiative->getTags());
+        self::assertCount(0, $initiative->getContacts());
+        self::assertCount(0, $initiative->getImages());
+        self::assertCount(0, $initiative->getAttachments());
+        self::assertNull($initiative->getCreatedAt());
+        self::assertNull($initiative->getUpdatedAt());
+        self::assertSame('', (string) $initiative);
+    }
+
+    public function testScalarAccessors(): void
+    {
+        $start = new \DateTimeImmutable('2025-01-01');
+        $end = new \DateTimeImmutable('2025-12-31');
+        $department = (new Department())->setName('Teknik og Miljø');
+
+        $initiative = (new Initiative())
+            ->setTitle('Grøn omstilling')
+            ->setCategory(Category::Climate)
+            ->setDescription('Beskrivelse')
+            ->setInitiativeType(InitiativeType::Project)
+            ->setStatus(Status::Active)
+            ->setStatusAdditional('Igangsat')
+            ->setOrganizationalAnchoring($department)
+            ->setEndorsement(false)
+            ->setEndorsementAuthor(EndorsementAuthor::CityCouncil)
+            ->setBudget(500000)
+            ->setTimePeriodStart($start)
+            ->setTimePeriodEnd($end);
+
+        self::assertSame('Grøn omstilling', $initiative->getTitle());
+        self::assertSame(Category::Climate, $initiative->getCategory());
+        self::assertSame('Beskrivelse', $initiative->getDescription());
+        self::assertSame(InitiativeType::Project, $initiative->getInitiativeType());
+        self::assertSame(Status::Active, $initiative->getStatus());
+        self::assertSame('Igangsat', $initiative->getStatusAdditional());
+        self::assertSame($department, $initiative->getOrganizationalAnchoring());
+        self::assertFalse($initiative->isEndorsement());
+        self::assertSame(EndorsementAuthor::CityCouncil, $initiative->getEndorsementAuthor());
+        self::assertSame(500000, $initiative->getBudget());
+        self::assertSame($start, $initiative->getTimePeriodStart());
+        self::assertSame($end, $initiative->getTimePeriodEnd());
+        self::assertSame('Grøn omstilling', (string) $initiative);
+    }
+
+    public function testCompletionPercentage(): void
+    {
+        self::assertSame(0, (new Initiative())->getCompletionPercentage());
+
+        $full = (new Initiative())
+            ->setTitle('T')
+            ->setCategory(Category::Climate)
+            ->setDescription('D')
+            ->setInitiativeType(InitiativeType::Project)
+            ->setStatus(Status::Active)
+            ->setOrganizationalAnchoring((new Department())->setName('Teknik og Miljø'))
+            ->setEndorsementAuthor(EndorsementAuthor::CityCouncil)
+            ->setBudget(1000)
+            ->setFunding([Funding::EuFunds])
+            ->setTimePeriodStart(new \DateTimeImmutable())
+            ->setTimePeriodEnd(new \DateTimeImmutable());
+
+        self::assertSame(100, $full->getCompletionPercentage());
+    }
+
+    public function testFundingRoundTrip(): void
+    {
+        $initiative = (new Initiative())->setFunding([Funding::MunicipalBudget, Funding::EuFunds]);
+
+        self::assertSame([Funding::MunicipalBudget, Funding::EuFunds], $initiative->getFunding());
+    }
+
+    public function testLinksKeepOnlyHttpUrls(): void
+    {
+        $initiative = (new Initiative())->setLinks([
+            '',
+            'https://ok.example',
+            'javascript:alert(1)',
+            '   ',
+            'http://plain.example',
+        ]);
+
+        self::assertSame(['https://ok.example', 'http://plain.example'], $initiative->getLinks());
+    }
+
+    public function testStrategyCollection(): void
+    {
+        $initiative = new Initiative();
+        $term = new Term(Vocabulary::Strategy);
+
+        $initiative->addStrategy($term);
+        $initiative->addStrategy($term);
+        self::assertCount(1, $initiative->getStrategies());
+
+        $initiative->removeStrategy($term);
+        self::assertCount(0, $initiative->getStrategies());
+
+        $initiative->setStrategies([new Term(Vocabulary::Strategy), new Term(Vocabulary::Strategy)]);
+        self::assertCount(2, $initiative->getStrategies());
+        $initiative->setStrategies([]);
+        self::assertCount(0, $initiative->getStrategies());
+    }
+
+    public function testStakeholderCollection(): void
+    {
+        $initiative = new Initiative();
+        $term = new Term(Vocabulary::Stakeholder);
+
+        $initiative->addStakeholder($term);
+        $initiative->addStakeholder($term);
+        self::assertCount(1, $initiative->getStakeholders());
+
+        $initiative->removeStakeholder($term);
+        self::assertCount(0, $initiative->getStakeholders());
+
+        $initiative->setStakeholders([new Term(Vocabulary::Stakeholder)]);
+        self::assertCount(1, $initiative->getStakeholders());
+        $initiative->setStakeholders([]);
+        self::assertCount(0, $initiative->getStakeholders());
+    }
+
+    public function testTagCollection(): void
+    {
+        $initiative = new Initiative();
+        $term = new Term(Vocabulary::Tag);
+
+        $initiative->addTag($term);
+        $initiative->addTag($term);
+        self::assertCount(1, $initiative->getTags());
+
+        $initiative->removeTag($term);
+        self::assertCount(0, $initiative->getTags());
+
+        $initiative->setTags([new Term(Vocabulary::Tag), new Term(Vocabulary::Tag)]);
+        self::assertCount(2, $initiative->getTags());
+        $initiative->setTags([]);
+        self::assertCount(0, $initiative->getTags());
+    }
+
+    public function testContactCollection(): void
+    {
+        $initiative = new Initiative();
+        $contact = (new Contact())->setName('Anne');
+
+        $initiative->addContact($contact);
+        $initiative->addContact($contact);
+        self::assertCount(1, $initiative->getContacts());
+
+        $initiative->removeContact($contact);
+        self::assertCount(0, $initiative->getContacts());
+    }
+
+    public function testImageCollectionLinksBackToInitiative(): void
+    {
+        $initiative = new Initiative();
+        $image = new InitiativeImage();
+
+        $initiative->addImage($image);
+        $initiative->addImage($image);
+        self::assertCount(1, $initiative->getImages());
+        self::assertSame($initiative, $image->getInitiative());
+
+        $initiative->removeImage($image);
+        self::assertCount(0, $initiative->getImages());
+    }
+
+    public function testAttachmentCollectionLinksBackToInitiative(): void
+    {
+        $initiative = new Initiative();
+        $attachment = new InitiativeAttachment();
+
+        $initiative->addAttachment($attachment);
+        $initiative->addAttachment($attachment);
+        self::assertCount(1, $initiative->getAttachments());
+        self::assertSame($initiative, $attachment->getInitiative());
+
+        $initiative->removeAttachment($attachment);
+        self::assertCount(0, $initiative->getAttachments());
+    }
+}

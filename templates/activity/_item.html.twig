@@ -1,0 +1,9 @@
+<div id="activity-item-{{ id }}" class="recent-item">
+    <div>
+        {% if url %}<a href="{{ url }}" class="recent-item__title">{{ title }}</a>{% else %}<span class="recent-item__title">{{ title }}</span>{% endif %}
+        <div class="recent-item__meta">
+            {%- if actor %}{{ actor }} · {% endif -%}
+            {{ ('activity.action.' ~ action)|trans }} · {{ at|date('d.m.Y H:i') }}
+        </div>
+    </div>
+</div>

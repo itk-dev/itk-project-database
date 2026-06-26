@@ -1,0 +1,13 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'contact.new.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block admin_content %}
+    <div class="page__header" style="margin-bottom: var(--itk-space-5);">
+        <div>
+            <div class="breadcrumb"><a href="{{ path('admin_contacts') }}">{{ 'nav.contacts'|trans }}</a></div>
+            <h1 class="page__title">{{ 'contact.new.title'|trans }}</h1>
+        </div>
+    </div>
+    {{ include('admin/contacts/_form.html.twig', {button_label: 'action.create'}) }}
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'admin.users.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block admin_content %}
+    <div class="page__header" style="margin-bottom: var(--itk-space-5);">
+        <div>
+            <h1 class="page__title">{{ 'admin.users.title'|trans }}</h1>
+            <p class="page__subtitle">{{ 'admin.users.subtitle'|trans }}</p>
+        </div>
+        <div class="page__actions">
+            <a href="{{ path('admin_user_new') }}" class="btn btn--primary">{{ 'admin.users.new'|trans }}</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ 'user.email'|trans }}</th>
+                        <th>{{ 'user.name'|trans }}</th>
+                        <th>{{ 'user.roles'|trans }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td class="cell-title">{{ user.email }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>
+                                <div class="tag-list">
+                                    {% for role in user.roles %}<span class="tag">{{ role }}</span>{% endfor %}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-actions">
+                                    <a href="{{ path('admin_user_edit', {id: user.id}) }}" class="btn btn--ghost btn--sm">{{ 'action.edit'|trans }}</a>
+                                    {% if user.id != app.user.id %}
+                                        <form method="post" action="{{ path('admin_user_delete', {id: user.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete-user-' ~ user.id) }}">
+                                            <button type="submit" class="btn btn--danger btn--sm">{{ 'action.delete'|trans }}</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

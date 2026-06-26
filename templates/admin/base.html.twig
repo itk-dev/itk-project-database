@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% set route = app.request.attributes.get('_route') %}
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin_users') }}" class="admin-sidebar__link {{ route starts with 'admin_user' ? 'is-active' }}">{{ 'nav.users'|trans }}</a>
+            {% endif %}
+            <a href="{{ path('admin_contacts') }}" class="admin-sidebar__link {{ route starts with 'admin_contact' ? 'is-active' }}">{{ 'nav.contacts'|trans }}</a>
+            <a href="{{ path('admin_departments') }}" class="admin-sidebar__link {{ route starts with 'admin_department' ? 'is-active' }}">{{ 'nav.departments'|trans }}</a>
+        </aside>
+        <div>
+            {% block admin_content %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

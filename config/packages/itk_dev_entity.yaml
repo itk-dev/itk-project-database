@@ -1,0 +1,6 @@
+itk_dev_entity:
+  user_class: App\Entity\User
+  blameable:
+    enabled: true
+  timestampable:
+    enabled: true
