@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Contact;
+use App\Entity\Department;
 use App\Entity\Initiative;
 use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType as InitiativeTypeEnum;
-use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
 use App\Enum\Vocabulary;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -79,12 +79,12 @@ class InitiativeType extends AbstractType
                 'required' => false,
                 'attr' => ['rows' => 3],
             ])
-            ->add('organizationalAnchoring', EnumType::class, [
+            ->add('organizationalAnchoring', EntityType::class, [
                 'label' => 'initiative.organizational_anchoring',
-                'class' => OrganizationalAnchoring::class,
+                'class' => Department::class,
+                'choice_label' => 'name',
                 'required' => false,
                 'placeholder' => 'form.choose',
-                'choice_label' => static fn (OrganizationalAnchoring $value): string => $value->labelKey(),
             ])
             ->add('endorsement', CheckboxType::class, [
                 'label' => 'initiative.endorsement',

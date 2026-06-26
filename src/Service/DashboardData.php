@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Department;
 use App\Enum\Category;
 use App\Enum\Funding;
-use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
+use App\Repository\DepartmentRepository;
 use App\Repository\InitiativeRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -21,6 +22,7 @@ final class DashboardData
 {
     public function __construct(
         private readonly InitiativeRepository $initiatives,
+        private readonly DepartmentRepository $departments,
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -30,12 +32,18 @@ final class DashboardData
      */
     public function build(): array
     {
-        $departments = OrganizationalAnchoring::cases();
+        // Departments are managed entities now, so normalise them to the same
+        // {key, label} shape the enums get; the key is the id as a string, which
+        // is what dashboardRows() returns via IDENTITY().
+        $departments = array_map(
+            static fn (Department $department): array => ['key' => (string) $department->getId(), 'label' => (string) $department->getName()],
+            $this->departments->findAllOrdered(),
+        );
         $categories = Category::cases();
         $statuses = Status::cases();
         $fundings = Funding::cases();
 
-        $deptIndex = $this->index($departments);
+        $deptIndex = $this->indexKeys($departments);
         $catIndex = $this->index($categories);
         $statusIndex = $this->index($statuses);
         $fundingIndex = $this->index($fundings);
@@ -114,7 +122,7 @@ final class DashboardData
                 'departmentsTotal' => \count($departments),
                 'collaboration' => $collaborationCount,
             ],
-            'departments' => $this->labelled($departments),
+            'departments' => $departments,
             'categories' => $this->labelled($categories),
             'statuses' => $this->labelled($statuses),
             'fundings' => $this->labelled($fundings),
@@ -134,7 +142,7 @@ final class DashboardData
      * is a candidate for "sammenfald". Ranked by how broadly it spans.
      *
      * @param list<Category>                             $categories
-     * @param list<OrganizationalAnchoring>              $departments
+     * @param list<array{key: string, label: string}>    $departments
      * @param array<string, array<string, list<string>>> $titlesByCategoryDept
      *
      * @return list<array<string, mixed>>
@@ -143,7 +151,7 @@ final class DashboardData
     {
         $deptLabel = [];
         foreach ($departments as $d) {
-            $deptLabel[$d->value] = $this->t($d->labelKey());
+            $deptLabel[$d['key']] = $d['label'];
         }
 
         $opportunities = [];
@@ -219,6 +227,21 @@ final class DashboardData
         $map = [];
         foreach ($cases as $i => $case) {
             $map[$case->value] = $i;
+        }
+
+        return $map;
+    }
+
+    /**
+     * @param list<array{key: string, label: string}> $rows
+     *
+     * @return array<string, int>
+     */
+    private function indexKeys(array $rows): array
+    {
+        $map = [];
+        foreach ($rows as $i => $row) {
+            $map[$row['key']] = $i;
         }
 
         return $map;

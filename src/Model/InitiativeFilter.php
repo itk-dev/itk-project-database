@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use App\Entity\Department;
 use App\Enum\Category;
 use App\Enum\InitiativeType;
-use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
 
 /**
@@ -23,7 +23,7 @@ class InitiativeFilter
 
     public ?InitiativeType $initiativeType = null;
 
-    public ?OrganizationalAnchoring $organizationalAnchoring = null;
+    public ?Department $organizationalAnchoring = null;
 
     public ?bool $endorsement = null;
 

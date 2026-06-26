@@ -9,7 +9,6 @@ use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
-use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
 use App\Enum\TranslatableEnum;
 use App\Model\InitiativeFilter;
@@ -53,6 +52,9 @@ class InitiativeRepository extends ServiceEntityRepository
                 sprintf('i.id IN (SELECT istr.id FROM %s istr JOIN istr.strategies st WHERE LOWER(st.name) LIKE :q)', Initiative::class),
                 sprintf('i.id IN (SELECT isth.id FROM %s isth JOIN isth.stakeholders sh WHERE LOWER(sh.name) LIKE :q)', Initiative::class),
                 sprintf('i.id IN (SELECT icon.id FROM %s icon JOIN icon.contacts co WHERE LOWER(co.name) LIKE :q)', Initiative::class),
+                // Department is a related entity searched by its stored name
+                // ("nik" should find "Teknik og Miljø").
+                sprintf('i.id IN (SELECT idep.id FROM %s idep JOIN idep.organizationalAnchoring dep WHERE LOWER(dep.name) LIKE :q)', Initiative::class),
             ];
 
             // Enum columns store slugs, but the user searches their translated
@@ -61,7 +63,6 @@ class InitiativeRepository extends ServiceEntityRepository
                 'status' => Status::cases(),
                 'category' => Category::cases(),
                 'initiativeType' => InitiativeType::cases(),
-                'organizationalAnchoring' => OrganizationalAnchoring::cases(),
                 'endorsementAuthor' => EndorsementAuthor::cases(),
             ];
             foreach ($enumFields as $field => $cases) {
@@ -95,7 +96,7 @@ class InitiativeRepository extends ServiceEntityRepository
         }
 
         if (null !== $filter->organizationalAnchoring) {
-            $qb->andWhere('i.organizationalAnchoring = :anchoring')->setParameter('anchoring', $filter->organizationalAnchoring->value);
+            $qb->andWhere('i.organizationalAnchoring = :anchoring')->setParameter('anchoring', $filter->organizationalAnchoring);
         }
 
         if (null !== $filter->endorsement) {
@@ -248,17 +249,21 @@ class InitiativeRepository extends ServiceEntityRepository
      */
     public function dashboardRows(): array
     {
+        // Join and select the department id (rather than IDENTITY()) so Doctrine
+        // applies the ULID type: IDENTITY() returns the raw binary FK, which would
+        // not match the canonical ULID strings the rest of build() keys on.
         return $this->createQueryBuilder('i')
             ->select(
                 'i.title',
                 'i.category',
                 'i.status',
-                'i.organizationalAnchoring',
+                'department.id AS organizationalAnchoring',
                 'i.budget',
                 'i.funding',
                 'i.timePeriodStart',
                 'i.timePeriodEnd',
             )
+            ->leftJoin('i.organizationalAnchoring', 'department')
             ->getQuery()
             ->getArrayResult();
     }

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Department;
 use App\Enum\Category;
 use App\Enum\InitiativeType as InitiativeTypeEnum;
-use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
 use App\Model\InitiativeFilter;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -52,12 +53,12 @@ class InitiativeFilterType extends AbstractType
                 'placeholder' => 'filter.all',
                 'choice_label' => static fn (InitiativeTypeEnum $value): string => $value->labelKey(),
             ])
-            ->add('organizationalAnchoring', EnumType::class, [
+            ->add('organizationalAnchoring', EntityType::class, [
                 'label' => 'initiative.organizational_anchoring',
-                'class' => OrganizationalAnchoring::class,
+                'class' => Department::class,
+                'choice_label' => 'name',
                 'required' => false,
                 'placeholder' => 'filter.all',
-                'choice_label' => static fn (OrganizationalAnchoring $value): string => $value->labelKey(),
             ])
             ->add('endorsement', ChoiceType::class, [
                 'label' => 'initiative.endorsement',

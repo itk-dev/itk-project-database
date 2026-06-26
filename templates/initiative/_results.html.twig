@@ -51,7 +51,7 @@
                             {% endif %}
                         </td>
                         <td>{{ initiative.initiativeType ? initiative.initiativeType.labelKey|trans : '—' }}</td>
-                        <td>{{ initiative.organizationalAnchoring ? initiative.organizationalAnchoring.labelKey|trans : '—' }}</td>
+                        <td>{{ initiative.organizationalAnchoring ? initiative.organizationalAnchoring.name : '—' }}</td>
                         <td>
                             {% if initiative.timePeriodStart %}
                                 {{ initiative.timePeriodStart|date('d.m.Y') }}{% if initiative.timePeriodEnd %} – {{ initiative.timePeriodEnd|date('d.m.Y') }}{% endif %}

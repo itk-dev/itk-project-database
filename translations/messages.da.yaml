@@ -63,6 +63,7 @@ nav:
     dashboard: Overblik
     initiatives: Initiativer
     contacts: Kontaktpersoner
+    departments: Afdelinger
     users: Brugere
     admin: Administration
     language: Sprog
@@ -147,7 +148,7 @@ initiative:
     initiative_type: Initiativets karakter
     status: Status
     status_additional: Status – supplerende tekst
-    organizational_anchoring: Organisatorisk forankring
+    organizational_anchoring: Afdeling
     endorsement: Er initiativet vedtaget
     endorsement_author: Hvor er det vedtaget
     budget: Budget (kr.)
@@ -210,6 +211,20 @@ contact:
         title: Ingen kontaktpersoner endnu
         hint: Opret en kontaktperson, eller tilføj en direkte på et initiativ.
 
+department:
+    name: Navn
+    name_duplicate: Der findes allerede en afdeling med dette navn.
+    index:
+        title: Afdelinger
+        subtitle: Organisatorisk forankring der kan vælges på initiativer.
+    new:
+        title: Ny afdeling
+    edit:
+        title: Rediger afdeling
+    empty:
+        title: Ingen afdelinger endnu
+        hint: Opret en afdeling, så den kan vælges på initiativer.
+
 user:
     email: E-mail
     name: Navn
@@ -247,6 +262,10 @@ flash:
         created: Kontaktpersonen blev oprettet.
         updated: Kontaktpersonen blev opdateret.
         deleted: Kontaktpersonen blev slettet.
+    department:
+        created: Afdelingen blev oprettet.
+        updated: Afdelingen blev opdateret.
+        deleted: Afdelingen blev slettet.
     user:
         created: Brugeren blev oprettet.
         updated: Brugeren blev opdateret.
@@ -276,13 +295,6 @@ enum:
         policy: Politik
         pilot: Pilot
         operation: Drift
-    organizational_anchoring:
-        mayors_department: Borgmesterens Afdeling
-        technical_and_environment: Teknik og Miljø
-        culture_and_citizens: Kultur og Borgerservice
-        social_and_employment: Sociale Forhold og Beskæftigelse
-        children_and_youth: Børn og Unge
-        health_and_care: Sundhed og Omsorg
     endorsement_author:
         city_council: Byrådet
         magistrate: Magistraten

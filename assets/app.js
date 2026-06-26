@@ -1,20 +1,6 @@
 import "./stimulus_bootstrap.js";
 import TomSelect from "tom-select";
 
-function initUserMenu() {
-    const toggle = document.getElementById("userMenuToggle");
-    const menu = document.getElementById("userMenu");
-    if (!toggle || !menu || toggle.dataset.bound) {
-        return;
-    }
-    toggle.dataset.bound = "1";
-
-    toggle.addEventListener("click", (event) => {
-        event.stopPropagation();
-        menu.classList.toggle("is-open");
-    });
-}
-
 function initCollections() {
     document.querySelectorAll("[data-collection]").forEach((collection) => {
         if (collection.dataset.bound) {
@@ -75,12 +61,22 @@ function initContactSelect() {
     });
 }
 
-// The document survives Turbo navigations, so the outside-click handler is
-// registered once here rather than re-added on every page.
+// One delegated handler on the document (which survives Turbo navigations and
+// cache restores) both opens the menu — when the click lands on the toggle —
+// and closes it on any outside click. Delegation avoids per-page binding, which
+// breaks when Turbo restores a cached <body> whose toggle still carries the
+// "bound" marker but has lost its (never-cached) listener.
 document.addEventListener("click", (event) => {
     const menu = document.getElementById("userMenu");
+    if (!menu) {
+        return;
+    }
     const toggle = document.getElementById("userMenuToggle");
-    if (menu && !menu.contains(event.target) && event.target !== toggle) {
+    if (toggle && toggle.contains(event.target)) {
+        menu.classList.toggle("is-open");
+        return;
+    }
+    if (!menu.contains(event.target)) {
         menu.classList.remove("is-open");
     }
 });
@@ -88,7 +84,6 @@ document.addEventListener("click", (event) => {
 // Turbo Drive swaps <body> on each visit and never fires DOMContentLoaded;
 // turbo:load runs on the first load and on every subsequent visit.
 document.addEventListener("turbo:load", () => {
-    initUserMenu();
     initCollections();
     initContactSelect();
 });

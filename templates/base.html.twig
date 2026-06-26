@@ -25,7 +25,6 @@
                 <div class="top-nav__menu">
                     <a href="{{ path('app_dashboard') }}" class="top-nav__link {{ route == 'app_dashboard' ? 'is-active' }}">{{ 'nav.dashboard'|trans }}</a>
                     <a href="{{ path('app_initiative_index') }}" class="top-nav__link {{ route starts with 'app_initiative' ? 'is-active' }}">{{ 'nav.initiatives'|trans }}</a>
-                    <a href="{{ path('app_contact_index') }}" class="top-nav__link {{ route starts with 'app_contact' ? 'is-active' }}">{{ 'nav.contacts'|trans }}</a>
                 </div>
                 <div class="top-nav__right">
                     <div class="top-nav__menu-anchor">
@@ -46,9 +45,7 @@
                                     <a href="{{ path('app_locale', {locale: 'en', return: app.request.requestUri}) }}" class="lang-toggle__option {{ app.request.locale == 'en' ? 'lang-toggle__option--active' }}">EN</a>
                                 </div>
                             </div>
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path('admin_users') }}" class="user-menu__link">{{ 'nav.admin'|trans }}</a>
-                            {% endif %}
+                            <a href="{{ path(is_granted('ROLE_ADMIN') ? 'admin_users' : 'admin_contacts') }}" class="user-menu__link">{{ 'nav.admin'|trans }}</a>
                             <form id="mascotToggleForm" method="post" action="{{ path('app_settings_mascot_toggle') }}" class="user-menu__form">
                                 <input type="hidden" name="_token" value="{{ csrf_token('toggle-mascot') }}">
                                 <input type="hidden" name="return" value="{{ app.request.requestUri }}">

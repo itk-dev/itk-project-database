@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Contact;
+use App\Entity\Department;
 use App\Entity\Initiative;
 use App\Entity\Term;
 use App\Entity\User;
@@ -12,7 +13,6 @@ use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
-use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
 use App\Enum\Vocabulary;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -24,6 +24,7 @@ class AppFixtures extends Fixture
     private const array TAGS = ['Bæredygtighed', 'Borgerinddragelse', 'Innovation', 'Sundhed', 'Klima', 'Mobilitet', 'Data', 'Tryghed', 'Læring', 'Fællesskab'];
     private const array STAKEHOLDERS = ['Aarhus Kommune', 'Region Midtjylland', 'Aarhus Universitet', 'Erhverv Aarhus', 'Lokale foreninger', 'Boligforeninger', 'VIA University College', 'Business Region Aarhus'];
     private const array STRATEGIES = ['Klimaplan 2030', 'Erhvervsplan', 'Børn- og ungepolitik', 'Mobilitetsplan', 'Digitaliseringsstrategi', 'Sundhedspolitik'];
+    private const array DEPARTMENTS = ['ITK Development', 'CFIA', 'Aarhus CityLab', 'Stab', 'OS2', 'AI Lab', 'IOT Lab', 'GTM', 'Fut Lab'];
 
     public function __construct(private readonly UserPasswordHasherInterface $hasher)
     {
@@ -53,17 +54,23 @@ class AppFixtures extends Fixture
         $stakeholders = $this->makeTerms($manager, self::STAKEHOLDERS, Vocabulary::Stakeholder);
         $strategies = $this->makeTerms($manager, self::STRATEGIES, Vocabulary::Strategy);
 
+        $departments = [];
+        foreach (self::DEPARTMENTS as $name) {
+            $department = (new Department())->setName($name);
+            $manager->persist($department);
+            $departments[] = $department;
+        }
+
         $contacts = [];
         $firstNames = ['Anne', 'Mette', 'Lars', 'Søren', 'Camilla', 'Jens', 'Ida', 'Mads', 'Sofie', 'Peter', 'Louise', 'Thomas'];
         $lastNames = ['Jensen', 'Nielsen', 'Hansen', 'Pedersen', 'Andersen', 'Christensen', 'Larsen', 'Sørensen'];
-        $departments = ['Borgmesterens Afdeling', 'Teknik og Miljø', 'Kultur og Borgerservice', 'Sociale Forhold og Beskæftigelse', 'Børn og Unge', 'Sundhed og Omsorg'];
         for ($i = 0; $i < 14; ++$i) {
             $name = $firstNames[array_rand($firstNames)].' '.$lastNames[array_rand($lastNames)];
             $contact = (new Contact())
                 ->setName($name)
                 ->setEmail(strtolower(str_replace(' ', '.', $this->ascii($name))).'@aarhus.dk')
                 ->setPhone('+45 '.mt_rand(20, 99).' '.mt_rand(10, 99).' '.mt_rand(10, 99).' '.mt_rand(10, 99))
-                ->setDepartment($departments[array_rand($departments)]);
+                ->setDepartment(self::DEPARTMENTS[array_rand(self::DEPARTMENTS)]);
             $manager->persist($contact);
             $contacts[] = $contact;
         }
@@ -98,7 +105,6 @@ class AppFixtures extends Fixture
         $statuses = Status::cases();
         $categories = Category::cases();
         $types = InitiativeType::cases();
-        $anchorings = OrganizationalAnchoring::cases();
         $endorsers = EndorsementAuthor::cases();
         $fundings = Funding::cases();
 
@@ -108,7 +114,7 @@ class AppFixtures extends Fixture
                 ->setCategory($categories[array_rand($categories)])
                 ->setInitiativeType($types[array_rand($types)])
                 ->setStatus($statuses[array_rand($statuses)])
-                ->setOrganizationalAnchoring($anchorings[array_rand($anchorings)])
+                ->setOrganizationalAnchoring($departments[array_rand($departments)])
                 ->setDescription('Initiativet arbejder med '.mb_strtolower($title).' gennem en tværgående indsats med fokus på borgernes hverdag og kommunens strategiske mål.')
                 ->setEndorsement(0 === $index % 3 ? false : true)
                 ->setBudget(mt_rand(1, 40) * 50000);

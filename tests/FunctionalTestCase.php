@@ -6,6 +6,7 @@ namespace App\Tests;
 
 use App\Entity\User;
 use App\Repository\ContactRepository;
+use App\Repository\DepartmentRepository;
 use App\Repository\InitiativeRepository;
 use App\Repository\TermRepository;
 use App\Repository\UserRepository;
@@ -56,6 +57,14 @@ abstract class FunctionalTestCase extends WebTestCase
     {
         $repository = static::getContainer()->get(ContactRepository::class);
         \assert($repository instanceof ContactRepository);
+
+        return $repository;
+    }
+
+    protected function departments(): DepartmentRepository
+    {
+        $repository = static::getContainer()->get(DepartmentRepository::class);
+        \assert($repository instanceof DepartmentRepository);
 
         return $repository;
     }

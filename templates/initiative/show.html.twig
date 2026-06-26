@@ -103,7 +103,7 @@
                         <dd>{{ initiative.initiativeType ? initiative.initiativeType.labelKey|trans : '—' }}</dd>
 
                         <dt>{{ 'initiative.organizational_anchoring'|trans }}</dt>
-                        <dd>{{ initiative.organizationalAnchoring ? initiative.organizationalAnchoring.labelKey|trans : '—' }}</dd>
+                        <dd>{{ initiative.organizationalAnchoring ? initiative.organizationalAnchoring.name : '—' }}</dd>
 
                         <dt>{{ 'initiative.endorsement'|trans }}</dt>
                         <dd>{{ initiative.endorsement ? 'common.yes'|trans : 'common.no'|trans }}{% if initiative.endorsementAuthor %} · {{ initiative.endorsementAuthor.labelKey|trans }}{% endif %}</dd>

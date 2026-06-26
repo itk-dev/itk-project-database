@@ -63,6 +63,7 @@ nav:
     dashboard: Overview
     initiatives: Initiatives
     contacts: Contacts
+    departments: Departments
     users: Users
     admin: Administration
     language: Language
@@ -147,7 +148,7 @@ initiative:
     initiative_type: Type of initiative
     status: Status
     status_additional: Status – additional text
-    organizational_anchoring: Organisational anchoring
+    organizational_anchoring: Department
     endorsement: Has the initiative been endorsed
     endorsement_author: Where it was endorsed
     budget: Budget (DKK)
@@ -210,6 +211,20 @@ contact:
         title: No contacts yet
         hint: Create a contact, or add one directly on an initiative.
 
+department:
+    name: Name
+    name_duplicate: A department with this name already exists.
+    index:
+        title: Departments
+        subtitle: Organisational anchoring that can be chosen on initiatives.
+    new:
+        title: New department
+    edit:
+        title: Edit department
+    empty:
+        title: No departments yet
+        hint: Create a department so it can be chosen on initiatives.
+
 user:
     email: Email
     name: Name
@@ -247,6 +262,10 @@ flash:
         created: The contact was created.
         updated: The contact was updated.
         deleted: The contact was deleted.
+    department:
+        created: The department was created.
+        updated: The department was updated.
+        deleted: The department was deleted.
     user:
         created: The user was created.
         updated: The user was updated.
@@ -276,13 +295,6 @@ enum:
         policy: Policy
         pilot: Pilot
         operation: Operation
-    organizational_anchoring:
-        mayors_department: Mayor's Department
-        technical_and_environment: Technical Services and Environment
-        culture_and_citizens: Culture and Citizens' Services
-        social_and_employment: Social Affairs and Employment
-        children_and_youth: Children and Young People
-        health_and_care: Health and Care
     endorsement_author:
         city_council: City Council
         magistrate: The Magistrate

@@ -8,7 +8,6 @@ use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
-use App\Enum\OrganizationalAnchoring;
 use App\Enum\Status;
 use App\Enum\TranslatableEnum;
 use App\Enum\Vocabulary;
@@ -22,7 +21,6 @@ final class TranslatableEnumTest extends TestCase
         $this->assertLabelKeys(EndorsementAuthor::cases(), 'enum.endorsement_author.');
         $this->assertLabelKeys(Funding::cases(), 'enum.funding.');
         $this->assertLabelKeys(InitiativeType::cases(), 'enum.initiative_type.');
-        $this->assertLabelKeys(OrganizationalAnchoring::cases(), 'enum.organizational_anchoring.');
         $this->assertLabelKeys(Status::cases(), 'enum.status.');
         $this->assertLabelKeys(Vocabulary::cases(), 'enum.vocabulary.');
     }
