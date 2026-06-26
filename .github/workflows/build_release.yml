@@ -29,7 +29,7 @@ jobs:
 
             - name: Building assets for the frontend
               run: |
-                  docker compose run --rm --user=root phpfpm bin/console asset-map:compile
+                  docker compose run --rm -e APP_ENV=prod phpfpm bin/console asset-map:compile
 
             - name: Clean up
               run: |
