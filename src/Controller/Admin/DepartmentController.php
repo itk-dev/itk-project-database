@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/departments')]
@@ -44,7 +45,7 @@ class DepartmentController extends AbstractController
         return $this->render('admin/departments/new.html.twig', ['form' => $form]);
     }
 
-    #[Route('/{id}/edit', name: 'admin_department_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'admin_department_edit', requirements: ['id' => Requirement::ULID], methods: ['GET', 'POST'])]
     public function edit(Request $request, Department $department, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(DepartmentType::class, $department);
@@ -63,7 +64,7 @@ class DepartmentController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'admin_department_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'admin_department_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     public function delete(Request $request, Department $department, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete-department-'.$department->getId(), (string) $request->request->get('_token'))) {

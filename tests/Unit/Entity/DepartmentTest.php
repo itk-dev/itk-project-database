@@ -13,7 +13,6 @@ final class DepartmentTest extends TestCase
     {
         $department = new Department();
 
-        self::assertNull($department->getId());
         self::assertNull($department->getName());
         self::assertSame('', (string) $department);
     }

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260626122921 extends AbstractMigration
+final class Version20260626175808 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,8 +21,8 @@ final class Version20260626122921 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE contact (id BINARY(16) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, name VARCHAR(255) NOT NULL, email VARCHAR(255) DEFAULT NULL, phone VARCHAR(64) DEFAULT NULL, department VARCHAR(255) DEFAULT NULL, created_by_id BINARY(16) DEFAULT NULL, modified_by_id BINARY(16) DEFAULT NULL, INDEX IDX_4C62E638B03A8386 (created_by_id), INDEX IDX_4C62E63899049ECE (modified_by_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
-        $this->addSql('CREATE TABLE department (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_CD1DE18A5E237E06 (name), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
-        $this->addSql('CREATE TABLE initiative (id BINARY(16) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, title VARCHAR(255) NOT NULL, category VARCHAR(32) DEFAULT NULL, description LONGTEXT DEFAULT NULL, initiative_type VARCHAR(32) DEFAULT NULL, status VARCHAR(32) DEFAULT NULL, status_additional LONGTEXT DEFAULT NULL, endorsement TINYINT NOT NULL, endorsement_author VARCHAR(32) DEFAULT NULL, budget INT DEFAULT NULL, funding JSON NOT NULL, time_period_start DATE DEFAULT NULL, time_period_end DATE DEFAULT NULL, links JSON NOT NULL, created_by_id BINARY(16) DEFAULT NULL, modified_by_id BINARY(16) DEFAULT NULL, organizational_anchoring_id INT DEFAULT NULL, INDEX IDX_E115DEFEB03A8386 (created_by_id), INDEX IDX_E115DEFE99049ECE (modified_by_id), INDEX IDX_E115DEFEA0A5E935 (organizational_anchoring_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE department (id BINARY(16) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, name VARCHAR(255) NOT NULL, created_by_id BINARY(16) DEFAULT NULL, modified_by_id BINARY(16) DEFAULT NULL, UNIQUE INDEX UNIQ_CD1DE18A5E237E06 (name), INDEX IDX_CD1DE18AB03A8386 (created_by_id), INDEX IDX_CD1DE18A99049ECE (modified_by_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE initiative (id BINARY(16) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, title VARCHAR(255) NOT NULL, category VARCHAR(32) DEFAULT NULL, description LONGTEXT DEFAULT NULL, initiative_type VARCHAR(32) DEFAULT NULL, status VARCHAR(32) DEFAULT NULL, status_additional LONGTEXT DEFAULT NULL, endorsement TINYINT NOT NULL, endorsement_author VARCHAR(32) DEFAULT NULL, budget INT DEFAULT NULL, funding JSON NOT NULL, time_period_start DATE DEFAULT NULL, time_period_end DATE DEFAULT NULL, links JSON NOT NULL, created_by_id BINARY(16) DEFAULT NULL, modified_by_id BINARY(16) DEFAULT NULL, organizational_anchoring_id BINARY(16) DEFAULT NULL, INDEX IDX_E115DEFEB03A8386 (created_by_id), INDEX IDX_E115DEFE99049ECE (modified_by_id), INDEX IDX_E115DEFEA0A5E935 (organizational_anchoring_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE initiative_strategy (initiative_id BINARY(16) NOT NULL, term_id BINARY(16) NOT NULL, INDEX IDX_9FDB07E5AB7D9771 (initiative_id), INDEX IDX_9FDB07E5E2C35FC (term_id), PRIMARY KEY (initiative_id, term_id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE initiative_contact (initiative_id BINARY(16) NOT NULL, contact_id BINARY(16) NOT NULL, INDEX IDX_6F980462AB7D9771 (initiative_id), INDEX IDX_6F980462E7A1254A (contact_id), PRIMARY KEY (initiative_id, contact_id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE initiative_stakeholder (initiative_id BINARY(16) NOT NULL, term_id BINARY(16) NOT NULL, INDEX IDX_C97AB0E7AB7D9771 (initiative_id), INDEX IDX_C97AB0E7E2C35FC (term_id), PRIMARY KEY (initiative_id, term_id)) DEFAULT CHARACTER SET utf8mb4');
@@ -33,6 +33,8 @@ final class Version20260626122921 extends AbstractMigration
         $this->addSql('CREATE TABLE `user` (id BINARY(16) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, email VARCHAR(180) NOT NULL, name VARCHAR(255) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, user_settings JSON NOT NULL, created_by_id BINARY(16) DEFAULT NULL, modified_by_id BINARY(16) DEFAULT NULL, UNIQUE INDEX UNIQ_8D93D649E7927C74 (email), INDEX IDX_8D93D649B03A8386 (created_by_id), INDEX IDX_8D93D64999049ECE (modified_by_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('ALTER TABLE contact ADD CONSTRAINT FK_4C62E638B03A8386 FOREIGN KEY (created_by_id) REFERENCES `user` (id) ON DELETE SET NULL');
         $this->addSql('ALTER TABLE contact ADD CONSTRAINT FK_4C62E63899049ECE FOREIGN KEY (modified_by_id) REFERENCES `user` (id) ON DELETE SET NULL');
+        $this->addSql('ALTER TABLE department ADD CONSTRAINT FK_CD1DE18AB03A8386 FOREIGN KEY (created_by_id) REFERENCES `user` (id) ON DELETE SET NULL');
+        $this->addSql('ALTER TABLE department ADD CONSTRAINT FK_CD1DE18A99049ECE FOREIGN KEY (modified_by_id) REFERENCES `user` (id) ON DELETE SET NULL');
         $this->addSql('ALTER TABLE initiative ADD CONSTRAINT FK_E115DEFEB03A8386 FOREIGN KEY (created_by_id) REFERENCES `user` (id) ON DELETE SET NULL');
         $this->addSql('ALTER TABLE initiative ADD CONSTRAINT FK_E115DEFE99049ECE FOREIGN KEY (modified_by_id) REFERENCES `user` (id) ON DELETE SET NULL');
         $this->addSql('ALTER TABLE initiative ADD CONSTRAINT FK_E115DEFEA0A5E935 FOREIGN KEY (organizational_anchoring_id) REFERENCES department (id) ON DELETE SET NULL');
@@ -61,6 +63,8 @@ final class Version20260626122921 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE contact DROP FOREIGN KEY FK_4C62E638B03A8386');
         $this->addSql('ALTER TABLE contact DROP FOREIGN KEY FK_4C62E63899049ECE');
+        $this->addSql('ALTER TABLE department DROP FOREIGN KEY FK_CD1DE18AB03A8386');
+        $this->addSql('ALTER TABLE department DROP FOREIGN KEY FK_CD1DE18A99049ECE');
         $this->addSql('ALTER TABLE initiative DROP FOREIGN KEY FK_E115DEFEB03A8386');
         $this->addSql('ALTER TABLE initiative DROP FOREIGN KEY FK_E115DEFE99049ECE');
         $this->addSql('ALTER TABLE initiative DROP FOREIGN KEY FK_E115DEFEA0A5E935');

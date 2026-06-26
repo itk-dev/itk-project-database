@@ -31,14 +31,14 @@ final class DepartmentControllerTest extends FunctionalTestCase
 
         $department = $this->departments()->findOneBy(['name' => $name]);
         self::assertInstanceOf(Department::class, $department);
-        $this->removeDepartment((int) $department->getId());
+        $this->removeDepartment((string) $department->getId());
     }
 
     public function testNewRejectsADuplicateName(): void
     {
         $this->loginAsAdmin();
         $name = 'Duplicate Department '.uniqid();
-        $id = (int) $this->createDepartment($name)->getId();
+        $id = (string) $this->createDepartment($name)->getId();
 
         $crawler = $this->client->request('GET', '/admin/departments/new');
         $form = $crawler->filter('button.btn--primary')->form(['department[name]' => $name]);
@@ -55,9 +55,9 @@ final class DepartmentControllerTest extends FunctionalTestCase
     public function testEditUpdatesDepartment(): void
     {
         $this->loginAsAdmin();
-        $id = (int) $this->createDepartment('Editable Department '.uniqid())->getId();
+        $id = (string) $this->createDepartment('Editable Department '.uniqid())->getId();
 
-        $crawler = $this->client->request('GET', sprintf('/admin/departments/%d/edit', $id));
+        $crawler = $this->client->request('GET', sprintf('/admin/departments/%s/edit', $id));
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->filter('button.btn--primary')->form(['department[name]' => 'Edited Department '.uniqid()]);
@@ -70,9 +70,9 @@ final class DepartmentControllerTest extends FunctionalTestCase
     public function testDeleteRemovesDepartmentWithAValidToken(): void
     {
         $this->loginAsAdmin();
-        $id = (int) $this->createDepartment('Deletable Department '.uniqid())->getId();
+        $id = (string) $this->createDepartment('Deletable Department '.uniqid())->getId();
 
-        $crawler = $this->client->request('GET', sprintf('/admin/departments/%d/edit', $id));
+        $crawler = $this->client->request('GET', sprintf('/admin/departments/%s/edit', $id));
         $form = $crawler->filter('form[action$="/delete"]')->form();
         $this->client->submit($form);
 
@@ -84,9 +84,9 @@ final class DepartmentControllerTest extends FunctionalTestCase
     public function testDeleteIgnoresAnInvalidToken(): void
     {
         $this->loginAsAdmin();
-        $id = (int) $this->createDepartment('Surviving Department '.uniqid())->getId();
+        $id = (string) $this->createDepartment('Surviving Department '.uniqid())->getId();
 
-        $this->client->request('POST', sprintf('/admin/departments/%d/delete', $id), ['_token' => 'invalid']);
+        $this->client->request('POST', sprintf('/admin/departments/%s/delete', $id), ['_token' => 'invalid']);
 
         $this->assertResponseRedirects('/admin/departments');
         $this->entityManager()->clear();
@@ -104,7 +104,7 @@ final class DepartmentControllerTest extends FunctionalTestCase
         return $department;
     }
 
-    private function removeDepartment(int $id): void
+    private function removeDepartment(string $id): void
     {
         $this->entityManager()->clear();
         $department = $this->departments()->find($id);
