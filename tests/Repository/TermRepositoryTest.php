@@ -36,7 +36,6 @@ final class TermRepositoryTest extends KernelTestCase
         $term = $this->repository->findOrCreate('klima', Vocabulary::Tag);
 
         self::assertSame('Klima', $term->getName());
-        self::assertNotNull($term->getId());
     }
 
     public function testFindOrCreateBuildsANewUnflushedTerm(): void
@@ -47,6 +46,6 @@ final class TermRepositoryTest extends KernelTestCase
 
         self::assertSame($name, $term->getName());
         self::assertSame(Vocabulary::Strategy, $term->getVocabulary());
-        self::assertNull($term->getId(), 'A freshly created term is persisted but not yet flushed.');
+        self::assertCount(0, $this->repository->findBy(['name' => $name]), 'A freshly created term is not yet flushed to the database.');
     }
 }

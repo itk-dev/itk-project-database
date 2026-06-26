@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/users')]
@@ -48,7 +49,7 @@ class UserController extends AbstractController
         return $this->render('admin/users/new.html.twig', ['form' => $form]);
     }
 
-    #[Route('/{id}/edit', name: 'admin_user_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'admin_user_edit', requirements: ['id' => Requirement::ULID], methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $hasher): Response
     {
         $form = $this->createForm(UserType::class, $user, ['require_password' => false]);
@@ -71,7 +72,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'admin_user_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'admin_user_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         if ($user === $this->getUser()) {

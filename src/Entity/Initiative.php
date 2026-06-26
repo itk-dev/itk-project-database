@@ -15,18 +15,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use ITKDev\EntityBundle\Entity\Contract\BlameableInterface;
-use ITKDev\EntityBundle\Entity\Contract\TimestampableInterface;
-use ITKDev\EntityBundle\Entity\Trait\BlameableTrait;
-use ITKDev\EntityBundle\Entity\Trait\TimestampableTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: InitiativeRepository::class)]
-class Initiative implements BlameableInterface, TimestampableInterface
+class Initiative extends AbstractEntity
 {
-    use BlameableTrait;
-    use TimestampableTrait;
-
     /**
      * Fields that count toward {@see getCompletionPercentage()} and the client-side
      * progress bar. Limited to the initiative's own columns so list rendering stays
@@ -39,11 +32,6 @@ class Initiative implements BlameableInterface, TimestampableInterface
         'organizationalAnchoring', 'endorsementAuthor',
         'budget', 'funding', 'timePeriodStart', 'timePeriodEnd',
     ];
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
 
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
@@ -125,17 +113,13 @@ class Initiative implements BlameableInterface, TimestampableInterface
 
     public function __construct()
     {
+        parent::__construct();
         $this->strategies = new ArrayCollection();
         $this->contacts = new ArrayCollection();
         $this->stakeholders = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->attachments = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getTitle(): ?string

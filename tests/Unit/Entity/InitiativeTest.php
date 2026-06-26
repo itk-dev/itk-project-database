@@ -24,7 +24,6 @@ final class InitiativeTest extends TestCase
     {
         $initiative = new Initiative();
 
-        self::assertNull($initiative->getId());
         self::assertNull($initiative->getTitle());
         self::assertTrue($initiative->isEndorsement());
         self::assertSame([], $initiative->getFunding());
