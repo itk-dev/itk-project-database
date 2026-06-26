@@ -1,0 +1,5 @@
+# Session-based CSRF protection for forms and logins/logouts.
+# Stateless CSRF needs the Stimulus csrf_protection_controller.js to resolve the
+# token client-side; this branch ships no Stimulus, so use session-based tokens.
+framework:
+    csrf_protection: true

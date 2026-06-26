@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'dashboard.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="page">
+        <div class="page__header">
+            <div>
+                <h1 class="page__title">{{ 'dashboard.title'|trans }}</h1>
+                <p class="page__subtitle">{{ 'dashboard.subtitle'|trans }}</p>
+            </div>
+            <div class="page__actions">
+                <a href="{{ path('app_initiative_index') }}" class="btn btn--ghost">{{ 'nav.initiatives'|trans }}</a>
+                <a href="{{ path('app_initiative_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+            </div>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-card__label">{{ 'dashboard.total'|trans }}</div>
+                <div class="stat-card__value">{{ total }}</div>
+            </div>
+            <div class="stat-card stat-card--accent">
+                <div class="stat-card__label">{{ 'nav.contacts'|trans }}</div>
+                <div class="stat-card__value">{{ contactCount }}</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.recent'|trans }}</span>
+                    <a href="{{ path('app_initiative_index') }}" class="btn btn--ghost btn--sm">{{ 'action.view'|trans }}</a>
+                </div>
+                {% if recent is empty %}
+                    <div class="empty-state">
+                        <div class="empty-state__title">{{ 'dashboard.empty'|trans }}</div>
+                        <a href="{{ path('app_initiative_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+                    </div>
+                {% else %}
+                    <div class="recent-list">
+                        {% for initiative in recent %}
+                            <div class="recent-item">
+                                <div>
+                                    <a href="{{ path('app_initiative_show', {id: initiative.id}) }}" class="recent-item__title">{{ initiative.title }}</a>
+                                    <div class="recent-item__meta">
+                                        {%- if initiative.organizationalAnchoring %}{{ initiative.organizationalAnchoring.labelKey|trans }} · {% endif -%}
+                                        {{ initiative.createdAt|date('d.m.Y') }}
+                                    </div>
+                                </div>
+                                <div class="tag-list">
+                                    {% if initiative.status %}<span class="badge badge--status-{{ initiative.status.value }}">{{ initiative.status.labelKey|trans }}</span>{% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.by_status'|trans }}</span>
+                </div>
+                <div class="status-bars">
+                    {% set maxCount = 1 %}
+                    {% for status in statuses %}
+                        {% set maxCount = max(maxCount, byStatus[status.value]|default(0)) %}
+                    {% endfor %}
+                    {% for status in statuses %}
+                        {% set count = byStatus[status.value]|default(0) %}
+                        <div>
+                            <div class="status-bar__head">
+                                <span>{{ status.labelKey|trans }}</span>
+                                <span class="muted">{{ count }}</span>
+                            </div>
+                            <div class="status-bar__track">
+                                <div class="status-bar__fill" style="width: {{ (count / maxCount * 100)|round }}%;"></div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

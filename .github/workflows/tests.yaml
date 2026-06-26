@@ -1,0 +1,51 @@
+name: Test
+
+on:
+    pull_request:
+    push:
+        branches:
+            - main
+            - develop
+
+env:
+    COMPOSE_USER: runner
+    # Consumed by docker-compose.yml (${PHP_XDEBUG_MODE:-off}); loads Xdebug in
+    # coverage mode so PHPUnit can produce the Clover report.
+    PHP_XDEBUG_MODE: coverage
+
+jobs:
+    phpunit:
+        runs-on: ubuntu-latest
+        name: PHPUnit + coverage gate
+        env:
+            # Test against the production MariaDB version (also pinned in .env).
+            # Picked up by docker-compose.yml's `image: ${MARIADB_IMAGE:-…}`.
+            MARIADB_IMAGE: mariadb:10.11
+            # Forwarded into phpfpm via `-e MARIADB_VERSION`; .env.test interpolates
+            # it into Doctrine's serverVersion URL parameter.
+            MARIADB_VERSION: 10.11.13-MariaDB
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Cache vendor
+              uses: actions/cache@v4
+              with:
+                  path: vendor
+                  key: vendor-php8.4-${{ hashFiles('composer.lock') }}
+                  restore-keys: vendor-php8.4-
+
+            - name: Create docker network
+              run: docker network create frontend
+
+            - name: Pull container images
+              run: docker compose pull --quiet phpfpm mariadb
+
+            - name: Install dependencies
+              run: docker compose run --rm phpfpm composer install
+
+            - name: Prepare the test database
+              run: docker compose run --rm -e MARIADB_VERSION phpfpm composer run test-setup
+
+            - name: Run tests and enforce 100% coverage
+              run: docker compose run --rm -e MARIADB_VERSION phpfpm composer run test-coverage
