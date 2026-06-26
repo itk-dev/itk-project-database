@@ -186,10 +186,6 @@ class InitiativeType extends AbstractType
                 'by_reference' => false,
                 'required' => false,
                 'prototype' => true,
-            ])
-            ->add('author', TextType::class, [
-                'label' => 'initiative.author',
-                'required' => false,
             ]);
 
         // Existing contacts bind directly through the select; brand-new ones are

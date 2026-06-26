@@ -7,6 +7,7 @@ namespace App\Tests\Controller;
 use App\Entity\Initiative;
 use App\Entity\InitiativeAttachment;
 use App\Tests\FunctionalTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 final class InitiativeControllerTest extends FunctionalTestCase
 {
@@ -48,13 +49,13 @@ final class InitiativeControllerTest extends FunctionalTestCase
     {
         $this->loginAsAdmin();
         $initiative = $this->createInitiative('Editable initiative');
-        $id = (int) $initiative->getId();
+        $id = (string) $initiative->getId();
 
-        $crawler = $this->client->request('GET', sprintf('/initiatives/%d/edit', $id));
+        $crawler = $this->client->request('GET', sprintf('/initiatives/%s/edit', $id));
         $this->assertResponseIsSuccessful();
 
         $token = (string) $crawler->filter('input[name="initiative[_token]"]')->attr('value');
-        $this->client->request('POST', sprintf('/initiatives/%d/edit', $id), [
+        $this->client->request('POST', sprintf('/initiatives/%s/edit', $id), [
             'initiative' => [
                 'title' => 'Edited initiative',
                 'images' => [['alt' => 'empty']],
@@ -63,7 +64,7 @@ final class InitiativeControllerTest extends FunctionalTestCase
             ],
         ]);
 
-        $this->assertResponseRedirects(sprintf('/initiatives/%d', $id));
+        $this->assertResponseRedirects(sprintf('/initiatives/%s', $id));
 
         $this->removeInitiative($id);
     }
@@ -72,9 +73,9 @@ final class InitiativeControllerTest extends FunctionalTestCase
     {
         $this->loginAsAdmin();
         $initiative = $this->createInitiative('Deletable initiative');
-        $id = (int) $initiative->getId();
+        $id = (string) $initiative->getId();
 
-        $crawler = $this->client->request('GET', sprintf('/initiatives/%d/edit', $id));
+        $crawler = $this->client->request('GET', sprintf('/initiatives/%s/edit', $id));
         $form = $crawler->filter('form[action$="/delete"]')->form();
         $this->client->submit($form);
 
@@ -88,9 +89,9 @@ final class InitiativeControllerTest extends FunctionalTestCase
     {
         $this->loginAsAdmin();
         $initiative = $this->createInitiative('Survivor initiative');
-        $id = (int) $initiative->getId();
+        $id = (string) $initiative->getId();
 
-        $this->client->request('POST', sprintf('/initiatives/%d/delete', $id), ['_token' => 'invalid']);
+        $this->client->request('POST', sprintf('/initiatives/%s/delete', $id), ['_token' => 'invalid']);
 
         $this->assertResponseRedirects('/initiatives');
         $this->entityManager()->clear();
@@ -106,11 +107,11 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $initiative->addAttachment(new InitiativeAttachment());
         $em = $this->entityManager();
         $em->flush();
-        $id = (int) $initiative->getId();
+        $id = (string) $initiative->getId();
 
-        $crawler = $this->client->request('GET', sprintf('/initiatives/%d/edit', $id));
+        $crawler = $this->client->request('GET', sprintf('/initiatives/%s/edit', $id));
         $token = (string) $crawler->filter('input[name="initiative[_token]"]')->attr('value');
-        $this->client->request('POST', sprintf('/initiatives/%d/edit', $id), [
+        $this->client->request('POST', sprintf('/initiatives/%s/edit', $id), [
             'initiative' => [
                 'title' => 'Has empty attachment',
                 // Re-submit the file-less attachment (empty file, no upload) so the
@@ -120,12 +121,73 @@ final class InitiativeControllerTest extends FunctionalTestCase
             ],
         ]);
 
-        $this->assertResponseRedirects(sprintf('/initiatives/%d', $id));
+        $this->assertResponseRedirects(sprintf('/initiatives/%s', $id));
 
         $this->entityManager()->clear();
         $reloaded = $this->initiatives()->find($id);
         self::assertNotNull($reloaded);
         self::assertCount(0, $reloaded->getAttachments(), 'A file-less attachment should be dropped.');
+
+        $this->removeInitiative($id);
+    }
+
+    public function testNewAutosaveReturnsCreatedWithLocationHeader(): void
+    {
+        $this->loginAsAdmin();
+
+        // Autosave posts via fetch with the X-Autosave header and no CSRF token.
+        $this->client->request('POST', '/initiatives/new', [
+            'initiative' => ['title' => 'Autosaved initiative'],
+        ], [], ['HTTP_X-Autosave' => '1']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        self::assertTrue($this->client->getResponse()->headers->has('X-Initiative-Location'));
+
+        $initiative = $this->initiatives()->findOneBy(['title' => 'Autosaved initiative']);
+        self::assertInstanceOf(Initiative::class, $initiative);
+
+        $this->removeInitiative((string) $initiative->getId());
+    }
+
+    public function testNewAutosaveReturnsUnprocessableWhenInvalid(): void
+    {
+        $this->loginAsAdmin();
+
+        // An empty title fails NotBlank, so autosave reports it without creating anything.
+        $this->client->request('POST', '/initiatives/new', [
+            'initiative' => ['title' => ''],
+        ], [], ['HTTP_X-Autosave' => '1']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        self::assertNull($this->initiatives()->findOneBy(['title' => '']));
+    }
+
+    public function testEditAutosaveReturnsNoContent(): void
+    {
+        $this->loginAsAdmin();
+        $initiative = $this->createInitiative('Autosave edit');
+        $id = (string) $initiative->getId();
+
+        $this->client->request('POST', sprintf('/initiatives/%s/edit', $id), [
+            'initiative' => ['title' => 'Autosave edited'],
+        ], [], ['HTTP_X-Autosave' => '1']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
+
+        $this->removeInitiative($id);
+    }
+
+    public function testEditAutosaveReturnsUnprocessableWhenInvalid(): void
+    {
+        $this->loginAsAdmin();
+        $initiative = $this->createInitiative('Autosave edit invalid');
+        $id = (string) $initiative->getId();
+
+        $this->client->request('POST', sprintf('/initiatives/%s/edit', $id), [
+            'initiative' => ['title' => ''],
+        ], [], ['HTTP_X-Autosave' => '1']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $this->removeInitiative($id);
     }
@@ -140,7 +202,7 @@ final class InitiativeControllerTest extends FunctionalTestCase
         return $initiative;
     }
 
-    private function removeInitiative(int $id): void
+    private function removeInitiative(string $id): void
     {
         $this->entityManager()->clear();
         $initiative = $this->initiatives()->find($id);

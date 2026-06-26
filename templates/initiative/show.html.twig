@@ -135,7 +135,7 @@
                         <dd>{{ h.term_list(initiative.tags) }}</dd>
 
                         <dt>{{ 'initiative.author'|trans }}</dt>
-                        <dd>{{ initiative.author ?: '—' }}</dd>
+                        <dd>{{ initiative.createdBy ? initiative.createdBy.name : '—' }}</dd>
 
                         <dt>{{ 'common.created'|trans }}</dt>
                         <dd>{{ initiative.createdAt|date('d.m.Y H:i') }}</dd>

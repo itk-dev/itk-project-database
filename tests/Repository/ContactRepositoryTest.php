@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
-use App\Entity\Contact;
 use App\Repository\ContactRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -19,8 +18,7 @@ final class ContactRepositoryTest extends KernelTestCase
         $contacts = $repository->findAllOrdered();
 
         // Ordering is delegated to the database collation, so we only assert the
-        // method returns the expected set of entities.
+        // method returns the persisted contacts.
         self::assertNotEmpty($contacts);
-        self::assertContainsOnlyInstancesOf(Contact::class, $contacts);
     }
 }

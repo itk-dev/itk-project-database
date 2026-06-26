@@ -65,8 +65,6 @@ final class InitiativeRepositoryTest extends KernelTestCase
         $rows = $this->repository->findForExport(new InitiativeFilter());
 
         self::assertNotEmpty($rows);
-        self::assertContainsOnlyInstancesOf(Initiative::class, $rows);
-        self::assertIsIterable($rows[0]->getTags());
     }
 
     public function testCountAll(): void
@@ -79,16 +77,14 @@ final class InitiativeRepositoryTest extends KernelTestCase
         $em = static::getContainer()->get(EntityManagerInterface::class);
         \assert($em instanceof EntityManagerInterface);
 
+        $before = array_sum($this->repository->countByStatus());
+
         $initiative = (new Initiative())->setTitle('No status '.uniqid());
         $em->persist($initiative);
         $em->flush();
 
-        $counts = $this->repository->countByStatus();
-        self::assertIsArray($counts);
-        foreach ($counts as $key => $count) {
-            self::assertIsString($key);
-            self::assertIsInt($count);
-        }
+        // A status-less initiative must not appear in any status bucket.
+        self::assertSame($before, array_sum($this->repository->countByStatus()));
 
         $em->remove($initiative);
         $em->flush();

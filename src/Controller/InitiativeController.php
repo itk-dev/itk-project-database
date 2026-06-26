@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Initiative;
+use App\Entity\User;
 use App\Form\InitiativeFilterType;
 use App\Form\InitiativeType;
 use App\Model\InitiativeFilter;
 use App\Repository\InitiativeRepository;
+use App\Service\ActivityPublisher;
 use App\Service\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Writer;
@@ -17,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class InitiativeController extends AbstractController
@@ -75,7 +78,7 @@ class InitiativeController extends AbstractController
 
             foreach ($rows as $row) {
                 $csv->insertOne([
-                    $row->getId(),
+                    (string) $row->getId(),
                     $row->getTitle(),
                     $translate($row->getStatus()),
                     $translate($row->getCategory()),
@@ -91,7 +94,7 @@ class InitiativeController extends AbstractController
                     $row->getTimePeriodStart()?->format('Y-m-d'),
                     $row->getTimePeriodEnd()?->format('Y-m-d'),
                     $names($row->getContacts()),
-                    $row->getAuthor(),
+                    ($creator = $row->getCreatedBy()) instanceof User ? $creator->getName() : null,
                 ]);
             }
         });
@@ -104,10 +107,18 @@ class InitiativeController extends AbstractController
     }
 
     #[Route('/initiatives/new', name: 'app_initiative_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, ActivityPublisher $activityPublisher): Response
     {
+        // Autosave creates the initiative as soon as the form is valid; the page
+        // then switches to editing it in place, so a new form saves like an edit.
+        // Same guard as edit(): the mandatory X-Autosave header stands in for CSRF.
+        $isAutosave = $request->headers->has('X-Autosave');
+
         $initiative = new Initiative();
-        $form = $this->createForm(InitiativeType::class, $initiative);
+        $form = $this->createForm(InitiativeType::class, $initiative, [
+            'csrf_protection' => !$isAutosave,
+            'allow_extra_fields' => $isAutosave,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -115,9 +126,24 @@ class InitiativeController extends AbstractController
             $entityManager->persist($initiative);
             $entityManager->flush();
 
+            $activityPublisher->publish('created', $initiative, $this->currentUser());
+
+            if ($isAutosave) {
+                // Hand back the edit URL so the form keeps autosaving in place.
+                $response = new Response(null, Response::HTTP_CREATED);
+                $response->headers->set('X-Initiative-Location', $this->generateUrl('app_initiative_edit', ['id' => $initiative->getId()]));
+
+                return $response;
+            }
+
             $this->addFlash('success', 'flash.initiative.created');
 
             return $this->redirectToRoute('app_initiative_show', ['id' => $initiative->getId()]);
+        }
+
+        if ($isAutosave) {
+            // Not valid yet (e.g. no title): report it without creating anything.
+            return new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('initiative/new.html.twig', [
@@ -126,7 +152,7 @@ class InitiativeController extends AbstractController
         ]);
     }
 
-    #[Route('/initiatives/{id}', name: 'app_initiative_show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[Route('/initiatives/{id}', name: 'app_initiative_show', requirements: ['id' => Requirement::ULID], methods: ['GET'])]
     public function show(Initiative $initiative): Response
     {
         return $this->render('initiative/show.html.twig', [
@@ -134,19 +160,44 @@ class InitiativeController extends AbstractController
         ]);
     }
 
-    #[Route('/initiatives/{id}/edit', name: 'app_initiative_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function edit(Request $request, Initiative $initiative, EntityManagerInterface $entityManager): Response
+    #[Route('/initiatives/{id}/edit', name: 'app_initiative_edit', requirements: ['id' => Requirement::ULID], methods: ['GET', 'POST'])]
+    public function edit(Request $request, Initiative $initiative, EntityManagerInterface $entityManager, ActivityPublisher $activityPublisher): Response
     {
-        $form = $this->createForm(InitiativeType::class, $initiative);
+        // Autosave posts the same form via fetch; it expects to stay on the page.
+        $isAutosave = $request->headers->has('X-Autosave');
+
+        // A background fetch can't run the stateless-CSRF JS (no real submit), so the
+        // sentinel token never resolves. Autosave is guarded instead by the mandatory
+        // X-Autosave header — a cross-origin caller can't set it without a refused CORS
+        // pre-flight — so we drop CSRF and ignore the now-stray _token field for it.
+        $form = $this->createForm(InitiativeType::class, $initiative, [
+            'csrf_protection' => !$isAutosave,
+            'allow_extra_fields' => $isAutosave,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->removeEmptyMedia($initiative);
             $entityManager->flush();
 
+            // Autosave is now the only save path on this form (the Save button is
+            // gone), so it must drive the live feed and dashboard too. Repeated
+            // autosaves of the same initiative don't flood the feed: each row is
+            // keyed by id and bumped in place rather than stacked.
+            $activityPublisher->publish('updated', $initiative, $this->currentUser());
+
+            if ($isAutosave) {
+                return new Response(null, Response::HTTP_NO_CONTENT);
+            }
+
             $this->addFlash('success', 'flash.initiative.updated');
 
             return $this->redirectToRoute('app_initiative_show', ['id' => $initiative->getId()]);
+        }
+
+        if ($isAutosave) {
+            // Report the failed validation without redrawing the form the user is editing.
+            return new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('initiative/edit.html.twig', [
@@ -155,16 +206,30 @@ class InitiativeController extends AbstractController
         ]);
     }
 
-    #[Route('/initiatives/{id}/delete', name: 'app_initiative_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function delete(Request $request, Initiative $initiative, EntityManagerInterface $entityManager): Response
+    #[Route('/initiatives/{id}/delete', name: 'app_initiative_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
+    public function delete(Request $request, Initiative $initiative, EntityManagerInterface $entityManager, ActivityPublisher $activityPublisher): Response
     {
         if ($this->isCsrfTokenValid('delete-initiative-'.$initiative->getId(), (string) $request->request->get('_token'))) {
+            $actor = $this->currentUser();
+
             $entityManager->remove($initiative);
             $entityManager->flush();
+
+            // Publish after removal so the live dashboard counts are already up to
+            // date; the detached entity still holds its title for the feed line.
+            $activityPublisher->publish('deleted', $initiative, $actor);
+
             $this->addFlash('success', 'flash.initiative.deleted');
         }
 
         return $this->redirectToRoute('app_initiative_index');
+    }
+
+    private function currentUser(): ?User
+    {
+        $user = $this->getUser();
+
+        return $user instanceof User ? $user : null;
     }
 
     /**

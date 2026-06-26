@@ -1,6 +1,23 @@
 app:
     name: Projektdatabase
 
+autosave:
+    saving: Gemmer…
+    saved: Gemt
+    unsaved: Ikke-gemte ændringer
+    error: Kunne ikke gemme — tjek de påkrævede felter
+    offline: Kunne ikke gemme — dine ændringer er bevaret her
+    files_hint: Klik på Upload for at tilføje filerne
+    completion: Udfyldningsgrad
+    upload_files: Upload filer
+
+activity:
+    title: Aktivitet
+    action:
+        created: oprettede
+        updated: opdaterede
+        deleted: slettede
+
 nav:
     dashboard: Overblik
     initiatives: Initiativer

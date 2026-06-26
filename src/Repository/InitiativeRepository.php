@@ -31,7 +31,8 @@ class InitiativeRepository extends ServiceEntityRepository
             // instead of acting as a wildcard. Backslash is MariaDB's default
             // LIKE escape character.
             $term = addcslashes(mb_strtolower(trim($filter->q)), '%_\\');
-            $qb->andWhere('LOWER(i.title) LIKE :q OR LOWER(i.description) LIKE :q OR LOWER(i.author) LIKE :q OR LOWER(i.statusAdditional) LIKE :q')
+            $qb->leftJoin('i.createdBy', 'createdBy')
+                ->andWhere('LOWER(i.title) LIKE :q OR LOWER(i.description) LIKE :q OR LOWER(createdBy.name) LIKE :q OR LOWER(i.statusAdditional) LIKE :q')
                 ->setParameter('q', '%'.$term.'%');
         }
 
@@ -86,14 +87,12 @@ class InitiativeRepository extends ServiceEntityRepository
             return [];
         }
 
-        $ids = array_map(static fn (Initiative $initiative): int => (int) $initiative->getId(), $initiatives);
-
         foreach (['strategies', 'stakeholders', 'tags', 'contacts'] as $association) {
             $this->createQueryBuilder('i')
                 ->addSelect('rel')
                 ->leftJoin('i.'.$association, 'rel')
-                ->andWhere('i.id IN (:ids)')
-                ->setParameter('ids', $ids)
+                ->andWhere('i IN (:initiatives)')
+                ->setParameter('initiatives', $initiatives)
                 ->getQuery()
                 ->getResult();
         }

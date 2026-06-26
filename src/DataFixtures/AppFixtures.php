@@ -47,6 +47,8 @@ class AppFixtures extends Fixture
         $editor->setPassword($this->hasher->hashPassword($editor, 'password'));
         $manager->persist($editor);
 
+        $users = [$admin, $editor];
+
         $tags = $this->makeTerms($manager, self::TAGS, Vocabulary::Tag);
         $stakeholders = $this->makeTerms($manager, self::STAKEHOLDERS, Vocabulary::Stakeholder);
         $strategies = $this->makeTerms($manager, self::STRATEGIES, Vocabulary::Strategy);
@@ -109,8 +111,8 @@ class AppFixtures extends Fixture
                 ->setOrganizationalAnchoring($anchorings[array_rand($anchorings)])
                 ->setDescription('Initiativet arbejder med '.mb_strtolower($title).' gennem en tværgående indsats med fokus på borgernes hverdag og kommunens strategiske mål.')
                 ->setEndorsement(0 === $index % 3 ? false : true)
-                ->setBudget(mt_rand(1, 40) * 50000)
-                ->setAuthor($firstNames[array_rand($firstNames)].' '.$lastNames[array_rand($lastNames)]);
+                ->setBudget(mt_rand(1, 40) * 50000);
+            $initiative->setCreatedBy($users[array_rand($users)]);
 
             if (0 !== $index % 4) {
                 $initiative->setEndorsementAuthor($endorsers[array_rand($endorsers)]);

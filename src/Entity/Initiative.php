@@ -18,13 +18,20 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: InitiativeRepository::class)]
-#[ORM\HasLifecycleCallbacks]
-class Initiative
+class Initiative extends AbstractEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    /**
+     * Fields that count toward {@see getCompletionPercentage()} and the client-side
+     * progress bar. Limited to the initiative's own columns so list rendering stays
+     * query-free; the booleans and the relational lists are intentionally excluded.
+     *
+     * @var list<string>
+     */
+    public const array COMPLETION_FIELDS = [
+        'title', 'category', 'description', 'initiativeType', 'status',
+        'organizationalAnchoring', 'endorsementAuthor',
+        'budget', 'funding', 'timePeriodStart', 'timePeriodEnd',
+    ];
 
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
@@ -104,36 +111,15 @@ class Initiative
     #[ORM\Column]
     private array $links = [];
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $author = null;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $createdAt;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $updatedAt;
-
     public function __construct()
     {
+        parent::__construct();
         $this->strategies = new ArrayCollection();
         $this->contacts = new ArrayCollection();
         $this->stakeholders = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->attachments = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    #[ORM\PreUpdate]
-    public function touch(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getTitle(): ?string
@@ -141,7 +127,7 @@ class Initiative
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 
@@ -492,26 +478,27 @@ class Initiative
         return $this;
     }
 
-    public function getAuthor(): ?string
+    /**
+     * Share of {@see COMPLETION_FIELDS} that are filled in, as a 0–100 percentage.
+     * Reads only own columns, so it is safe to call per row in a listing.
+     */
+    public function getCompletionPercentage(): int
     {
-        return $this->author;
-    }
+        $checks = [
+            null !== $this->title && '' !== $this->title,
+            null !== $this->category,
+            null !== $this->description && '' !== $this->description,
+            null !== $this->initiativeType,
+            null !== $this->status,
+            null !== $this->organizationalAnchoring,
+            null !== $this->endorsementAuthor,
+            null !== $this->budget,
+            [] !== $this->funding,
+            null !== $this->timePeriodStart,
+            null !== $this->timePeriodEnd,
+        ];
 
-    public function setAuthor(?string $author): static
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): \DateTimeImmutable
-    {
-        return $this->updatedAt;
+        return (int) round(\count(array_filter($checks)) / \count($checks) * 100);
     }
 
     public function __toString(): string

@@ -1,9 +1,49 @@
-{{ form_start(form, {attr: {class: 'form'}}) }}
+{% set form_attr = {
+    class: 'form',
+    'data-controller': 'form-progress',
+    'data-action': 'input->form-progress#recompute change->form-progress#recompute',
+    'data-form-progress-fields-value': constant('App\\Entity\\Initiative::COMPLETION_FIELDS')|json_encode,
+} %}
+{% if autosave|default(false) %}
+    {% set form_attr = form_attr|merge({
+        'data-controller': 'form-progress autosave',
+        'data-action': 'input->form-progress#recompute change->form-progress#recompute input->autosave#schedule change->autosave#schedule',
+        'data-autosave-debounce-value': 800,
+        'data-autosave-saving-text-value': 'autosave.saving'|trans,
+        'data-autosave-saved-text-value': 'autosave.saved'|trans,
+        'data-autosave-unsaved-text-value': 'autosave.unsaved'|trans,
+        'data-autosave-error-text-value': 'autosave.error'|trans,
+        'data-autosave-offline-text-value': 'autosave.offline'|trans,
+        'data-autosave-files-hint-text-value': 'autosave.files_hint'|trans,
+        'data-autosave-is-new-value': initiative.id ? 'false' : 'true',
+    }) %}
+{% endif %}
+{{ form_start(form, {attr: form_attr}) }}
+    <div class="form-statusbar">
+        <div class="form-statusbar__head">
+            <span class="form-progress__title">{{ 'autosave.completion'|trans }}</span>
+            {% if autosave|default(false) %}
+                <span class="autosave-status" data-autosave-target="status" role="status" aria-live="polite">
+                    <span class="autosave-status__icon" aria-hidden="true"></span>
+                    <span class="autosave-status__text" data-autosave-target="statusText"></span>
+                </span>
+            {% endif %}
+        </div>
+        <div class="form-progress">
+            <div class="form-progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="{{ 'autosave.completion'|trans }}">
+                <div class="form-progress__fill" data-form-progress-target="fill"></div>
+            </div>
+            <span class="form-progress__label" data-form-progress-target="label">0%</span>
+        </div>
+    </div>
+
     {{ form_errors(form) }}
 
     <div class="form-section">
         <div class="form-section__title">{{ 'initiative.section.basics'|trans }}</div>
-        {{ form_row(form.title) }}
+        {% set title_attr = {'data-action': 'input->title-mirror#update'} %}
+        {% if not initiative.id %}{% set title_attr = title_attr|merge({autofocus: true}) %}{% endif %}
+        {{ form_row(form.title, {attr: title_attr}) }}
         <div class="form-grid">
             {{ form_row(form.category) }}
             {{ form_row(form.initiativeType) }}
@@ -121,13 +161,16 @@
         </div>
     </div>
 
-    <div class="form-section">
-        <div class="form-section__title">{{ 'initiative.section.meta'|trans }}</div>
-        {{ form_row(form.author) }}
-    </div>
-
     <div class="form-actions">
-        <button type="submit" class="btn btn--primary">{{ button_label|default('action.save')|trans }}</button>
-        <a href="{{ initiative.id ? path('app_initiative_show', {id: initiative.id}) : path('app_initiative_index') }}" class="btn btn--ghost">{{ 'action.cancel'|trans }}</a>
+        {% if autosave|default(false) %}
+            <button type="submit" class="btn btn--primary" data-autosave-target="save" hidden>{{ 'autosave.upload_files'|trans }}</button>
+        {% else %}
+            <button type="submit" class="btn btn--primary">{{ button_label|default('action.save')|trans }}</button>
+            <a href="{{ initiative.id ? path('app_initiative_show', {id: initiative.id}) : path('app_initiative_index') }}" class="btn btn--ghost">{{ 'action.cancel'|trans }}</a>
+        {% endif %}
     </div>
+    {% do form.links.setRendered() %}
+    {% do form.contacts.setRendered() %}
+    {% do form.images.setRendered() %}
+    {% do form.attachments.setRendered() %}
 {{ form_end(form) }}

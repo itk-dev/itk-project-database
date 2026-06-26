@@ -24,7 +24,6 @@ final class InitiativeTest extends TestCase
     {
         $initiative = new Initiative();
 
-        self::assertNull($initiative->getId());
         self::assertNull($initiative->getTitle());
         self::assertTrue($initiative->isEndorsement());
         self::assertSame([], $initiative->getFunding());
@@ -35,8 +34,8 @@ final class InitiativeTest extends TestCase
         self::assertCount(0, $initiative->getContacts());
         self::assertCount(0, $initiative->getImages());
         self::assertCount(0, $initiative->getAttachments());
-        self::assertInstanceOf(\DateTimeImmutable::class, $initiative->getCreatedAt());
-        self::assertInstanceOf(\DateTimeImmutable::class, $initiative->getUpdatedAt());
+        self::assertNull($initiative->getCreatedAt());
+        self::assertNull($initiative->getUpdatedAt());
         self::assertSame('', (string) $initiative);
     }
 
@@ -57,8 +56,7 @@ final class InitiativeTest extends TestCase
             ->setEndorsementAuthor(EndorsementAuthor::CityCouncil)
             ->setBudget(500000)
             ->setTimePeriodStart($start)
-            ->setTimePeriodEnd($end)
-            ->setAuthor('Anne Jensen');
+            ->setTimePeriodEnd($end);
 
         self::assertSame('Grøn omstilling', $initiative->getTitle());
         self::assertSame(Category::Climate, $initiative->getCategory());
@@ -72,7 +70,6 @@ final class InitiativeTest extends TestCase
         self::assertSame(500000, $initiative->getBudget());
         self::assertSame($start, $initiative->getTimePeriodStart());
         self::assertSame($end, $initiative->getTimePeriodEnd());
-        self::assertSame('Anne Jensen', $initiative->getAuthor());
         self::assertSame('Grøn omstilling', (string) $initiative);
     }
 
@@ -189,15 +186,5 @@ final class InitiativeTest extends TestCase
 
         $initiative->removeAttachment($attachment);
         self::assertCount(0, $initiative->getAttachments());
-    }
-
-    public function testTouchAdvancesUpdatedAt(): void
-    {
-        $initiative = new Initiative();
-        $before = $initiative->getUpdatedAt();
-
-        $initiative->touch();
-
-        self::assertGreaterThanOrEqual($before, $initiative->getUpdatedAt());
     }
 }

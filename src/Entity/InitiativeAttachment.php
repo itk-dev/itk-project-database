@@ -10,13 +10,8 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity]
 #[Vich\Uploadable]
-class InitiativeAttachment
+class InitiativeAttachment extends AbstractEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[ORM\ManyToOne(targetEntity: Initiative::class, inversedBy: 'attachments')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Initiative $initiative = null;
@@ -42,14 +37,6 @@ class InitiativeAttachment
     #[ORM\Column(nullable: true)]
     private ?int $size = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getInitiative(): ?Initiative
     {
         return $this->initiative;
@@ -66,8 +53,10 @@ class InitiativeAttachment
     {
         $this->file = $file;
 
+        // Vich needs a mapped field to change so Doctrine persists the upload;
+        // touching the timestampable updatedAt provides that change.
         if (null !== $file) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->setUpdatedAt(new \DateTimeImmutable());
         }
     }
 
