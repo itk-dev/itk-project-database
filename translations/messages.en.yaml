@@ -1,6 +1,47 @@
 app:
     name: Project database
 
+mascot:
+    label: Your creative buddy
+    close: Close
+    cta: Create a new initiative
+    farewell: "See you around — I'm here whenever you need me! 👋"
+    welcome: "Yay, I'm back! Let's make something together. 🌟"
+    praise: "{1}You've created one initiative — nice start! 🌟|]1,Inf[You've created %count% initiatives — great work! 🌟"
+    finish:
+        almost: "“%title%” is %percent%% done — want to finish it off?"
+        touches: "“%title%” is %percent%% there and just needs its final touches. ✏️"
+        close: "You’re %percent%% through “%title%” — shall we wrap it up?"
+        blanks: "“%title%” is %percent%% filled in — a few blanks to go. 📝"
+        ending: "“%title%” is %percent%% done. Give it the ending it deserves! 🏁"
+        strong: "“%title%” is %percent%% there — let’s finish strong! 💪"
+    finish_cta: Finish it
+    msg:
+        idea: "Got a fresh idea? Let’s give it a home. ✨"
+        roll: "You’re on a roll — what’s next?"
+        bold: "Every great initiative starts with one bold line."
+        creativity: "Your creativity makes all the difference. 🌟"
+        another: "Another initiative? Yes please!"
+        draft: "Don’t let that draft gather dust — wrap it up."
+        future: "Look at you, shaping the future."
+        spark: "Every big change needs a first spark — got one? ⚡"
+        dream: "Dream big. The form can take it. 💭"
+        coffee: "A coffee and five minutes is all an idea needs. ☕"
+        small: "No idea is too small to write down."
+        colleague: "Somewhere a colleague needs exactly your idea. 🤝"
+        today: "Today’s a great day to start something new."
+        create: "Be the one who hits the create button. 🚀"
+        thought: "That thought you keep having? Give it a home here. 📝"
+        momentum: "One idea today, momentum tomorrow."
+        curious: "Curious what you’ll come up with next. 👀"
+    play:
+        invite: "Psst… up for a game of catch? 🌟"
+        start: "Play catch"
+        caught: "Haha, you got me! Now it's my turn 😈"
+        gotcha: "Gotcha! That was fun. Anyway, back to work. 🎉"
+        giveup: "Phew… let's call it a draw. 😅"
+        escaped: "Argh, you got away! Too quick for me. 🏳️"
+
 autosave:
     saving: Saving…
     saved: Saved
@@ -27,6 +68,8 @@ nav:
     language: Language
     signed_in_as: Signed in as
     logout: Sign out
+    mascot_disable: Disable mascot
+    mascot_enable: Enable mascot
 
 action:
     new: New

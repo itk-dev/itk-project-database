@@ -31,6 +31,15 @@ class User extends AbstractEntity implements UserInterface, PasswordAuthenticate
     #[ORM\Column]
     private ?string $password = null;
 
+    /**
+     * Free-form per-user preferences (e.g. whether the mascot is shown). Stored
+     * as JSON so new settings can be added without a schema change.
+     *
+     * @var array<string, mixed>
+     */
+    #[ORM\Column]
+    private array $userSettings = [];
+
     public function getEmail(): ?string
     {
         return $this->email;
@@ -98,6 +107,39 @@ class User extends AbstractEntity implements UserInterface, PasswordAuthenticate
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getUserSettings(): array
+    {
+        return $this->userSettings;
+    }
+
+    /**
+     * @param array<string, mixed> $userSettings
+     */
+    public function setUserSettings(array $userSettings): static
+    {
+        $this->userSettings = $userSettings;
+
+        return $this;
+    }
+
+    /**
+     * The mascot is shown unless the user has explicitly turned it off.
+     */
+    public function isMascotEnabled(): bool
+    {
+        return (bool) ($this->userSettings['mascotEnabled'] ?? true);
+    }
+
+    public function setMascotEnabled(bool $enabled): static
+    {
+        $this->userSettings['mascotEnabled'] = $enabled;
 
         return $this;
     }

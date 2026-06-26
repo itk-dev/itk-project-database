@@ -49,6 +49,11 @@
                             {% if is_granted('ROLE_ADMIN') %}
                                 <a href="{{ path('admin_users') }}" class="user-menu__link">{{ 'nav.admin'|trans }}</a>
                             {% endif %}
+                            <form id="mascotToggleForm" method="post" action="{{ path('app_settings_mascot_toggle') }}" class="user-menu__form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle-mascot') }}">
+                                <input type="hidden" name="return" value="{{ app.request.requestUri }}">
+                                <button type="submit" class="user-menu__button">{{ (app.user.mascotEnabled ? 'nav.mascot_disable' : 'nav.mascot_enable')|trans }}</button>
+                            </form>
                             <a href="{{ path('app_logout') }}" class="user-menu__logout">{{ 'nav.logout'|trans }}</a>
                         </div>
                     </div>
@@ -58,6 +63,78 @@
     {% endblock %}
 
     {% block body %}{% endblock %}
+
+    {% block mascot %}
+        {% if app.user %}
+            {% set ctx = mascot_context() %}
+            {% set messages = [
+                'mascot.msg.idea'|trans,
+                'mascot.msg.roll'|trans,
+                'mascot.msg.bold'|trans,
+                'mascot.msg.creativity'|trans,
+                'mascot.msg.another'|trans,
+                'mascot.msg.draft'|trans,
+                'mascot.msg.future'|trans,
+                'mascot.msg.spark'|trans,
+                'mascot.msg.dream'|trans,
+                'mascot.msg.coffee'|trans,
+                'mascot.msg.small'|trans,
+                'mascot.msg.colleague'|trans,
+                'mascot.msg.today'|trans,
+                'mascot.msg.create'|trans,
+                'mascot.msg.thought'|trans,
+                'mascot.msg.momentum'|trans,
+                'mascot.msg.curious'|trans,
+            ] %}
+            {% if ctx.count > 0 %}
+                {% set messages = messages|merge(['mascot.praise'|trans({'%count%': ctx.count})]) %}
+            {% endif %}
+            {% set finishMessages = [] %}
+            {% if ctx.unfinished %}
+                {% set finishParams = {'%title%': ctx.unfinished.title, '%percent%': ctx.unfinished.completionPercentage} %}
+                {% set finishMessages = [
+                    'mascot.finish.almost'|trans(finishParams),
+                    'mascot.finish.touches'|trans(finishParams),
+                    'mascot.finish.close'|trans(finishParams),
+                    'mascot.finish.blanks'|trans(finishParams),
+                    'mascot.finish.ending'|trans(finishParams),
+                    'mascot.finish.strong'|trans(finishParams),
+                ] %}
+            {% endif %}
+            <div class="mascot{{ app.user.mascotEnabled ? '' : ' mascot--away' }}" data-controller="mascot"
+                 data-action="mouseenter->mascot#pause mouseleave->mascot#resume"
+                 data-mascot-enabled-value="{{ app.user.mascotEnabled ? 'true' : 'false' }}"
+                 data-mascot-farewell-value="{{ 'mascot.farewell'|trans }}"
+                 data-mascot-welcome-value="{{ 'mascot.welcome'|trans }}"
+                 data-mascot-enable-label-value="{{ 'nav.mascot_enable'|trans }}"
+                 data-mascot-disable-label-value="{{ 'nav.mascot_disable'|trans }}"
+                 data-mascot-invite-value="{{ 'mascot.play.invite'|trans }}"
+                 data-mascot-caught-value="{{ 'mascot.play.caught'|trans }}"
+                 data-mascot-gotcha-value="{{ 'mascot.play.gotcha'|trans }}"
+                 data-mascot-giveup-value="{{ 'mascot.play.giveup'|trans }}"
+                 data-mascot-escaped-value="{{ 'mascot.play.escaped'|trans }}"
+                 {% if ctx.unfinished %}data-mascot-finish-texts-value="{{ finishMessages|json_encode }}"{% endif %}
+                 data-mascot-messages-value="{{ messages|json_encode }}">
+                <div class="mascot__bubble" data-mascot-target="bubble" role="status" aria-live="polite" hidden>
+                    <button type="button" class="mascot__close" data-action="mascot#close" aria-label="{{ 'mascot.close'|trans }}">×</button>
+                    <p class="mascot__text" data-mascot-target="text"></p>
+                    <a class="mascot__cta" data-mascot-target="cta" href="{{ path('app_initiative_new') }}">{{ 'mascot.cta'|trans }} →</a>
+                    {% if ctx.unfinished %}
+                        <a class="mascot__cta" data-mascot-target="finish" href="{{ path('app_initiative_edit', {id: ctx.unfinished.id}) }}" hidden>{{ 'mascot.finish_cta'|trans }} →</a>
+                    {% endif %}
+                    <button type="button" class="mascot__play" data-mascot-target="play" data-action="mascot#startFlee" hidden>{{ 'mascot.play.start'|trans }} →</button>
+                </div>
+                <button type="button" class="mascot__avatar" data-action="mascot#poke" aria-label="{{ 'mascot.label'|trans }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#f5b800" stroke="#1f1300" stroke-width="1.1" stroke-linejoin="round"/>
+                        <circle cx="9.6" cy="10.2" r="0.95" fill="#1f1300"/>
+                        <circle cx="14.4" cy="10.2" r="0.95" fill="#1f1300"/>
+                        <path d="M9.7 12.5c.7.8 3.9.8 4.6 0" fill="none" stroke="#1f1300" stroke-width="1" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        {% endif %}
+    {% endblock %}
 
     {% block flashes %}
         {% set all_flashes = app.flashes %}

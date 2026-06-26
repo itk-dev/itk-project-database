@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-7](https://github.com/itk-dev/itk-project-database/pull/7)
+  Add a mascot motivating users to create and complete initiatives
 * [PR-6](https://github.com/itk-dev/itk-project-database/pull/6)
   Mark udfyldningsgrad fields with a star that flies into a progress trophy
 * [PR-5](https://github.com/itk-dev/itk-project-database/pull/5)
