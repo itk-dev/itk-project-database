@@ -119,6 +119,7 @@ initiative:
     new_contacts: Add new contacts
     author: Filled out by
     terms_help: Separate multiple values with commas.
+    completion_field_hint: This field counts towards the completion rate.
     images: Images
     attachments: Files
     image_file: Image file
