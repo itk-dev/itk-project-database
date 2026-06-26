@@ -52,6 +52,32 @@ final class UserTest extends TestCase
         self::assertCount(2, $roles);
     }
 
+    public function testUserSettingsDefaultEmptyAndMascotEnabled(): void
+    {
+        $user = new User();
+
+        self::assertSame([], $user->getUserSettings());
+        // No stored preference means the mascot is shown.
+        self::assertTrue($user->isMascotEnabled());
+    }
+
+    public function testMascotPreferenceTogglesThroughSettings(): void
+    {
+        $user = new User();
+
+        $user->setMascotEnabled(false);
+        self::assertFalse($user->isMascotEnabled());
+        self::assertSame(['mascotEnabled' => false], $user->getUserSettings());
+
+        $user->setMascotEnabled(true);
+        self::assertTrue($user->isMascotEnabled());
+
+        // Unrelated settings are preserved and don't affect the mascot default.
+        $user->setUserSettings(['theme' => 'dark']);
+        self::assertSame(['theme' => 'dark'], $user->getUserSettings());
+        self::assertTrue($user->isMascotEnabled());
+    }
+
     public function testEraseCredentialsDoesNothing(): void
     {
         $user = new User();

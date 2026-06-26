@@ -20,18 +20,28 @@ export default class extends Controller {
         giveup: String,
         escaped: String,
         finishTexts: { type: Array, default: [] },
+        enabled: { type: Boolean, default: true },
+        farewell: String,
+        welcome: String,
+        enableLabel: String,
+        disableLabel: String,
     };
 
     connect() {
         this.mode = "idle";
         this.timers = {};
+        this.wireToggle();
         const state = this.loadState();
         this.lastIndex = state.lastIndex ?? -1;
         this.lastShownAt = state.lastShownAt ?? 0;
-        // Resume the cadence where the previous page left off, so navigating
-        // around doesn't pop a fresh message on every load.
-        const sinceLast = Date.now() - this.lastShownAt;
-        this.scheduleNext(Math.max(1800, this.intervalValue - sinceLast));
+        // Only run the cheer cadence while enabled; a disabled mascot is rendered
+        // parked off-screen (the `mascot--away` class) and stays silent until the
+        // user turns it back on. Resume where the previous page left off so
+        // navigating around doesn't pop a fresh message on every load.
+        if (this.enabledValue) {
+            const sinceLast = Date.now() - this.lastShownAt;
+            this.scheduleNext(Math.max(1800, this.intervalValue - sinceLast));
+        }
     }
 
     disconnect() {
@@ -41,6 +51,78 @@ export default class extends Controller {
         window.clearTimeout(this.fadeTimer);
         window.clearTimeout(this.inviteTimer);
         window.clearTimeout(this.quietTimer);
+        window.clearTimeout(this.toggleTimer);
+        if (this.toggleForm && this.onToggleSubmit) {
+            this.toggleForm.removeEventListener("submit", this.onToggleSubmit);
+        }
+    }
+
+    // The disable/enable control lives in the user menu (outside this element),
+    // so we reach for its <form> by id and intercept its submit. Without JS the
+    // form posts normally and the server still persists the choice.
+    wireToggle() {
+        this.toggleForm = document.getElementById("mascotToggleForm");
+        if (!this.toggleForm) {
+            return;
+        }
+        this.toggleButton = this.toggleForm.querySelector("button");
+        this.onToggleSubmit = (event) => {
+            event.preventDefault();
+            this.persistToggle();
+        };
+        this.toggleForm.addEventListener("submit", this.onToggleSubmit);
+    }
+
+    persistToggle() {
+        const next = !this.enabledValue;
+        const token = this.toggleForm.querySelector(
+            'input[name="_token"]',
+        ).value;
+        fetch(this.toggleForm.action, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "fetch",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({ _token: token }),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    this.applyEnabled(next);
+                }
+            })
+            .catch(() => {});
+    }
+
+    // Drive the leaving/returning choreography once the server has stored it.
+    applyEnabled(enabled) {
+        this.enabledValue = enabled;
+        if (this.toggleButton) {
+            this.toggleButton.textContent = enabled
+                ? this.disableLabelValue
+                : this.enableLabelValue;
+        }
+        window.clearTimeout(this.toggleTimer);
+
+        if (enabled) {
+            // Slide back in, then say how happy it is to be back.
+            this.element.classList.remove("mascot--away");
+            this.mode = "idle";
+            this.toggleTimer = window.setTimeout(() => {
+                this.say(this.welcomeValue, "cta");
+                this.scheduleNext(this.intervalValue);
+            }, 520);
+
+            return;
+        }
+
+        // Wave goodbye, let it linger long enough to read, then slide off-screen.
+        this.clearNamedTimer("cycle");
+        this.say(this.farewellValue);
+        this.toggleTimer = window.setTimeout(() => {
+            this.hide();
+            this.element.classList.add("mascot--away");
+        }, 2600);
     }
 
     scheduleNext(delay) {
@@ -110,14 +192,13 @@ export default class extends Controller {
         this.scheduleNext(this.intervalValue);
     }
 
-    // The avatar click means different things depending on the current mode.
+    // Clicking the avatar only does something during the play-catch game; a plain
+    // idle click is intentionally inert (no message, no animation).
     poke() {
         if ("invited" === this.mode) {
             this.startFlee();
         } else if ("flee" === this.mode) {
             this.caught();
-        } else if ("idle" === this.mode) {
-            this.speak();
         }
     }
 

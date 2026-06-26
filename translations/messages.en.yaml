@@ -5,6 +5,8 @@ mascot:
     label: Your creative buddy
     close: Close
     cta: Create a new initiative
+    farewell: "See you around — I'm here whenever you need me! 👋"
+    welcome: "Yay, I'm back! Let's make something together. 🌟"
     praise: "{1}You've created one initiative — nice start! 🌟|]1,Inf[You've created %count% initiatives — great work! 🌟"
     finish:
         almost: "“%title%” is %percent%% done — want to finish it off?"
@@ -66,6 +68,8 @@ nav:
     language: Language
     signed_in_as: Signed in as
     logout: Sign out
+    mascot_disable: Disable mascot
+    mascot_enable: Enable mascot
 
 action:
     new: New

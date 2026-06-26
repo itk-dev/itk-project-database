@@ -46,6 +46,11 @@
                             {% if is_granted('ROLE_ADMIN') %}
                                 <a href="{{ path('admin_users') }}" class="user-menu__link">{{ 'nav.admin'|trans }}</a>
                             {% endif %}
+                            <form id="mascotToggleForm" method="post" action="{{ path('app_settings_mascot_toggle') }}" class="user-menu__form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle-mascot') }}">
+                                <input type="hidden" name="return" value="{{ app.request.requestUri }}">
+                                <button type="submit" class="user-menu__button">{{ (app.user.mascotEnabled ? 'nav.mascot_disable' : 'nav.mascot_enable')|trans }}</button>
+                            </form>
                             <a href="{{ path('app_logout') }}" class="user-menu__logout">{{ 'nav.logout'|trans }}</a>
                         </div>
                     </div>
@@ -93,8 +98,13 @@
                     'mascot.finish.strong'|trans(finishParams),
                 ] %}
             {% endif %}
-            <div class="mascot" data-controller="mascot"
+            <div class="mascot{{ app.user.mascotEnabled ? '' : ' mascot--away' }}" data-controller="mascot"
                  data-action="mouseenter->mascot#pause mouseleave->mascot#resume"
+                 data-mascot-enabled-value="{{ app.user.mascotEnabled ? 'true' : 'false' }}"
+                 data-mascot-farewell-value="{{ 'mascot.farewell'|trans }}"
+                 data-mascot-welcome-value="{{ 'mascot.welcome'|trans }}"
+                 data-mascot-enable-label-value="{{ 'nav.mascot_enable'|trans }}"
+                 data-mascot-disable-label-value="{{ 'nav.mascot_disable'|trans }}"
                  data-mascot-invite-value="{{ 'mascot.play.invite'|trans }}"
                  data-mascot-caught-value="{{ 'mascot.play.caught'|trans }}"
                  data-mascot-gotcha-value="{{ 'mascot.play.gotcha'|trans }}"
