@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 class ContactController extends AbstractController
 {
@@ -41,7 +42,7 @@ class ContactController extends AbstractController
         return $this->render('contact/new.html.twig', ['form' => $form]);
     }
 
-    #[Route('/contacts/{id}/edit', name: 'app_contact_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/contacts/{id}/edit', name: 'app_contact_edit', requirements: ['id' => Requirement::ULID], methods: ['GET', 'POST'])]
     public function edit(Request $request, Contact $contact, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ContactType::class, $contact);
@@ -60,7 +61,7 @@ class ContactController extends AbstractController
         ]);
     }
 
-    #[Route('/contacts/{id}/delete', name: 'app_contact_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/contacts/{id}/delete', name: 'app_contact_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     public function delete(Request $request, Contact $contact, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete-contact-'.$contact->getId(), (string) $request->request->get('_token'))) {

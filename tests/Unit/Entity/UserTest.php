@@ -13,7 +13,6 @@ final class UserTest extends TestCase
     {
         $user = new User();
 
-        self::assertNull($user->getId());
         self::assertNull($user->getEmail());
         self::assertNull($user->getPassword());
         self::assertSame('', $user->getUserIdentifier());

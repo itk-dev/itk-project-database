@@ -33,9 +33,9 @@ final class ContactControllerTest extends FunctionalTestCase
     public function testEditUpdatesContact(): void
     {
         $this->loginAsAdmin();
-        $id = (int) $this->createContact('Editable Contact')->getId();
+        $id = (string) $this->createContact('Editable Contact')->getId();
 
-        $crawler = $this->client->request('GET', sprintf('/contacts/%d/edit', $id));
+        $crawler = $this->client->request('GET', sprintf('/contacts/%s/edit', $id));
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->filter('button.btn--primary')->form(['contact[name]' => 'Edited Contact']);
@@ -48,9 +48,9 @@ final class ContactControllerTest extends FunctionalTestCase
     public function testDeleteRemovesContactWithAValidToken(): void
     {
         $this->loginAsAdmin();
-        $id = (int) $this->createContact('Deletable Contact')->getId();
+        $id = (string) $this->createContact('Deletable Contact')->getId();
 
-        $crawler = $this->client->request('GET', sprintf('/contacts/%d/edit', $id));
+        $crawler = $this->client->request('GET', sprintf('/contacts/%s/edit', $id));
         $form = $crawler->filter('form[action$="/delete"]')->form();
         $this->client->submit($form);
 
@@ -62,9 +62,9 @@ final class ContactControllerTest extends FunctionalTestCase
     public function testDeleteIgnoresAnInvalidToken(): void
     {
         $this->loginAsAdmin();
-        $id = (int) $this->createContact('Surviving Contact')->getId();
+        $id = (string) $this->createContact('Surviving Contact')->getId();
 
-        $this->client->request('POST', sprintf('/contacts/%d/delete', $id), ['_token' => 'invalid']);
+        $this->client->request('POST', sprintf('/contacts/%s/delete', $id), ['_token' => 'invalid']);
 
         $this->assertResponseRedirects('/contacts');
         $this->entityManager()->clear();
@@ -82,7 +82,7 @@ final class ContactControllerTest extends FunctionalTestCase
         return $contact;
     }
 
-    private function removeContact(int $id): void
+    private function removeContact(string $id): void
     {
         $this->entityManager()->clear();
         $contact = $this->contacts()->find($id);
