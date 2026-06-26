@@ -9,11 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * [PR-5](https://github.com/itk-dev/itk-project-database/pull/5)
   Improve initiative list, search and filters using partial page rendering
+* [PR-8](https://github.com/itk-dev/itk-project-database/pull/8)
+  Adopt itk-dev/entity-bundle: ULID identifiers + shared blamable/timestampable
+* [PR-10](https://github.com/itk-dev/itk-project-database/pull/10)
+  Correct docker compose setup.
 * [PR-4](https://github.com/itk-dev/itk-project-database/pull/4)
   Add Chart.js graphs to the dashboard
 * [PR-3](https://github.com/itk-dev/itk-project-database/pull/3)
   Add real-time activity feed with autosave
 * [PR-2](https://github.com/itk-dev/itk-project-database/pull/2)
-  Add Symfony UX Turbo and stimulus
+  Add Symfony UX Turbo and stimulus.
 * [PR-1](https://github.com/itk-dev/itk-project-database/pull/1)
   Initial Symfony 8 rebuild of the project database.
