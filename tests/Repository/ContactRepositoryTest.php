@@ -20,6 +20,5 @@ final class ContactRepositoryTest extends KernelTestCase
         // Ordering is delegated to the database collation, so we only assert the
         // method returns the persisted contacts.
         self::assertNotEmpty($contacts);
-        self::assertNotNull($contacts[0]->getId());
     }
 }

@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/contacts')]
@@ -44,7 +45,7 @@ class ContactController extends AbstractController
         return $this->render('admin/contacts/new.html.twig', ['form' => $form]);
     }
 
-    #[Route('/{id}/edit', name: 'admin_contact_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'admin_contact_edit', requirements: ['id' => Requirement::ULID], methods: ['GET', 'POST'])]
     public function edit(Request $request, Contact $contact, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ContactType::class, $contact);
@@ -63,7 +64,7 @@ class ContactController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'admin_contact_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'admin_contact_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     public function delete(Request $request, Contact $contact, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete-contact-'.$contact->getId(), (string) $request->request->get('_token'))) {

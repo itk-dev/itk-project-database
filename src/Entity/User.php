@@ -14,13 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['email'], message: 'user.email_duplicate')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User extends AbstractEntity implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[Assert\NotBlank]
     #[Assert\Email]
     #[ORM\Column(length: 180, unique: true)]
@@ -36,10 +31,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    /**
+     * Free-form per-user preferences (e.g. whether the mascot is shown). Stored
+     * as JSON so new settings can be added without a schema change.
+     *
+     * @var array<string, mixed>
+     */
+    #[ORM\Column]
+    private array $userSettings = [];
 
     public function getEmail(): ?string
     {
@@ -108,6 +107,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getUserSettings(): array
+    {
+        return $this->userSettings;
+    }
+
+    /**
+     * @param array<string, mixed> $userSettings
+     */
+    public function setUserSettings(array $userSettings): static
+    {
+        $this->userSettings = $userSettings;
+
+        return $this;
+    }
+
+    /**
+     * The mascot is shown unless the user has explicitly turned it off.
+     */
+    public function isMascotEnabled(): bool
+    {
+        return (bool) ($this->userSettings['mascotEnabled'] ?? true);
+    }
+
+    public function setMascotEnabled(bool $enabled): static
+    {
+        $this->userSettings['mascotEnabled'] = $enabled;
 
         return $this;
     }

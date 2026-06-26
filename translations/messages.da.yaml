@@ -5,25 +5,42 @@ mascot:
     label: Din kreative makker
     close: Luk
     cta: Opret nyt initiativ
+    farewell: "Vi ses — jeg er her, hvis du får brug for mig! 👋"
+    welcome: "Yes, jeg er tilbage! Lad os skabe noget sammen. 🌟"
     praise: "{1}Du har skabt ét initiativ — godt begyndt! 🌟|]1,Inf[Du har skabt %count% initiativer — flot arbejde! 🌟"
-    finish: "“%title%” mangler lidt endnu — gør den helt færdig?"
+    finish:
+        almost: "“%title%” er %percent% % færdig — skal vi gøre den helt færdig?"
+        touches: "“%title%” er %percent% % færdig og mangler kun de sidste detaljer. ✏️"
+        close: "Du er %percent% % gennem “%title%” — skal vi gøre den færdig?"
+        blanks: "“%title%” er %percent% % udfyldt — der mangler stadig et par felter. 📝"
+        ending: "“%title%” er %percent% % færdig. Giv den en værdig afslutning! 🏁"
+        strong: "“%title%” er %percent% % færdig — lad os tage den sidste bid! 💪"
     finish_cta: Gør færdig
     msg:
-        idea: "Har du en ny idé? Lad os give den et hjem. ✨"
-        roll: "Du er i gang — hvad bliver det næste?"
-        bold: "Ethvert godt initiativ starter med én modig linje."
-        finish: "Halvvejs er det sværeste. Kom nu — gør det færdigt! 💪"
+        idea: "Har du en ny idé? Så er det her, den hører til. ✨"
+        roll: "Du er godt i gang — hvad bliver det næste?"
+        bold: "Ethvert godt initiativ starter med et modigt første skridt."
         creativity: "Din kreativitet gør hele forskellen. 🌟"
         another: "Endnu et initiativ? Ja tak!"
         draft: "Lad ikke kladden samle støv — få den i mål."
-        future: "Se dig lige — du former fremtiden."
+        future: "Se lige dig — du er med til at forme fremtiden."
+        spark: "Enhver stor forandring kræver en første gnist — har du en? ⚡"
+        dream: "Drøm stort — formularen skal nok følge med. 💭"
+        coffee: "En kop kaffe og fem minutter — mere skal en god idé ikke bruge. ☕"
+        small: "Ingen idé er for lille til at skrive ned."
+        colleague: "Et eller andet sted sidder en kollega og mangler præcis din idé. 🤝"
+        today: "I dag er en god dag at starte noget nyt."
+        create: "Vær den, der trykker på opret-knappen. 🚀"
+        thought: "Den tanke, du hele tiden vender tilbage til? Skriv den ned her. 📝"
+        momentum: "Én idé i dag kan forme morgendagen."
+        curious: "Jeg er spændt på, hvad du finder på nu. 👀"
     play:
-        invite: "Pssst… har du tid til en omgang fangeleg? 🌟"
-        start: "Leg fangeleg"
+        invite: "Pssst… har du tid til en omgang tagfat? 🌟"
+        start: "Leg tagfat"
         caught: "Haha, du fangede mig! Nu er det min tur 😈"
         gotcha: "Fanget! Det var sjovt. Nå, tilbage til arbejdet. 🎉"
-        giveup: "Pyha… vi kalder det uafgjort. 😅"
-        escaped: "Argh, du slap væk! Du er for hurtig. 🏳️"
+        giveup: "Pyha… lad os kalde det uafgjort. 😅"
+        escaped: "Argh, du slap væk! Du er alt for hurtig. 🏳️"
 
 autosave:
     saving: Gemmer…
@@ -52,6 +69,8 @@ nav:
     language: Sprog
     signed_in_as: Logget ind som
     logout: Log ud
+    mascot_disable: Slå makker fra
+    mascot_enable: Slå makker til
 
 action:
     new: Opret

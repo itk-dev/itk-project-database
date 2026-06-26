@@ -86,7 +86,6 @@ final class InitiativeRepositoryTest extends KernelTestCase
         $rows = $this->repository->findForExport(new InitiativeFilter());
 
         self::assertNotEmpty($rows);
-        self::assertNotNull($rows[0]->getId());
     }
 
     public function testCountAll(): void

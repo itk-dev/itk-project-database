@@ -252,7 +252,8 @@ h3 {
 }
 
 .user-menu__link,
-.user-menu__logout {
+.user-menu__logout,
+.user-menu__button {
     display: block;
     padding: var(--itk-space-2) var(--itk-space-3);
     border-radius: var(--itk-radius-2);
@@ -261,9 +262,23 @@ h3 {
 }
 
 .user-menu__link:hover,
-.user-menu__logout:hover {
+.user-menu__logout:hover,
+.user-menu__button:hover {
     background-color: var(--itk-slate-100);
     text-decoration: none;
+}
+
+.user-menu__form {
+    margin: 0;
+}
+
+.user-menu__button {
+    width: 100%;
+    border: none;
+    background: none;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
 }
 
 .user-menu__logout {
@@ -1690,6 +1705,20 @@ textarea {
     align-items: flex-end;
     gap: var(--itk-space-2);
     pointer-events: none;
+    animation: mascot-bob 3.4s ease-in-out infinite;
+    transition:
+        right 0.5s ease,
+        opacity 0.5s ease;
+}
+
+.mascot:hover {
+    animation-play-state: paused;
+}
+
+.mascot--away {
+    right: -340px;
+    opacity: 0;
+    animation: none;
 }
 
 .mascot__avatar,
@@ -1708,7 +1737,6 @@ textarea {
     cursor: pointer;
     display: grid;
     place-items: center;
-    animation: mascot-bob 3.4s ease-in-out infinite;
     transition: transform 0.15s;
 }
 
@@ -1825,13 +1853,10 @@ textarea {
 .mascot--playing {
     right: auto;
     bottom: auto;
+    animation: none;
     transition:
         left 0.18s ease,
         top 0.18s ease;
-}
-
-.mascot--playing .mascot__avatar {
-    animation: none;
 }
 
 .mascot--playing .mascot__bubble {
@@ -1843,12 +1868,14 @@ textarea {
 }
 
 .mascot--chasing {
+    animation: none;
     transition: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .mascot__avatar {
+    .mascot {
         animation: none;
+        transition: none;
     }
 
     .mascot__bubble {

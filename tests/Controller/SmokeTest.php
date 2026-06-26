@@ -46,10 +46,10 @@ final class SmokeTest extends WebTestCase
         $initiative = $container->get(InitiativeRepository::class)->findOneBy([]);
         self::assertNotNull($initiative, 'Fixtures should create at least one initiative.');
 
-        $client->request('GET', sprintf('/initiatives/%d', $initiative->getId()));
+        $client->request('GET', sprintf('/initiatives/%s', $initiative->getId()));
         $this->assertResponseIsSuccessful();
 
-        $client->request('GET', sprintf('/initiatives/%d/edit', $initiative->getId()));
+        $client->request('GET', sprintf('/initiatives/%s/edit', $initiative->getId()));
         $this->assertResponseIsSuccessful();
     }
 
@@ -73,7 +73,6 @@ final class SmokeTest extends WebTestCase
         $initiative->addImage($image);
         $entityManager->flush();
 
-        self::assertNotNull($image->getId());
         self::assertNotNull($image->getImageName(), 'Vich should persist the stored file name.');
         self::assertSame('sample.png', $image->getOriginalName());
 
