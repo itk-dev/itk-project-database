@@ -21,8 +21,8 @@ use ITKDev\EntityBundle\Entity\Trait\TimestampableTrait;
  * bundle's listeners.
  *
  * The Vich-backed media entities ({@see InitiativeImage}, {@see InitiativeAttachment})
- * extend {@see AbstractITKDevEntity} directly instead, because their own Vich
- * "updatedAt" field would collide with the timestampable trait's.
+ * extend this base too; they reuse the timestampable "updatedAt" column as the
+ * field Vich touches on upload rather than declaring their own.
  */
 #[ORM\MappedSuperclass]
 abstract class AbstractEntity extends AbstractITKDevEntity implements TimestampableInterface, BlameableInterface

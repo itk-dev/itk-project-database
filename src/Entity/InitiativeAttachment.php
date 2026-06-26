@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use ITKDev\EntityBundle\Entity\AbstractITKDevEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity]
 #[Vich\Uploadable]
-class InitiativeAttachment extends AbstractITKDevEntity
+class InitiativeAttachment extends AbstractEntity
 {
     #[ORM\ManyToOne(targetEntity: Initiative::class, inversedBy: 'attachments')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -38,9 +37,6 @@ class InitiativeAttachment extends AbstractITKDevEntity
     #[ORM\Column(nullable: true)]
     private ?int $size = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
-
     public function getInitiative(): ?Initiative
     {
         return $this->initiative;
@@ -57,8 +53,10 @@ class InitiativeAttachment extends AbstractITKDevEntity
     {
         $this->file = $file;
 
+        // Vich needs a mapped field to change so Doctrine persists the upload;
+        // touching the timestampable updatedAt provides that change.
         if (null !== $file) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->setUpdatedAt(new \DateTimeImmutable());
         }
     }
 
