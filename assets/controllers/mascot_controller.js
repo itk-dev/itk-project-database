@@ -12,8 +12,8 @@ export default class extends Controller {
 
     static values = {
         messages: { type: Array, default: [] },
-        interval: { type: Number, default: 24000 },
-        playChance: { type: Number, default: 0.08 },
+        interval: { type: Number, default: 50000 },
+        playChance: { type: Number, default: 0.01 },
         invite: String,
         caught: String,
         gotcha: String,
@@ -94,7 +94,7 @@ export default class extends Controller {
                 this.mode = "idle";
                 this.hide();
             }
-        }, 8000);
+        }, 15000);
     }
 
     startFlee() {
@@ -248,7 +248,7 @@ export default class extends Controller {
             this.bubbleTarget.classList.add("is-visible");
         });
         window.clearTimeout(this.hideTimer);
-        this.hideTimer = window.setTimeout(() => this.hide(), 8000);
+        this.hideTimer = window.setTimeout(() => this.hide(), 20000);
         this.lastShownAt = Date.now();
         this.saveState();
     }
