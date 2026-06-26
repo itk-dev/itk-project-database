@@ -35,10 +35,18 @@ final class InitiativeRepositoryTest extends KernelTestCase
         $filter->initiativeType = InitiativeType::Project;
         $filter->organizationalAnchoring = OrganizationalAnchoring::HealthAndCare;
         $filter->endorsement = true;
-        $filter->budgetMin = 0;
-        $filter->budgetMax = 1_000_000_000;
         $filter->sort = 'title';
         $filter->direction = 'ASC';
+
+        self::assertIsArray($this->repository->search($filter)->getQuery()->getResult());
+    }
+
+    public function testSearchMatchesTranslatedFundingLabel(): void
+    {
+        $filter = new InitiativeFilter();
+        // "midler" is a substring of the Danish "EU-midler" funding label, so the
+        // search maps it to the eu_funds slug and matches it inside the funding JSON.
+        $filter->q = 'midler';
 
         self::assertIsArray($this->repository->search($filter)->getQuery()->getResult());
     }

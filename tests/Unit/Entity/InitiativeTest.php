@@ -73,6 +73,26 @@ final class InitiativeTest extends TestCase
         self::assertSame('Grøn omstilling', (string) $initiative);
     }
 
+    public function testCompletionPercentage(): void
+    {
+        self::assertSame(0, (new Initiative())->getCompletionPercentage());
+
+        $full = (new Initiative())
+            ->setTitle('T')
+            ->setCategory(Category::Climate)
+            ->setDescription('D')
+            ->setInitiativeType(InitiativeType::Project)
+            ->setStatus(Status::Active)
+            ->setOrganizationalAnchoring(OrganizationalAnchoring::TechnicalAndEnvironment)
+            ->setEndorsementAuthor(EndorsementAuthor::CityCouncil)
+            ->setBudget(1000)
+            ->setFunding([Funding::EuFunds])
+            ->setTimePeriodStart(new \DateTimeImmutable())
+            ->setTimePeriodEnd(new \DateTimeImmutable());
+
+        self::assertSame(100, $full->getCompletionPercentage());
+    }
+
     public function testFundingRoundTrip(): void
     {
         $initiative = (new Initiative())->setFunding([Funding::MunicipalBudget, Funding::EuFunds]);

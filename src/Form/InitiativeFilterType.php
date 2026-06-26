@@ -12,7 +12,6 @@ use App\Model\InitiativeFilter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -66,16 +65,6 @@ class InitiativeFilterType extends AbstractType
                 'placeholder' => 'filter.all',
                 'choices' => ['filter.yes' => true, 'filter.no' => false],
                 'choice_value' => $boolChoiceValue,
-            ])
-            ->add('budgetMin', IntegerType::class, [
-                'label' => 'filter.budget_min',
-                'required' => false,
-                'attr' => ['min' => 0],
-            ])
-            ->add('budgetMax', IntegerType::class, [
-                'label' => 'filter.budget_max',
-                'required' => false,
-                'attr' => ['min' => 0],
             ]);
     }
 
