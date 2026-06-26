@@ -24,12 +24,12 @@ jobs:
             - name: Composer install
               run: |
                   docker network create frontend
-                  docker compose run --rm --user=root phpfpm composer install --no-dev -o --classmap-authoritative
-                  docker compose run --rm --user=root phpfpm composer clear-cache
+                  docker compose run --rm -e APP_ENV=prod phpfpm composer install --no-dev --optimize-autoloader
+                  docker compose run --rm -e APP_ENV=prod phpfpm composer clear-cache
 
-            - name: Building assets for the frontend
-              run: |
-                  docker compose run --rm --user=root phpfpm composer asset-map:compile
+            #- name: Building assets for the frontend
+            #  run: |
+            #      docker compose run --rm --user=root phpfpm composer asset-map:compile
 
             - name: Clean up
               run: |
