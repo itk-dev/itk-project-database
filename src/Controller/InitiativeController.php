@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class InitiativeController extends AbstractController
@@ -77,7 +78,7 @@ class InitiativeController extends AbstractController
 
             foreach ($rows as $row) {
                 $csv->insertOne([
-                    $row->getId(),
+                    (string) $row->getId(),
                     $row->getTitle(),
                     $translate($row->getStatus()),
                     $translate($row->getCategory()),
@@ -151,7 +152,7 @@ class InitiativeController extends AbstractController
         ]);
     }
 
-    #[Route('/initiatives/{id}', name: 'app_initiative_show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[Route('/initiatives/{id}', name: 'app_initiative_show', requirements: ['id' => Requirement::ULID], methods: ['GET'])]
     public function show(Initiative $initiative): Response
     {
         return $this->render('initiative/show.html.twig', [
@@ -159,7 +160,7 @@ class InitiativeController extends AbstractController
         ]);
     }
 
-    #[Route('/initiatives/{id}/edit', name: 'app_initiative_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/initiatives/{id}/edit', name: 'app_initiative_edit', requirements: ['id' => Requirement::ULID], methods: ['GET', 'POST'])]
     public function edit(Request $request, Initiative $initiative, EntityManagerInterface $entityManager, ActivityPublisher $activityPublisher): Response
     {
         // Autosave posts the same form via fetch; it expects to stay on the page.
@@ -205,7 +206,7 @@ class InitiativeController extends AbstractController
         ]);
     }
 
-    #[Route('/initiatives/{id}/delete', name: 'app_initiative_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/initiatives/{id}/delete', name: 'app_initiative_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     public function delete(Request $request, Initiative $initiative, EntityManagerInterface $entityManager, ActivityPublisher $activityPublisher): Response
     {
         if ($this->isCsrfTokenValid('delete-initiative-'.$initiative->getId(), (string) $request->request->get('_token'))) {

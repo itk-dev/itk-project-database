@@ -37,9 +37,6 @@ class InitiativeAttachment extends AbstractEntity
     #[ORM\Column(nullable: true)]
     private ?int $size = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
-
     public function getInitiative(): ?Initiative
     {
         return $this->initiative;
@@ -56,8 +53,10 @@ class InitiativeAttachment extends AbstractEntity
     {
         $this->file = $file;
 
+        // Vich needs a mapped field to change so Doctrine persists the upload;
+        // touching the timestampable updatedAt provides that change.
         if (null !== $file) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->setUpdatedAt(new \DateTimeImmutable());
         }
     }
 

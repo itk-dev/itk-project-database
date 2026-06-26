@@ -20,13 +20,10 @@ class Term extends AbstractEntity
     #[ORM\Column(length: 32, enumType: Vocabulary::class)]
     private Vocabulary $vocabulary;
 
-    #[ORM\Column]
-    private \DateTimeImmutable $createdAt;
-
     public function __construct(Vocabulary $vocabulary = Vocabulary::Tag)
     {
+        parent::__construct();
         $this->vocabulary = $vocabulary;
-        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getName(): ?string
@@ -51,11 +48,6 @@ class Term extends AbstractEntity
         $this->vocabulary = $vocabulary;
 
         return $this;
-    }
-
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
     }
 
     public function __toString(): string

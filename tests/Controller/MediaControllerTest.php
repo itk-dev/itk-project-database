@@ -23,7 +23,7 @@ final class MediaControllerTest extends FunctionalTestCase
         $em = $this->entityManager();
         $em->flush();
 
-        $this->client->request('GET', sprintf('/media/image/%d', (int) $image->getId()));
+        $this->client->request('GET', sprintf('/media/image/%s', (string) $image->getId()));
         $this->assertResponseIsSuccessful();
 
         $em->remove($image);
@@ -41,7 +41,7 @@ final class MediaControllerTest extends FunctionalTestCase
         $em = $this->entityManager();
         $em->flush();
 
-        $this->client->request('GET', sprintf('/media/attachment/%d', (int) $attachment->getId()));
+        $this->client->request('GET', sprintf('/media/attachment/%s', (string) $attachment->getId()));
         $this->assertResponseIsSuccessful();
 
         $em->remove($attachment);

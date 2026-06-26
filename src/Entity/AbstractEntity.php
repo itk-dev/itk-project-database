@@ -5,25 +5,28 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use ITKDev\EntityBundle\Attribute\ITKDevEntity;
+use ITKDev\EntityBundle\Entity\AbstractITKDevEntity;
+use ITKDev\EntityBundle\Entity\Contract\BlameableInterface;
+use ITKDev\EntityBundle\Entity\Contract\TimestampableInterface;
+use ITKDev\EntityBundle\Entity\Trait\BlameableTrait;
+use ITKDev\EntityBundle\Entity\Trait\TimestampableTrait;
 
 /**
- * Base class for the app's domain entities. Carries #[ITKDevEntity] — the marker
- * the bundle scans for, inherited along the parent chain — while keeping the
- * project's own auto-increment id. ULID ids via the bundle's own
- * AbstractITKDevEntity are reserved for the dedicated feature branch.
+ * Project base for persisted domain entities.
+ *
+ * Extends the bundle's {@see AbstractITKDevEntity} (ULID identity + the
+ * #[ITKDevEntity] discovery marker) and composes the cross-cutting concerns the
+ * application applies uniformly to its domain entities: created/updated
+ * timestamps and created-by/modified-by blame, both populated on flush by the
+ * bundle's listeners.
+ *
+ * The Vich-backed media entities ({@see InitiativeImage}, {@see InitiativeAttachment})
+ * extend this base too; they reuse the timestampable "updatedAt" column as the
+ * field Vich touches on upload rather than declaring their own.
  */
 #[ORM\MappedSuperclass]
-#[ITKDevEntity]
-abstract class AbstractEntity
+abstract class AbstractEntity extends AbstractITKDevEntity implements TimestampableInterface, BlameableInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    use TimestampableTrait;
+    use BlameableTrait;
 }

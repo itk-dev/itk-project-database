@@ -47,7 +47,7 @@ final class ActivityPublisher
 
         $stream = $this->twig->render('activity/_broadcast.html.twig', [
             'action' => $action,
-            'initiativeId' => $initiative->getId(),
+            'initiativeId' => (string) $initiative->getId(),
             'title' => $initiative->getTitle(),
             'url' => $url,
             'actor' => $actor?->getName(),

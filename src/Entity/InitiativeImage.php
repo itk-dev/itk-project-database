@@ -40,9 +40,6 @@ class InitiativeImage extends AbstractEntity
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $alt = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
-
     public function getInitiative(): ?Initiative
     {
         return $this->initiative;
@@ -59,9 +56,10 @@ class InitiativeImage extends AbstractEntity
     {
         $this->imageFile = $imageFile;
 
-        // Vich needs a mapped field to change so Doctrine persists the upload.
+        // Vich needs a mapped field to change so Doctrine persists the upload;
+        // touching the timestampable updatedAt provides that change.
         if (null !== $imageFile) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->setUpdatedAt(new \DateTimeImmutable());
         }
     }
 
