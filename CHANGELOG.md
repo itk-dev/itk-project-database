@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-
 * [PR-8](https://github.com/itk-dev/itk-project-database/pull/8)
   Adopt itk-dev/entity-bundle: ULID identifiers + shared blamable/timestampable
+* [PR-10](https://github.com/itk-dev/itk-project-database/pull/10)
+  Correct docker compose setup.
 * [PR-3](https://github.com/itk-dev/itk-project-database/pull/3)
   Add real-time activity feed with autosave
 * [PR-10](https://github.com/itk-dev/itk-project-database/pull/10)
