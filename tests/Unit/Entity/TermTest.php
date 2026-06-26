@@ -16,7 +16,9 @@ final class TermTest extends TestCase
 
         self::assertNull($term->getName());
         self::assertSame(Vocabulary::Tag, $term->getVocabulary());
-        self::assertInstanceOf(\DateTimeImmutable::class, $term->getCreatedAt());
+        // Timestamps are populated by the bundle's listener on flush, so they
+        // are still null on a freshly constructed (unpersisted) entity.
+        self::assertNull($term->getCreatedAt());
         self::assertSame('', (string) $term);
     }
 

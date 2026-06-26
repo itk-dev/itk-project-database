@@ -17,7 +17,9 @@ final class ContactTest extends TestCase
         self::assertNull($contact->getEmail());
         self::assertNull($contact->getPhone());
         self::assertNull($contact->getDepartment());
-        self::assertInstanceOf(\DateTimeImmutable::class, $contact->getCreatedAt());
+        // Timestamps are populated by the bundle's listener on flush, so they
+        // are still null on a freshly constructed (unpersisted) entity.
+        self::assertNull($contact->getCreatedAt());
         self::assertSame('', (string) $contact);
     }
 
@@ -34,14 +36,5 @@ final class ContactTest extends TestCase
         self::assertSame('+45 12 34 56 78', $contact->getPhone());
         self::assertSame('Teknik og Miljø', $contact->getDepartment());
         self::assertSame('Anne Jensen', (string) $contact);
-    }
-
-    public function testTouchUpdatesTimestamp(): void
-    {
-        $contact = new Contact();
-        $contact->touch();
-
-        // touch() does not throw and leaves the entity in a valid state.
-        self::assertInstanceOf(\DateTimeImmutable::class, $contact->getCreatedAt());
     }
 }

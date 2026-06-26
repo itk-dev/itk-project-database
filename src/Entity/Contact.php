@@ -6,12 +6,10 @@ namespace App\Entity;
 
 use App\Repository\ContactRepository;
 use Doctrine\ORM\Mapping as ORM;
-use ITKDev\EntityBundle\Entity\AbstractITKDevEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
-#[ORM\HasLifecycleCallbacks]
-class Contact extends AbstractITKDevEntity
+class Contact extends AbstractEntity
 {
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
@@ -26,25 +24,6 @@ class Contact extends AbstractITKDevEntity
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $department = null;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $createdAt;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $updatedAt;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    #[ORM\PreUpdate]
-    public function touch(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
-    }
 
     public function getName(): ?string
     {
@@ -92,11 +71,6 @@ class Contact extends AbstractITKDevEntity
         $this->department = $department;
 
         return $this;
-    }
-
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
     }
 
     public function __toString(): string
