@@ -8,6 +8,7 @@
 /public/bundles/
 /var/
 /vendor/
+/.claude/
 ###< symfony/framework-bundle ###
 
 ###> symfony/asset-mapper ###
