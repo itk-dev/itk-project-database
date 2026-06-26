@@ -73,12 +73,28 @@ filter:
 
 dashboard:
     title: Overview
-    subtitle: The status of every initiative in the database.
+    subtitle: The status of every initiative
     total: Total initiatives
+    total_hint: registered in total
+    in_progress: In progress
+    in_progress_hint: active right now
+    departments_involved: Departments involved
+    departments_involved_hint: with at least one initiative
+    collaboration_count: Possible collaborations
+    collaboration_count_hint: themes across departments
     by_status: By status
     recent: Recently created
     no_status: No status
     empty: No initiatives have been created yet.
+    themes_heatmap: Themes across departments
+    themes_heatmap_sub: Darker = more initiatives. Marked themes span at least three departments.
+    collaboration: Possible collaboration
+    collaboration_sub: Initiatives in different departments sharing a theme.
+    status_by_dept: Status by department
+    funding_sources: Funding sources
+    budget_by_dept: Budget by department
+    reach: Themes by department reach
+    timeline: Timeline
 
 initiative:
     title: Title

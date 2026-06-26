@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Entity\Initiative;
-use App\Repository\ContactRepository;
 use App\Repository\InitiativeRepository;
 use App\Service\ActivityPublisher;
+use App\Service\DashboardData;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 final class ActivityPublisherTest extends TestCase
@@ -27,18 +28,17 @@ final class ActivityPublisherTest extends TestCase
         $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
         $urlGenerator->method('generate')->willReturn('/initiatives/1');
 
+        // DashboardData is final (can't be doubled), so build a real one from stubs.
         $initiatives = $this->createStub(InitiativeRepository::class);
-        $initiatives->method('countAll')->willReturn(1);
-        $initiatives->method('countByStatus')->willReturn([]);
-        $initiatives->method('findRecent')->willReturn([]);
-
-        $contacts = $this->createStub(ContactRepository::class);
-        $contacts->method('count')->willReturn(0);
+        $initiatives->method('dashboardRows')->willReturn([]);
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnArgument(0);
+        $dashboardData = new DashboardData($initiatives, $translator);
 
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects(self::once())->method('warning');
 
-        $publisher = new ActivityPublisher($hub, $twig, $urlGenerator, $initiatives, $contacts, $logger);
+        $publisher = new ActivityPublisher($hub, $twig, $urlGenerator, $dashboardData, $logger);
 
         // An unreachable hub must be swallowed and logged, never bubbled up — the
         // underlying save (autosave) is the primary path and must still succeed.
