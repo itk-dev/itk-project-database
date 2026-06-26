@@ -249,17 +249,21 @@ class InitiativeRepository extends ServiceEntityRepository
      */
     public function dashboardRows(): array
     {
+        // Join and select the department id (rather than IDENTITY()) so Doctrine
+        // applies the ULID type: IDENTITY() returns the raw binary FK, which would
+        // not match the canonical ULID strings the rest of build() keys on.
         return $this->createQueryBuilder('i')
             ->select(
                 'i.title',
                 'i.category',
                 'i.status',
-                'IDENTITY(i.organizationalAnchoring) AS organizationalAnchoring',
+                'department.id AS organizationalAnchoring',
                 'i.budget',
                 'i.funding',
                 'i.timePeriodStart',
                 'i.timePeriodEnd',
             )
+            ->leftJoin('i.organizationalAnchoring', 'department')
             ->getQuery()
             ->getArrayResult();
     }
