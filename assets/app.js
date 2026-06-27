@@ -47,26 +47,16 @@ function initCollections() {
     });
 }
 
-function initContactSelect() {
-    document.querySelectorAll("[data-contact-select]").forEach((select) => {
-        if (select.dataset.bound) {
-            return;
-        }
-        select.dataset.bound = "1";
-        new TomSelect(select, {
-            plugins: ["remove_button"],
-            hideSelected: true,
-            maxOptions: null,
-        });
-    });
-}
+const capitalize = (value) =>
+    value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
 
-// Free-tagging fields (strategies, stakeholders, tags): a chip multiselect whose
-// dropdown is the vocabulary's shared pool, served as inspiration. create:true
-// lets a user add a brand-new term that is persisted on save and then shows up in
-// everyone's pool on the next page load.
-function initTermSelect() {
-    document.querySelectorAll("[data-term-select]").forEach((input) => {
+// A chip multiselect whose dropdown is a shared pool served as inspiration.
+// create lets a user add a brand-new value that is persisted on save and then
+// shows up in everyone's pool on the next page load; a capitalised value also
+// collapses onto an existing option of the same name instead of duplicating.
+// `transform` normalises a freshly typed value before it becomes a chip.
+function initCreatableSelect(selector, poolKey, transform) {
+    document.querySelectorAll(selector).forEach((input) => {
         if (input.dataset.bound) {
             return;
         }
@@ -74,7 +64,7 @@ function initTermSelect() {
 
         let pool = [];
         try {
-            pool = JSON.parse(input.dataset.termPool || "[]");
+            pool = JSON.parse(input.dataset[poolKey] || "[]");
         } catch {
             pool = [];
         }
@@ -90,18 +80,12 @@ function initTermSelect() {
             text: name,
         }));
 
-        const capitalize = (value) =>
-            value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
-
         new TomSelect(input, {
             plugins: ["remove_button"],
             options,
             items: current,
-            // Capitalise a brand-new term so it matches the rest of the pool; a
-            // capitalised value also collapses onto an existing option of the
-            // same name instead of creating a near-duplicate.
             create: (typed) => {
-                const name = capitalize(typed.trim());
+                const name = transform(typed.trim());
                 return { value: name, text: name };
             },
             createOnBlur: true,
@@ -110,6 +94,20 @@ function initTermSelect() {
             maxOptions: null,
         });
     });
+}
+
+// Free-tagging term fields (strategies, stakeholders, tags) capitalise new
+// entries; contacts keep the typed name as-is.
+function initTermSelect() {
+    initCreatableSelect("[data-term-select]", "termPool", capitalize);
+}
+
+function initContactSelect() {
+    initCreatableSelect(
+        "[data-contact-select]",
+        "contactPool",
+        (value) => value,
+    );
 }
 
 // One delegated handler on the document (which survives Turbo navigations and

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Area;
-use App\Entity\Contact;
 use App\Entity\Department;
 use App\Entity\Initiative;
 use App\Enum\EndorsementAuthor;
@@ -24,8 +23,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -41,6 +38,7 @@ class InitiativeType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'label' => 'initiative.title',
+                'help' => 'initiative.title_help',
             ])
             ->add('area', EntityType::class, [
                 'label' => 'initiative.area',
@@ -48,11 +46,13 @@ class InitiativeType extends AbstractType
                 'choice_label' => 'name',
                 'required' => false,
                 'placeholder' => 'form.choose',
+                'help' => 'initiative.area_help',
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'initiative.description',
                 'required' => false,
                 'attr' => ['rows' => 4],
+                'help' => 'initiative.description_help',
             ])
             ->add('strategies', TermsTextType::class, [
                 'label' => 'initiative.strategies',
@@ -66,6 +66,7 @@ class InitiativeType extends AbstractType
                 'required' => false,
                 'placeholder' => 'form.choose',
                 'choice_label' => static fn (InitiativeTypeEnum $value): string => $value->labelKey(),
+                'help' => 'initiative.initiative_type_help',
             ])
             ->add('status', EnumType::class, [
                 'label' => 'initiative.status',
@@ -73,11 +74,13 @@ class InitiativeType extends AbstractType
                 'required' => false,
                 'placeholder' => 'form.choose',
                 'choice_label' => static fn (Status $value): string => $value->labelKey(),
+                'help' => 'initiative.status_help',
             ])
             ->add('statusAdditional', TextareaType::class, [
                 'label' => 'initiative.status_additional',
                 'required' => false,
                 'attr' => ['rows' => 3],
+                'help' => 'initiative.status_additional_help',
             ])
             ->add('organizationalAnchoring', EntityType::class, [
                 'label' => 'initiative.organizational_anchoring',
@@ -85,6 +88,7 @@ class InitiativeType extends AbstractType
                 'choice_label' => 'name',
                 'required' => false,
                 'placeholder' => 'form.choose',
+                'help' => 'initiative.organizational_anchoring_help',
             ])
             ->add('endorsement', CheckboxType::class, [
                 'label' => 'initiative.endorsement',
@@ -96,11 +100,13 @@ class InitiativeType extends AbstractType
                 'required' => false,
                 'placeholder' => 'form.choose',
                 'choice_label' => static fn (EndorsementAuthor $value): string => $value->labelKey(),
+                'help' => 'initiative.endorsement_author_help',
             ])
             ->add('budget', IntegerType::class, [
                 'label' => 'initiative.budget',
                 'required' => false,
                 'attr' => ['min' => 0],
+                'help' => 'initiative.budget_help',
             ])
             ->add('funding', EnumType::class, [
                 'label' => 'initiative.funding',
@@ -127,12 +133,14 @@ class InitiativeType extends AbstractType
                 'widget' => 'single_text',
                 'input' => 'datetime_immutable',
                 'required' => false,
+                'help' => 'initiative.time_period_start_help',
             ])
             ->add('timePeriodEnd', DateType::class, [
                 'label' => 'initiative.time_period_end',
                 'widget' => 'single_text',
                 'input' => 'datetime_immutable',
                 'required' => false,
+                'help' => 'initiative.time_period_end_help',
             ])
             ->add('links', CollectionType::class, [
                 'label' => 'initiative.links',
@@ -151,25 +159,10 @@ class InitiativeType extends AbstractType
                 'required' => false,
                 'prototype' => true,
             ])
-            ->add('contacts', EntityType::class, [
+            ->add('contacts', ContactsTextType::class, [
                 'label' => 'initiative.contacts',
-                'class' => Contact::class,
-                'choice_label' => 'name',
-                'multiple' => true,
                 'required' => false,
-                'by_reference' => false,
-                'attr' => ['data-contact-select' => true],
-            ])
-            ->add('newContacts', CollectionType::class, [
-                'label' => 'initiative.new_contacts',
-                'entry_type' => ContactType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'delete_empty' => static fn (?Contact $contact): bool => null === $contact || null === $contact->getName() || '' === trim((string) $contact->getName()),
-                'by_reference' => false,
-                'required' => false,
-                'prototype' => true,
-                'mapped' => false,
+                'help' => 'initiative.terms_help',
             ])
             ->add('images', CollectionType::class, [
                 'label' => 'initiative.images',
@@ -189,17 +182,6 @@ class InitiativeType extends AbstractType
                 'required' => false,
                 'prototype' => true,
             ]);
-
-        // Existing contacts bind directly through the select; brand-new ones are
-        // built in the unmapped "newContacts" collection and merged in here.
-        $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event): void {
-            $initiative = $event->getData();
-            if ($initiative instanceof Initiative) {
-                foreach ($event->getForm()->get('newContacts')->getData() as $contact) {
-                    $initiative->addContact($contact);
-                }
-            }
-        });
     }
 
     /**

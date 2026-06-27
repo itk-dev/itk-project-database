@@ -87,7 +87,6 @@ action:
     reset: Reset
     export: Export CSV
     add_link: Add link
-    add_contact: Add contact
     add_image: Add image
     add_attachment: Add file
     remove: Remove
@@ -143,25 +142,35 @@ dashboard:
 
 initiative:
     title: Title
+    title_help: A short, descriptive name for the initiative.
     area: Area
+    area_help: The thematic area the initiative belongs to.
     description: Short description
+    description_help: A brief summary of the purpose and content.
     strategies: Strategies and plans
     initiative_type: Type of initiative
+    initiative_type_help: The nature of the initiative, e.g. project or operation.
     status: Status
+    status_help: How far along the initiative is.
     status_additional: Status – additional text
+    status_additional_help: Add detail to the status if needed.
     organizational_anchoring: Department
+    organizational_anchoring_help: The department responsible for the initiative.
     endorsement: Has the initiative been endorsed
     endorsement_author: Where it was endorsed
+    endorsement_author_help: Where the initiative was endorsed.
     budget: Budget (DKK)
+    budget_help: Total budget in whole kroner.
     funding: Funding sources
     stakeholders: Stakeholders and partners
     tags: Tags
     time_period_start: Time period – start
+    time_period_start_help: When the initiative starts.
     time_period_end: Time period – end
+    time_period_end_help: When the initiative is expected to end.
     time_period: Time period
     links: Relevant links
     contacts: Contacts
-    new_contacts: Add new contacts
     author: Filled out by
     terms_help: Choose an existing one, or type a new and press Enter.
     completion_field_hint: This field counts towards the completion rate.
@@ -198,9 +207,13 @@ initiative:
 
 contact:
     name: Name
+    name_help: The contact's full name.
     email: Email
+    email_help: Work email, if known.
     phone: Phone
+    phone_help: Phone number, if known.
     department: Department
+    department_help: The department or unit the person belongs to.
     index:
         title: Contacts
         subtitle: People attached to initiatives.
@@ -214,6 +227,7 @@ contact:
 
 department:
     name: Name
+    name_help: The department name as shown on initiatives.
     name_duplicate: A department with this name already exists.
     index:
         title: Departments
@@ -228,6 +242,7 @@ department:
 
 area:
     name: Name
+    name_help: The area name as shown on initiatives.
     name_duplicate: An area with this name already exists.
     index:
         title: Areas
@@ -242,7 +257,9 @@ area:
 
 user:
     email: Email
+    email_help: Used to sign in and for notifications.
     name: Name
+    name_help: Shown in activity and as the author.
     roles: Roles
     password: Password
     email_duplicate: A user with this email already exists.

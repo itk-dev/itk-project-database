@@ -99,23 +99,6 @@
         {{ form_row(form.stakeholders) }}
 
         {{ form_row(form.contacts) }}
-
-        <div class="form-row">
-            <label>{{ 'initiative.new_contacts'|trans }}</label>
-            <div class="collection" data-collection data-remove-label="{{ 'action.remove'|trans }}"
-                 data-prototype="{{ form_widget(form.newContacts.vars.prototype)|e('html_attr') }}">
-                <div class="collection" data-collection-list>
-                    {% for contact in form.newContacts %}
-                        <div class="collection__item" data-collection-item>
-                            <div class="collection__fields form-grid">
-                                {{ form_widget(contact) }}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                <button type="button" class="btn btn--ghost btn--sm" data-collection-add>{{ 'action.add_contact'|trans }}</button>
-            </div>
-        </div>
     </div>
 
     <div class="form-section">
@@ -171,7 +154,6 @@
         {% endif %}
     </div>
     {% do form.links.setRendered() %}
-    {% do form.contacts.setRendered() %}
     {% do form.images.setRendered() %}
     {% do form.attachments.setRendered() %}
 {{ form_end(form) }}

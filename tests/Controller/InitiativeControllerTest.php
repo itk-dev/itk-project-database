@@ -21,7 +21,8 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $this->client->request('POST', '/initiatives/new', [
             'initiative' => [
                 'title' => 'Coverage initiative',
-                'newContacts' => [['name' => 'Coverage Contact']],
+                // A typed name creates a new contact on the fly and attaches it.
+                'contacts' => 'Coverage Contact',
                 // An empty image row exercises the image branch of removeEmptyMedia().
                 'images' => [['alt' => 'empty image row']],
                 '_token' => $token,
