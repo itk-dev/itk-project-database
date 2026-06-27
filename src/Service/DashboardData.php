@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Area;
 use App\Entity\Department;
-use App\Enum\Category;
 use App\Enum\Funding;
 use App\Enum\Status;
+use App\Repository\AreaRepository;
 use App\Repository\DepartmentRepository;
 use App\Repository\InitiativeRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -23,6 +24,7 @@ final class DashboardData
     public function __construct(
         private readonly InitiativeRepository $initiatives,
         private readonly DepartmentRepository $departments,
+        private readonly AreaRepository $areas,
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -32,31 +34,34 @@ final class DashboardData
      */
     public function build(): array
     {
-        // Departments are managed entities now, so normalise them to the same
-        // {key, label} shape the enums get; the key is the id as a string, which
-        // is what dashboardRows() returns via IDENTITY().
+        // Departments and areas are managed entities, so normalise them to the same
+        // {key, label} shape the enums get; the key is the id as a string, which is
+        // what dashboardRows() returns by joining and selecting the id.
         $departments = array_map(
             static fn (Department $department): array => ['key' => (string) $department->getId(), 'label' => (string) $department->getName()],
             $this->departments->findAllOrdered(),
         );
-        $categories = Category::cases();
+        $areas = array_map(
+            static fn (Area $area): array => ['key' => (string) $area->getId(), 'label' => (string) $area->getName()],
+            $this->areas->findAllOrdered(),
+        );
         $statuses = Status::cases();
         $fundings = Funding::cases();
 
         $deptIndex = $this->indexKeys($departments);
-        $catIndex = $this->index($categories);
+        $areaIndex = $this->indexKeys($areas);
         $statusIndex = $this->index($statuses);
         $fundingIndex = $this->index($fundings);
 
-        $heatmap = $this->zeroMatrix(\count($departments), \count($categories));
+        $heatmap = $this->zeroMatrix(\count($departments), \count($areas));
         $statusByDept = $this->zeroMatrix(\count($statuses), \count($departments));
         $statusDistribution = array_fill(0, \count($statuses), 0);
         $budgetByDept = array_fill(0, \count($departments), 0);
         $fundingCount = array_fill(0, \count($fundings), 0);
-        $reachByDept = array_fill(0, \count($categories), []);
+        $reachByDept = array_fill(0, \count($areas), []);
 
-        /** @var array<string, array<string, list<string>>> $titlesByCategoryDept */
-        $titlesByCategoryDept = [];
+        /** @var array<string, array<string, list<string>>> $titlesByAreaDept */
+        $titlesByAreaDept = [];
         $timeline = [];
         $total = 0;
         $deptsSeen = [];
@@ -64,19 +69,19 @@ final class DashboardData
         foreach ($this->initiatives->dashboardRows() as $row) {
             ++$total;
             $dept = $this->enumValue($row['organizationalAnchoring'] ?? null);
-            $cat = $this->enumValue($row['category'] ?? null);
+            $area = $this->enumValue($row['area'] ?? null);
             $status = $this->enumValue($row['status'] ?? null);
             $di = null !== $dept ? ($deptIndex[$dept] ?? null) : null;
-            $ci = null !== $cat ? ($catIndex[$cat] ?? null) : null;
+            $ai = null !== $area ? ($areaIndex[$area] ?? null) : null;
             $si = null !== $status ? ($statusIndex[$status] ?? null) : null;
 
             if (null !== $di) {
                 $deptsSeen[$di] = true;
             }
-            if (null !== $di && null !== $ci) {
-                ++$heatmap[$di][$ci];
-                $reachByDept[$ci][$di] = true;
-                $titlesByCategoryDept[$cat][$dept][] = (string) $row['title'];
+            if (null !== $di && null !== $ai) {
+                ++$heatmap[$di][$ai];
+                $reachByDept[$ai][$di] = true;
+                $titlesByAreaDept[$area][$dept][] = (string) $row['title'];
             }
             if (null !== $si) {
                 ++$statusDistribution[$si];
@@ -108,8 +113,8 @@ final class DashboardData
 
         $inProgress = $statusDistribution[$statusIndex[Status::Active->value]] ?? 0;
         $collaborationCount = 0;
-        foreach ($categories as $category) {
-            if (\count($titlesByCategoryDept[$category->value] ?? []) >= 2) {
+        foreach ($areas as $area) {
+            if (\count($titlesByAreaDept[$area['key']] ?? []) >= 2) {
                 ++$collaborationCount;
             }
         }
@@ -123,7 +128,7 @@ final class DashboardData
                 'collaboration' => $collaborationCount,
             ],
             'departments' => $departments,
-            'categories' => $this->labelled($categories),
+            'areas' => $areas,
             'statuses' => $this->labelled($statuses),
             'fundings' => $this->labelled($fundings),
             'heatmap' => $heatmap,
@@ -131,23 +136,23 @@ final class DashboardData
             'statusDistribution' => $statusDistribution,
             'budgetByDept' => $budgetByDept,
             'fundingCount' => $fundingCount,
-            'reach' => $this->reach($categories, $reachByDept),
-            'collaboration' => $this->collaboration($categories, $departments, $titlesByCategoryDept),
+            'reach' => $this->reach($areas, $reachByDept),
+            'collaboration' => $this->collaboration($areas, $departments, $titlesByAreaDept),
             'timeline' => \array_slice($timeline, 0, 10),
         ];
     }
 
     /**
-     * Cross-department themes: a category worked on in two or more departments
+     * Cross-department themes: an area worked on in two or more departments
      * is a candidate for "sammenfald". Ranked by how broadly it spans.
      *
-     * @param list<Category>                             $categories
+     * @param list<array{key: string, label: string}>    $areas
      * @param list<array{key: string, label: string}>    $departments
-     * @param array<string, array<string, list<string>>> $titlesByCategoryDept
+     * @param array<string, array<string, list<string>>> $titlesByAreaDept
      *
      * @return list<array<string, mixed>>
      */
-    private function collaboration(array $categories, array $departments, array $titlesByCategoryDept): array
+    private function collaboration(array $areas, array $departments, array $titlesByAreaDept): array
     {
         $deptLabel = [];
         foreach ($departments as $d) {
@@ -155,8 +160,8 @@ final class DashboardData
         }
 
         $opportunities = [];
-        foreach ($categories as $category) {
-            $byDept = $titlesByCategoryDept[$category->value] ?? [];
+        foreach ($areas as $area) {
+            $byDept = $titlesByAreaDept[$area['key']] ?? [];
             if (\count($byDept) < 2) {
                 continue;
             }
@@ -173,8 +178,8 @@ final class DashboardData
             $distinctDepts = \count($byDept);
             $strength = min(100, $distinctDepts * 22 + min($total, 8) * 4);
             $opportunities[] = [
-                'theme' => $this->t($category->labelKey()),
-                'themeKey' => $category->value,
+                'theme' => $area['label'],
+                'themeKey' => $area['key'],
                 'departmentCount' => $distinctDepts,
                 'initiativeCount' => $total,
                 'strength' => $strength,
@@ -190,19 +195,19 @@ final class DashboardData
     }
 
     /**
-     * @param list<Category>         $categories
-     * @param list<array<int, bool>> $reachByDept
+     * @param list<array{key: string, label: string}> $areas
+     * @param list<array<int, bool>>                  $reachByDept
      *
      * @return list<array<string, mixed>>
      */
-    private function reach(array $categories, array $reachByDept): array
+    private function reach(array $areas, array $reachByDept): array
     {
         $reach = [];
-        foreach ($categories as $ci => $category) {
-            $reach[] = ['label' => $this->t($category->labelKey()), 'depts' => \count($reachByDept[$ci])];
+        foreach ($areas as $ai => $area) {
+            $reach[] = ['label' => $area['label'], 'depts' => \count($reachByDept[$ai])];
         }
 
-        // Kept in category order (not sorted by count) so the radar axes stay stable
+        // Kept in area order (not sorted by count) so the radar axes stay stable
         // across live updates rather than rotating when a count changes.
         return $reach;
     }

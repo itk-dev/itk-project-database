@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
@@ -27,7 +26,7 @@ class Initiative extends AbstractEntity
      * @var list<string>
      */
     public const array COMPLETION_FIELDS = [
-        'title', 'category', 'description', 'initiativeType', 'status',
+        'title', 'area', 'description', 'initiativeType', 'status',
         'organizationalAnchoring', 'endorsementAuthor',
         'budget', 'funding', 'timePeriodStart', 'timePeriodEnd',
     ];
@@ -36,8 +35,9 @@ class Initiative extends AbstractEntity
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 32, nullable: true, enumType: Category::class)]
-    private ?Category $category = null;
+    #[ORM\ManyToOne(targetEntity: Area::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Area $area = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
@@ -134,14 +134,14 @@ class Initiative extends AbstractEntity
         return $this;
     }
 
-    public function getCategory(): ?Category
+    public function getArea(): ?Area
     {
-        return $this->category;
+        return $this->area;
     }
 
-    public function setCategory(?Category $category): static
+    public function setArea(?Area $area): static
     {
-        $this->category = $category;
+        $this->area = $area;
 
         return $this;
     }
@@ -486,7 +486,7 @@ class Initiative extends AbstractEntity
     {
         $checks = [
             null !== $this->title && '' !== $this->title,
-            null !== $this->category,
+            null !== $this->area,
             null !== $this->description && '' !== $this->description,
             null !== $this->initiativeType,
             null !== $this->status,
