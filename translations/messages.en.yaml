@@ -64,6 +64,7 @@ nav:
     initiatives: Initiatives
     contacts: Contacts
     departments: Departments
+    areas: Areas
     users: Users
     admin: Administration
     language: Language
@@ -225,6 +226,20 @@ department:
         title: No departments yet
         hint: Create a department so it can be chosen on initiatives.
 
+area:
+    name: Name
+    name_duplicate: An area with this name already exists.
+    index:
+        title: Areas
+        subtitle: Thematic area that can be chosen on initiatives.
+    new:
+        title: New area
+    edit:
+        title: Edit area
+    empty:
+        title: No areas yet
+        hint: Create an area so it can be chosen on initiatives.
+
 user:
     email: Email
     name: Name
@@ -266,6 +281,10 @@ flash:
         created: The department was created.
         updated: The department was updated.
         deleted: The department was deleted.
+    area:
+        created: The area was created.
+        updated: The area was updated.
+        deleted: The area was deleted.
     user:
         created: The user was created.
         updated: The user was updated.
