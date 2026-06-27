@@ -25,6 +25,7 @@ export default class extends Controller {
             type: String,
             default: "Save failed — your changes are kept here",
         },
+        requiredText: { type: String, default: "Add a title to save" },
         filesHintText: { type: String, default: "Click Save to upload files" },
         isNew: { type: Boolean, default: false },
     };
@@ -55,6 +56,14 @@ export default class extends Controller {
     }
 
     async save() {
+        // A required field (the title) is empty: don't POST an invalid form and
+        // flash a save error. Show a hint and keep the last saved version — once
+        // a title is typed again, the next change saves normally.
+        if (this.hasEmptyRequiredField()) {
+            this.setStatus(this.requiredTextValue, "unsaved");
+            return;
+        }
+
         // A picked-but-unsaved file is left for Save so we never half-upload it.
         if (this.hasPendingFile()) {
             this.setStatus(this.filesHintTextValue, "unsaved");
@@ -135,6 +144,12 @@ export default class extends Controller {
         return Array.from(
             this.element.querySelectorAll('input[type="file"]'),
         ).some((input) => input.files && input.files.length > 0);
+    }
+
+    hasEmptyRequiredField() {
+        return Array.from(
+            this.element.querySelectorAll("[data-autosave-required]"),
+        ).some((field) => "" === field.value.trim());
     }
 
     // Files only upload on an explicit Save, so surface that button while one is staged.

@@ -14,6 +14,7 @@
         'data-autosave-unsaved-text-value': 'autosave.unsaved'|trans,
         'data-autosave-error-text-value': 'autosave.error'|trans,
         'data-autosave-offline-text-value': 'autosave.offline'|trans,
+        'data-autosave-required-text-value': 'autosave.required'|trans,
         'data-autosave-files-hint-text-value': 'autosave.files_hint'|trans,
         'data-autosave-is-new-value': initiative.id ? 'false' : 'true',
     }) %}
@@ -42,7 +43,7 @@
 
     <div class="form-section">
         <div class="form-section__title">{{ 'initiative.section.basics'|trans }}</div>
-        {% set title_attr = {'data-action': 'input->title-mirror#update'} %}
+        {% set title_attr = {'data-action': 'input->title-mirror#update', 'data-autosave-required': true} %}
         {% if not initiative.id %}{% set title_attr = title_attr|merge({autofocus: true}) %}{% endif %}
         {{ form_row(form.title, {attr: title_attr}) }}
         <div class="form-grid">

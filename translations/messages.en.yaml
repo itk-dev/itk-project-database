@@ -46,6 +46,7 @@ autosave:
     saving: Saving…
     saved: Saved
     unsaved: Unsaved changes
+    required: Add a title to save.
     error: Couldn’t save — check the required fields
     offline: Save failed — your changes are kept here
     files_hint: Click Upload to add the files
