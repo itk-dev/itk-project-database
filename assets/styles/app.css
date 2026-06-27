@@ -1069,7 +1069,7 @@ h3 {
 .form-row__head {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
+    align-items: center;
     gap: var(--itk-space-2);
 }
 
@@ -1080,23 +1080,36 @@ h3 {
     color: var(--itk-slate-700);
 }
 
+.form-row__head > label {
+    display: inline-flex;
+    align-items: center;
+}
+
 .completion-star {
-    display: inline-block;
-    margin-left: var(--itk-space-1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 1.1em;
+    height: 1em;
+    margin-right: 2px;
     color: gold;
-    font-size: 1.1em;
+    font-size: 0.8em;
     line-height: 1;
-    vertical-align: text-top;
-    -webkit-text-stroke: 0.75px #000;
+    vertical-align: middle;
+    -webkit-text-stroke: 0.5px #000;
     paint-order: stroke fill;
     cursor: help;
+    transition:
+        width 0.25s ease,
+        margin-right 0.25s ease,
+        opacity 0.25s ease;
 }
 
 .completion-star--gone {
     width: 0;
-    margin-left: 0;
+    margin-right: 0;
     opacity: 0;
-    overflow: hidden;
 }
 
 .form-row .help-text,

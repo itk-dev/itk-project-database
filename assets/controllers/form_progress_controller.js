@@ -127,11 +127,19 @@ export default class extends Controller {
     realRect(star) {
         const gone = star.classList.contains("completion-star--gone");
         if (gone) {
+            // Drop the transition while measuring so the box reflects the star's
+            // settled size, not its collapsed (mid-transition) one.
+            star.style.transition = "none";
             star.classList.remove("completion-star--gone");
         }
         const rect = star.getBoundingClientRect();
         if (gone) {
             star.classList.add("completion-star--gone");
+            // Flush the collapsed state while the transition is still off, so
+            // re-enabling it below doesn't animate the star from full back to
+            // hidden — that was the brief flash beside the label.
+            void star.offsetWidth;
+            star.style.transition = "";
         }
 
         return rect;
