@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   shared tag pool where new entries are capitalised and reused as suggestions.
 * [PR-15](https://github.com/itk-dev/itk-project-database/pull/15)
   Make Kategori a user-defined Area entity with an admin CRUD, replacing the
-  fixed Category enum. 
+  fixed Category enum.
 
 ## [0.1.0] - 2026-06-26
 
@@ -38,4 +38,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Initial Symfony 8 rebuild of the project database.
 
 [Unreleased]: https://github.com/itk-dev/itk-project-database/compare/0.1.0...HEAD
-[0.1.0]: https://github.com/itk-dev/itk-project-database/releases/tag/0.1.09i876rbhn gvfcdevgbhjgnybtfr v8decsxz
+[0.1.0]: <https://github.com/itk-dev/itk-project-database/releases/tag/0.1.09i876rbhn> gvfcdevgbhjgnybtfr v8decsxz
