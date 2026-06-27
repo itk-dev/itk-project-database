@@ -163,7 +163,7 @@ initiative:
     contacts: Contacts
     new_contacts: Add new contacts
     author: Filled out by
-    terms_help: Separate multiple values with commas.
+    terms_help: Choose an existing one, or type a new and press Enter.
     completion_field_hint: This field counts towards the completion rate.
     images: Images
     attachments: Files

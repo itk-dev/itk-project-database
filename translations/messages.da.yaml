@@ -163,7 +163,7 @@ initiative:
     contacts: Kontaktpersoner
     new_contacts: Opret nye kontaktpersoner
     author: Udfyldt af
-    terms_help: Adskil flere værdier med komma.
+    terms_help: Vælg eksisterende, eller skriv en ny og tryk Enter.
     completion_field_hint: Dette felt tæller med i udfyldningsgraden.
     images: Billeder
     attachments: Filer

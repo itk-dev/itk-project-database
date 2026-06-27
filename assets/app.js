@@ -61,6 +61,57 @@ function initContactSelect() {
     });
 }
 
+// Free-tagging fields (strategies, stakeholders, tags): a chip multiselect whose
+// dropdown is the vocabulary's shared pool, served as inspiration. create:true
+// lets a user add a brand-new term that is persisted on save and then shows up in
+// everyone's pool on the next page load.
+function initTermSelect() {
+    document.querySelectorAll("[data-term-select]").forEach((input) => {
+        if (input.dataset.bound) {
+            return;
+        }
+        input.dataset.bound = "1";
+
+        let pool = [];
+        try {
+            pool = JSON.parse(input.dataset.termPool || "[]");
+        } catch {
+            pool = [];
+        }
+
+        // The current values plus the pool become the selectable options; the
+        // current ones are kept selected.
+        const current = input.value
+            .split(",")
+            .map((value) => value.trim())
+            .filter(Boolean);
+        const options = [...new Set([...current, ...pool])].map((name) => ({
+            value: name,
+            text: name,
+        }));
+
+        const capitalize = (value) =>
+            value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+
+        new TomSelect(input, {
+            plugins: ["remove_button"],
+            options,
+            items: current,
+            // Capitalise a brand-new term so it matches the rest of the pool; a
+            // capitalised value also collapses onto an existing option of the
+            // same name instead of creating a near-duplicate.
+            create: (typed) => {
+                const name = capitalize(typed.trim());
+                return { value: name, text: name };
+            },
+            createOnBlur: true,
+            persist: false,
+            hideSelected: true,
+            maxOptions: null,
+        });
+    });
+}
+
 // One delegated handler on the document (which survives Turbo navigations and
 // cache restores) both opens the menu — when the click lands on the toggle —
 // and closes it on any outside click. Delegation avoids per-page binding, which
@@ -86,4 +137,5 @@ document.addEventListener("click", (event) => {
 document.addEventListener("turbo:load", () => {
     initCollections();
     initContactSelect();
+    initTermSelect();
 });

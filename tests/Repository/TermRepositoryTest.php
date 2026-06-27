@@ -48,4 +48,11 @@ final class TermRepositoryTest extends KernelTestCase
         self::assertSame(Vocabulary::Strategy, $term->getVocabulary());
         self::assertCount(0, $this->repository->findBy(['name' => $name]), 'A freshly created term is not yet flushed to the database.');
     }
+
+    public function testFindOrCreateCapitalisesANewTerm(): void
+    {
+        $term = $this->repository->findOrCreate('grøn omstilling '.uniqid(), Vocabulary::Strategy);
+
+        self::assertSame('G', mb_substr((string) $term->getName(), 0, 1));
+    }
 }
