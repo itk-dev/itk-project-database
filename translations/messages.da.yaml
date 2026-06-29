@@ -141,6 +141,7 @@ dashboard:
     empty: Der er endnu ikke oprettet nogen initiativer.
     themes_heatmap: Områder på tværs af afdelinger
     themes_heatmap_sub: Antal initiativer pr. område i hver afdeling.
+    themes_heatmap_empty: Tilføj både afdelinger og områder for at se denne graf.
     collaboration: Muligt samarbejde
     collaboration_sub: Initiativer i forskellige afdelinger med fælles område.
     status_by_dept: Status pr. afdeling

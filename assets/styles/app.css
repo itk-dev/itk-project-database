@@ -628,6 +628,12 @@ h3 {
     min-width: 560px;
 }
 
+.heat-empty {
+    margin: 0;
+    color: var(--itk-slate-500);
+    font-size: var(--itk-text-sm);
+}
+
 .heat__collabel {
     display: flex;
     flex-direction: column;

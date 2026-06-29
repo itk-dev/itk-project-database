@@ -141,6 +141,7 @@ dashboard:
     empty: No initiatives have been created yet.
     themes_heatmap: Areas across departments
     themes_heatmap_sub: Number of initiatives per area in each department. Darker = more; marked areas span at least three departments.
+    themes_heatmap_empty: Add both departments and areas to see this chart.
     collaboration: Possible collaboration
     collaboration_sub: Initiatives in different departments sharing an area.
     status_by_dept: Status by department

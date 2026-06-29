@@ -3,7 +3,7 @@
 {% block title %}{{ 'dashboard.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
 
 {% block body %}
-    <div class="page" data-controller="dashboard-live dashboard-viz">
+    <div class="page" data-controller="dashboard-live dashboard-viz" data-dashboard-viz-empty-value="{{ 'dashboard.themes_heatmap_empty'|trans }}">
         <div class="page__header">
             <div>
                 <h1 class="page__title">{{ 'dashboard.title'|trans }}</h1>
