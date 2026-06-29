@@ -109,6 +109,15 @@
                     'mascot.finish.strong'|trans(finishParams),
                 ] %}
             {% endif %}
+            {% set contactMessages = [] %}
+            {% if ctx.incompleteContact %}
+                {% set contactParams = {'%name%': ctx.incompleteContact.name} %}
+                {% set contactMessages = [
+                    'mascot.contact.details'|trans(contactParams),
+                    'mascot.contact.quick'|trans(contactParams),
+                    'mascot.contact.name_only'|trans(contactParams),
+                ] %}
+            {% endif %}
             <div class="mascot{{ app.user.mascotEnabled ? '' : ' mascot--away' }}" data-controller="mascot"
                  data-action="mouseenter->mascot#pause mouseleave->mascot#resume"
                  data-mascot-enabled-value="{{ app.user.mascotEnabled ? 'true' : 'false' }}"
@@ -121,6 +130,7 @@
                  data-mascot-giveup-value="{{ 'mascot.play.giveup'|trans }}"
                  data-mascot-escaped-value="{{ 'mascot.play.escaped'|trans }}"
                  {% if ctx.unfinished %}data-mascot-finish-texts-value="{{ finishMessages|json_encode }}"{% endif %}
+                 {% if ctx.incompleteContact %}data-mascot-finish-contact-texts-value="{{ contactMessages|json_encode }}"{% endif %}
                  data-mascot-messages-value="{{ messages|json_encode }}">
                 <div class="mascot__bubble" data-mascot-target="bubble" role="status" aria-live="polite" hidden>
                     <button type="button" class="mascot__close" data-action="mascot#close" aria-label="{{ 'mascot.close'|trans }}">×</button>
@@ -129,11 +139,21 @@
                     {% if ctx.unfinished %}
                         <a class="mascot__cta" data-mascot-target="finish" href="{{ path('app_initiative_edit', {id: ctx.unfinished.id}) }}" hidden>{{ 'mascot.finish_cta'|trans }} →</a>
                     {% endif %}
+                    {% if ctx.incompleteContact %}
+                        <a class="mascot__cta" data-mascot-target="finishContact" href="{{ path('admin_contact_edit', {id: ctx.incompleteContact.id}) }}" hidden>{{ 'mascot.finish_cta'|trans }} →</a>
+                    {% endif %}
                     <button type="button" class="mascot__play" data-mascot-target="play" data-action="mascot#startFlee" hidden>{{ 'mascot.play.start'|trans }} →</button>
                 </div>
                 <button type="button" class="mascot__avatar" data-action="mascot#poke" aria-label="{{ 'mascot.label'|trans }}">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#f5b800" stroke="#1f1300" stroke-width="1.1" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="mascotGold" x1="0" y1="0" x2="0.5" y2="1">
+                                <stop class="mascot__gold-stop" offset="0%" stop-color="#ffe488"/>
+                                <stop class="mascot__gold-stop" offset="50%" stop-color="#fcc24a"/>
+                                <stop class="mascot__gold-stop" offset="100%" stop-color="#eaa326"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="url(#mascotGold)" stroke="#1f1300" stroke-width="1.1" stroke-linejoin="round"/>
                         <circle cx="9.6" cy="10.2" r="0.95" fill="#1f1300"/>
                         <circle cx="14.4" cy="10.2" r="0.95" fill="#1f1300"/>
                         <path d="M9.7 12.5c.7.8 3.9.8 4.6 0" fill="none" stroke="#1f1300" stroke-width="1" stroke-linecap="round"/>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Contact;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -54,5 +55,25 @@ class ContactRepository extends ServiceEntityRepository
         $this->getEntityManager()->persist($contact);
 
         return $contact;
+    }
+
+    /**
+     * The user's most recent contact that still lacks an email — typically one
+     * they created on the fly from an initiative's contact picker (name only).
+     * Used by the mascot to nudge them to fill in the rest.
+     */
+    public function findIncompleteByCreator(User $user): ?Contact
+    {
+        // createdBy is a ManyToOne to the UserInterface (resolved to User via
+        // resolve_target_entities); binding the entity to a ULID FK doesn't match,
+        // so compare the raw FK against the user's id with the ulid type applied.
+        return $this->createQueryBuilder('c')
+            ->andWhere('IDENTITY(c.createdBy) = :user')
+            ->andWhere("(c.email IS NULL OR c.email = '')")
+            ->setParameter('user', $user->getId(), 'ulid')
+            ->orderBy('c.createdAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
