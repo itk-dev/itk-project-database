@@ -23,6 +23,70 @@
         </div>
 
         <div class="viz-grid">
+            <div class="card span-6">
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.unfinished.title'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.unfinished.sub'|trans }}</p>
+                </div>
+                <div class="feed-scroll">
+                    {% if unfinishedInitiatives is empty and incompleteContacts is empty %}
+                        <div class="todo-empty">
+                            <div class="todo-empty__title">{{ 'dashboard.unfinished.empty_title'|trans }}</div>
+                        </div>
+                    {% else %}
+                        {% for initiative in unfinishedInitiatives %}
+                            <a class="recent-item" href="{{ path('app_initiative_edit', {id: initiative.id}) }}">
+                                <span class="recent-item__body">
+                                    <span class="recent-item__title">{{ initiative.title }}</span>
+                                    <span class="recent-item__meta">{{ 'dashboard.unfinished.initiative'|trans }}</span>
+                                </span>
+                                <span class="badge">{{ 'dashboard.unfinished.percent_done'|trans({'%percent%': initiative.completionPercentage}) }}</span>
+                                <span class="recent-item__cta">{{ 'dashboard.unfinished.cta'|trans }} →</span>
+                            </a>
+                        {% endfor %}
+                        {% for contact in incompleteContacts %}
+                            <a class="recent-item" href="{{ path('admin_contact_edit', {id: contact.id}) }}">
+                                <span class="recent-item__body">
+                                    <span class="recent-item__title">{{ contact.name }}</span>
+                                    <span class="recent-item__meta">{{ 'dashboard.unfinished.contact'|trans }}</span>
+                                </span>
+                                <span class="badge badge--draft">{{ 'dashboard.unfinished.contact_badge'|trans }}</span>
+                                <span class="recent-item__cta">{{ 'dashboard.unfinished.cta'|trans }} →</span>
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card span-6 card--stretch">
+                <div class="card__header">
+                    <span class="card__title">{{ 'activity.title'|trans }}</span>
+                    <p class="card__sub">{{ 'activity.subtitle'|trans }}</p>
+                </div>
+                <div class="feed-fill">
+                    <div id="activity-feed" class="activity-feed feed-scroll">
+                        {% if recent is empty %}
+                            <div class="todo-empty">
+                                <div class="todo-empty__title">{{ 'activity.empty'|trans }}</div>
+                            </div>
+                        {% else %}
+                            {% for initiative in recent %}
+                                {% set updated = initiative.wasUpdatedAfterCreation %}
+                                {% set actor = updated ? initiative.modifiedBy : initiative.createdBy %}
+                                {{ include('activity/_item.html.twig', {
+                                    id: initiative.id,
+                                    action: updated ? 'updated' : 'created',
+                                    title: initiative.title,
+                                    url: path('app_initiative_show', {id: initiative.id}),
+                                    actor: actor ? actor.name : null,
+                                    at: updated ? initiative.updatedAt : initiative.createdAt,
+                                }) }}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
             <div class="card span-12">
                 <div class="card__header">
                     <span class="card__title">{{ 'dashboard.themes_heatmap'|trans }}</span>
@@ -40,22 +104,6 @@
                 </div>
                 <div class="card__body">
                     <div class="collab" data-dashboard-viz-target="collab"></div>
-                </div>
-            </div>
-
-            <div class="card span-12">
-                <div class="card__header"><span class="card__title">{{ 'activity.title'|trans }}</span></div>
-                <div id="activity-feed" class="activity-feed feed-scroll">
-                    {% for initiative in recent %}
-                        {{ include('activity/_item.html.twig', {
-                            id: initiative.id,
-                            action: 'created',
-                            title: initiative.title,
-                            url: path('app_initiative_show', {id: initiative.id}),
-                            actor: initiative.createdBy ? initiative.createdBy.name : null,
-                            at: initiative.createdAt,
-                        }) }}
-                    {% endfor %}
                 </div>
             </div>
 

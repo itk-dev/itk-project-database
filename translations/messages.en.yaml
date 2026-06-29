@@ -60,6 +60,8 @@ autosave:
 
 activity:
     title: Activity
+    subtitle: Latest activity on the platform
+    empty: No activity to show
     action:
         created: created
         updated: updated
@@ -151,6 +153,15 @@ dashboard:
     reach_sub: How many departments each area appears in.
     timeline: Timeline
     timeline_sub: Each initiative's time period on a timeline.
+    unfinished:
+        title: Your work
+        sub: Your initiatives and contacts that are still missing details.
+        initiative: Initiative
+        contact: Contact
+        contact_badge: Missing details
+        percent_done: "%percent% % filled in"
+        cta: Finish
+        empty_title: You're all caught up
 
 initiative:
     title: Title

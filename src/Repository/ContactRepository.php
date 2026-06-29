@@ -64,6 +64,18 @@ class ContactRepository extends ServiceEntityRepository
      */
     public function findIncompleteByCreator(User $user): ?Contact
     {
+        return $this->findIncompleteListByCreator($user, 1)[0] ?? null;
+    }
+
+    /**
+     * The user's contacts that still lack an email (created name-only and not yet
+     * finished), most recent first, capped at $limit. Surfaced on the dashboard
+     * as outstanding work.
+     *
+     * @return Contact[]
+     */
+    public function findIncompleteListByCreator(User $user, int $limit = 6): array
+    {
         // createdBy is a ManyToOne to the UserInterface (resolved to User via
         // resolve_target_entities); binding the entity to a ULID FK doesn't match,
         // so compare the raw FK against the user's id with the ulid type applied.
@@ -72,8 +84,8 @@ class ContactRepository extends ServiceEntityRepository
             ->andWhere("(c.email IS NULL OR c.email = '')")
             ->setParameter('user', $user->getId(), 'ulid')
             ->orderBy('c.createdAt', 'DESC')
-            ->setMaxResults(1)
+            ->setMaxResults($limit)
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
     }
 }

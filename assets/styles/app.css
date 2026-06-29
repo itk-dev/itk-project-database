@@ -471,6 +471,24 @@ h3 {
     padding: var(--itk-space-5);
 }
 
+.card--stretch {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+}
+
+.feed-fill {
+    position: relative;
+    flex: 1;
+    min-height: 230px;
+}
+
+.feed-fill .feed-scroll {
+    position: absolute;
+    inset: 0;
+    height: auto;
+}
+
 .card__header {
     padding: var(--itk-space-4) var(--itk-space-5);
     border-bottom: 1px solid var(--itk-slate-100);
@@ -842,6 +860,75 @@ h3 {
 
 .recent-item__meta {
     font-size: var(--itk-text-xs);
+    color: var(--itk-slate-500);
+}
+
+a.recent-item {
+    color: inherit;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+}
+
+a.recent-item:hover {
+    background-color: color-mix(in srgb, var(--itk-blue) 9%, transparent);
+}
+
+.recent-item__cta {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--itk-text-xs);
+    font-weight: 600;
+    color: var(--itk-blue);
+    white-space: nowrap;
+}
+
+a.recent-item:hover .badge {
+    display: none;
+}
+
+a.recent-item:hover .recent-item__cta {
+    display: inline-flex;
+}
+
+.recent-item__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.recent-item__body .recent-item__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.todo-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--itk-space-2);
+    height: 100%;
+    padding: var(--itk-space-5);
+    text-align: center;
+}
+
+.todo-empty__icon {
+    color: var(--itk-green);
+    line-height: 0;
+}
+
+.todo-empty__title {
+    font-weight: 600;
+    color: var(--itk-ink);
+}
+
+.todo-empty__hint {
+    max-width: 34ch;
+    margin: 0 0 var(--itk-space-2);
+    font-size: var(--itk-text-sm);
     color: var(--itk-slate-500);
 }
 

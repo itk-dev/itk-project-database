@@ -95,6 +95,26 @@ final class InitiativeTest extends TestCase
         self::assertSame(100, $full->getCompletionPercentage());
     }
 
+    public function testWasUpdatedAfterCreation(): void
+    {
+        // No timestamps yet (entity not persisted) — treated as not updated.
+        self::assertFalse((new Initiative())->wasUpdatedAfterCreation());
+
+        $created = new \DateTimeImmutable('2025-01-01 10:00:00');
+
+        // Edited within a day of creation: still reads as "created".
+        $fresh = new Initiative();
+        $fresh->setCreatedAt($created);
+        $fresh->setUpdatedAt($created->modify('+5 hours'));
+        self::assertFalse($fresh->wasUpdatedAfterCreation());
+
+        // Edited more than a day after creation.
+        $edited = new Initiative();
+        $edited->setCreatedAt($created);
+        $edited->setUpdatedAt($created->modify('+2 days'));
+        self::assertTrue($edited->wasUpdatedAfterCreation());
+    }
+
     public function testFundingRoundTrip(): void
     {
         $initiative = (new Initiative())->setFunding([Funding::MunicipalBudget, Funding::EuFunds]);

@@ -501,6 +501,24 @@ class Initiative extends AbstractEntity
         return (int) round(\count(array_filter($checks)) / \count($checks) * 100);
     }
 
+    /**
+     * Whether the initiative has been edited since it was created — drives the
+     * "updated" vs "created" label in the dashboard activity feed. Only counts as
+     * an edit once it's more than a day past creation, so the initial save and any
+     * same-day tweaks still read as "created".
+     */
+    public function wasUpdatedAfterCreation(): bool
+    {
+        $created = $this->getCreatedAt();
+        $updated = $this->getUpdatedAt();
+
+        if (null === $created || null === $updated) {
+            return false;
+        }
+
+        return $updated->getTimestamp() - $created->getTimestamp() > 60 * 60 * 24;
+    }
+
     public function __toString(): string
     {
         return (string) $this->title;

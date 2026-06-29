@@ -16,7 +16,7 @@ mascot:
         blanks: "“%title%” er %percent% % udfyldt — der mangler stadig et par felter. 📝"
         ending: "“%title%” er %percent% % færdig. Giv den en værdig afslutning! 🏁"
         strong: "“%title%” er %percent% % færdig — lad os tage den sidste bid! 💪"
-    finish_cta: Gør færdig
+    finish_cta: Gå til redigering
     contact:
         details: "Kontaktpersonen “%name%” som du har oprettet mangler stadig oplysninger — Vil du gøre den færdig?"
         quick: "Du tilføjede “%name%” i farten — vil du udfylde resten? ✏️"
@@ -60,6 +60,8 @@ autosave:
 
 activity:
     title: Aktivitet
+    subtitle: Seneste aktivitet på platformen
+    empty: Ingen aktivitet at vise
     action:
         created: oprettede
         updated: opdaterede
@@ -151,6 +153,15 @@ dashboard:
     reach_sub: Hvor mange afdelinger hvert område er repræsenteret i.
     timeline: Tidslinje
     timeline_sub: Hvert initiativs tidsperiode på en tidslinje.
+    unfinished:
+        title: Dit igangværende arbejde
+        sub: Dine initiativer og kontaktpersoner der mangler de sidste detaljer.
+        initiative: Initiativ
+        contact: Kontaktperson
+        contact_badge: Mangler oplysninger
+        percent_done: "%percent% % udfyldt"
+        cta: Gå til redigering
+        empty_title: Intet igangværende arbejde
 
 initiative:
     title: Titel
