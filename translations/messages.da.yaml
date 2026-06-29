@@ -71,10 +71,8 @@ nav:
     language: Sprog
     signed_in_as: Logget ind som
     logout: Log ud
-    mascot_disable: Slå makker fra
-    mascot_enable: Slå makker til
-    stars_disable: Slå flyvende stjerner fra
-    stars_enable: Slå flyvende stjerner til
+    show_mascot: Din ven Glimt
+    show_stars: Flyvende stjerner
 
 action:
     new: Opret

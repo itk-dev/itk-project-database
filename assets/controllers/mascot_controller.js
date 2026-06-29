@@ -23,8 +23,6 @@ export default class extends Controller {
         enabled: { type: Boolean, default: true },
         farewell: String,
         welcome: String,
-        enableLabel: String,
-        disableLabel: String,
     };
 
     connect() {
@@ -98,9 +96,10 @@ export default class extends Controller {
     applyEnabled(enabled) {
         this.enabledValue = enabled;
         if (this.toggleButton) {
-            this.toggleButton.textContent = enabled
-                ? this.disableLabelValue
-                : this.enableLabelValue;
+            this.toggleButton.setAttribute(
+                "aria-checked",
+                enabled ? "true" : "false",
+            );
         }
         window.clearTimeout(this.toggleTimer);
 

@@ -49,12 +49,18 @@
                             <form id="mascotToggleForm" method="post" action="{{ path('app_settings_mascot_toggle') }}" class="user-menu__form">
                                 <input type="hidden" name="_token" value="{{ csrf_token('toggle-mascot') }}">
                                 <input type="hidden" name="return" value="{{ app.request.requestUri }}">
-                                <button type="submit" class="user-menu__button">{{ (app.user.mascotEnabled ? 'nav.mascot_disable' : 'nav.mascot_enable')|trans }}</button>
+                                <button type="submit" class="user-menu__button user-menu__toggle" role="switch" aria-checked="{{ app.user.mascotEnabled ? 'true' : 'false' }}">
+                                    <span class="toggle-switch" aria-hidden="true"><span class="toggle-switch__knob"></span></span>
+                                    {{ 'nav.show_mascot'|trans }}
+                                </button>
                             </form>
                             <form id="starsToggleForm" method="post" action="{{ path('app_settings_stars_toggle') }}" class="user-menu__form">
                                 <input type="hidden" name="_token" value="{{ csrf_token('toggle-stars') }}">
                                 <input type="hidden" name="return" value="{{ app.request.requestUri }}">
-                                <button type="submit" class="user-menu__button">{{ (app.user.starsEnabled ? 'nav.stars_disable' : 'nav.stars_enable')|trans }}</button>
+                                <button type="submit" class="user-menu__button user-menu__toggle" role="switch" aria-checked="{{ app.user.starsEnabled ? 'true' : 'false' }}">
+                                    <span class="toggle-switch" aria-hidden="true"><span class="toggle-switch__knob"></span></span>
+                                    {{ 'nav.show_stars'|trans }}
+                                </button>
                             </form>
                             <a href="{{ path('app_logout') }}" class="user-menu__logout">{{ 'nav.logout'|trans }}</a>
                         </div>
@@ -108,8 +114,6 @@
                  data-mascot-enabled-value="{{ app.user.mascotEnabled ? 'true' : 'false' }}"
                  data-mascot-farewell-value="{{ 'mascot.farewell'|trans }}"
                  data-mascot-welcome-value="{{ 'mascot.welcome'|trans }}"
-                 data-mascot-enable-label-value="{{ 'nav.mascot_enable'|trans }}"
-                 data-mascot-disable-label-value="{{ 'nav.mascot_disable'|trans }}"
                  data-mascot-invite-value="{{ 'mascot.play.invite'|trans }}"
                  data-mascot-caught-value="{{ 'mascot.play.caught'|trans }}"
                  data-mascot-gotcha-value="{{ 'mascot.play.gotcha'|trans }}"

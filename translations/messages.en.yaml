@@ -71,10 +71,8 @@ nav:
     language: Language
     signed_in_as: Signed in as
     logout: Sign out
-    mascot_disable: Disable mascot
-    mascot_enable: Enable mascot
-    stars_disable: Disable flying stars
-    stars_enable: Enable flying stars
+    show_mascot: Show mascot
+    show_stars: Show flying stars
 
 action:
     new: New
