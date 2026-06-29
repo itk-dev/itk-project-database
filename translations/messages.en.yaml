@@ -7,6 +7,7 @@ mascot:
     cta: Create a new initiative
     farewell: "See you around — I'm here whenever you need me! 👋"
     welcome: "Yay, I'm back! Let's make something together. 🌟"
+    intro: "Hi, I'm Glimt — your friend in the corner. Shall we create something?"
     praise: "{1}You've created one initiative — nice start! 🌟|]1,Inf[You've created %count% initiatives — great work! 🌟"
     finish:
         almost: "“%title%” is %percent%% done — want to finish it off?"
