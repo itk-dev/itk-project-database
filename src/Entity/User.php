@@ -144,6 +144,22 @@ class User extends AbstractEntity implements UserInterface, PasswordAuthenticate
         return $this;
     }
 
+    /**
+     * The completion stars fly into the trophy unless the user turns it off; the
+     * udfyldningsgrad bar keeps working either way.
+     */
+    public function isStarsEnabled(): bool
+    {
+        return (bool) ($this->userSettings['starsEnabled'] ?? true);
+    }
+
+    public function setStarsEnabled(bool $enabled): static
+    {
+        $this->userSettings['starsEnabled'] = $enabled;
+
+        return $this;
+    }
+
     public function eraseCredentials(): void
     {
     }

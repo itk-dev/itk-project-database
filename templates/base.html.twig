@@ -51,6 +51,11 @@
                                 <input type="hidden" name="return" value="{{ app.request.requestUri }}">
                                 <button type="submit" class="user-menu__button">{{ (app.user.mascotEnabled ? 'nav.mascot_disable' : 'nav.mascot_enable')|trans }}</button>
                             </form>
+                            <form id="starsToggleForm" method="post" action="{{ path('app_settings_stars_toggle') }}" class="user-menu__form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle-stars') }}">
+                                <input type="hidden" name="return" value="{{ app.request.requestUri }}">
+                                <button type="submit" class="user-menu__button">{{ (app.user.starsEnabled ? 'nav.stars_disable' : 'nav.stars_enable')|trans }}</button>
+                            </form>
                             <a href="{{ path('app_logout') }}" class="user-menu__logout">{{ 'nav.logout'|trans }}</a>
                         </div>
                     </div>

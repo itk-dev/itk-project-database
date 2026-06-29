@@ -73,6 +73,8 @@ nav:
     logout: Sign out
     mascot_disable: Disable mascot
     mascot_enable: Enable mascot
+    stars_disable: Disable flying stars
+    stars_enable: Enable flying stars
 
 action:
     new: New

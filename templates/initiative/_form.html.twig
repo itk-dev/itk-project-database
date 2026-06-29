@@ -3,6 +3,7 @@
     'data-controller': 'form-progress',
     'data-action': 'input->form-progress#recompute change->form-progress#recompute',
     'data-form-progress-fields-value': constant('App\\Entity\\Initiative::COMPLETION_FIELDS')|json_encode,
+    'data-form-progress-stars-value': (app.user.starsEnabled ?? true) ? 'true' : 'false',
 } %}
 {% if autosave|default(false) %}
     {% set form_attr = form_attr|merge({

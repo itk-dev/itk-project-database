@@ -60,6 +60,19 @@ final class UserSettingsControllerTest extends FunctionalTestCase
         self::assertTrue($this->reloadEditor()->isMascotEnabled());
     }
 
+    public function testStarsToggleRedirectsAndFlipsThePreference(): void
+    {
+        $this->loginAsEditor();
+        $crawler = $this->client->request('GET', '/');
+        $this->assertResponseIsSuccessful();
+        $token = (string) $crawler->filter('#starsToggleForm input[name="_token"]')->attr('value');
+
+        $this->client->request('POST', '/settings/stars/toggle', ['_token' => $token, 'return' => '/initiatives']);
+
+        $this->assertResponseRedirects('/initiatives');
+        self::assertFalse($this->reloadEditor()->isStarsEnabled());
+    }
+
     private function mascotToggleToken(): string
     {
         $crawler = $this->client->request('GET', '/');

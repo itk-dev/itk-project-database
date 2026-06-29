@@ -19,6 +19,7 @@ export default class extends Controller {
 
     static values = {
         fields: { type: Array, default: [] },
+        stars: { type: Boolean, default: true },
     };
 
     connect() {
@@ -182,7 +183,9 @@ export default class extends Controller {
         const dx = toRect.left + toRect.width / 2 - startX;
         const dy = toRect.top + toRect.height / 2 - startY;
 
-        if (this.prefersReducedMotion) {
+        // No flight when the user turned stars off (or prefers reduced motion):
+        // the bar still advances, the star just doesn't fly.
+        if (!this.animateStars) {
             onArrive();
 
             return;
@@ -258,7 +261,7 @@ export default class extends Controller {
     }
 
     popTrophy() {
-        if (!this.hasStarTarget || this.prefersReducedMotion) {
+        if (!this.hasStarTarget || !this.animateStars) {
             return;
         }
 
@@ -274,6 +277,10 @@ export default class extends Controller {
 
     get prefersReducedMotion() {
         return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    get animateStars() {
+        return this.starsValue && !this.prefersReducedMotion;
     }
 
     // "initiative[links][0]" -> "links", "initiative[funding][]" -> "funding".

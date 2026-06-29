@@ -73,6 +73,8 @@ nav:
     logout: Log ud
     mascot_disable: Slå makker fra
     mascot_enable: Slå makker til
+    stars_disable: Slå flyvende stjerner fra
+    stars_enable: Slå flyvende stjerner til
 
 action:
     new: Opret
