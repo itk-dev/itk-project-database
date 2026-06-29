@@ -1,5 +1,5 @@
 app:
-    name: Projektdatabase
+    name: Projects
 
 mascot:
     label: Din kreative makker
@@ -83,6 +83,7 @@ nav:
 
 action:
     new: Opret
+    new_initiative: Opret nyt initiativ
     edit: Rediger
     delete: Slet
     save: Gem
@@ -125,7 +126,6 @@ filter:
 
 dashboard:
     title: Overblik
-    subtitle: Status på alle initiativer
     total: Initiativer i alt
     total_hint: registrerede i alt
     in_progress: Igangværende
@@ -308,6 +308,8 @@ login:
     password: Adgangskode
     submit: Log ind
     error: Forkert e-mail eller adgangskode.
+    no_account: Har du ikke en konto?
+    no_account_body: "Adgang sker via invitation. Kommer du fra den gamle platform, skal du inviteres for at få adgang. Kontakt %itk% for at komme videre."
 
 flash:
     initiative:

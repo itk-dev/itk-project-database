@@ -18,9 +18,8 @@
         {% if app.user %}
             {% set route = app.request.attributes.get('_route') %}
             <nav class="top-nav">
-                <a href="{{ path('app_dashboard') }}" class="top-nav__brand">
-                    <span class="top-nav__brand-mark"></span>
-                    <span>{{ 'app.name'|trans }}</span>
+                <a href="{{ path('app_dashboard') }}" class="top-nav__brand" aria-label="{{ 'app.name'|trans }}">
+                    <img class="top-nav__brand-logo" src="{{ asset('images/itk-logo.png') }}" alt="ITK">
                 </a>
                 <div class="top-nav__menu">
                     <a href="{{ path('app_dashboard') }}" class="top-nav__link {{ route == 'app_dashboard' ? 'is-active' }}">{{ 'nav.dashboard'|trans }}</a>
