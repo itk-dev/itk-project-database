@@ -308,7 +308,7 @@ export default class extends Controller {
         el.innerHTML = "";
         if (!this.viz.collaboration.length) {
             el.innerHTML =
-                '<p class="collab-empty">Ingen tværgående temaer endnu — kategorisér initiativer for at finde sammenfald.</p>';
+                '<p class="collab-empty">Ingen tværgående områder endnu — kategorisér initiativer for at finde sammenfald.</p>';
             return;
         }
         // Hold the entrance paused until the panel scrolls into view; once seen,

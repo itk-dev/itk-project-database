@@ -131,20 +131,26 @@ dashboard:
     departments_involved: Afdelinger involveret
     departments_involved_hint: med mindst ét initiativ
     collaboration_count: Mulige samarbejder
-    collaboration_count_hint: temaer på tværs af afdelinger
+    collaboration_count_hint: områder på tværs af afdelinger
     by_status: Fordeling på status
+    by_status_sub: Alle initiativer fordelt på deres aktuelle status.
     recent: Senest oprettede
     no_status: Uden status
     empty: Der er endnu ikke oprettet nogen initiativer.
-    themes_heatmap: Temaer på tværs af afdelinger
-    themes_heatmap_sub: Mørkere = flere initiativer. Markerede temaer går på tværs af mindst tre afdelinger.
+    themes_heatmap: Områder på tværs af afdelinger
+    themes_heatmap_sub: Antal initiativer pr. område i hver afdeling.
     collaboration: Muligt samarbejde
-    collaboration_sub: Initiativer i forskellige afdelinger med fælles tema.
+    collaboration_sub: Initiativer i forskellige afdelinger med fælles område.
     status_by_dept: Status pr. afdeling
+    status_by_dept_sub: Initiativernes status fordelt på hver afdeling.
     funding_sources: Finansieringskilder
+    funding_sources_sub: Antal initiativer pr. finansieringskilde.
     budget_by_dept: Budget pr. afdeling
-    reach: Temaer med flest afdelinger
+    budget_by_dept_sub: Samlet budget for initiativerne i hver afdeling.
+    reach: Områder med flest afdelinger
+    reach_sub: Hvor mange afdelinger hvert område er repræsenteret i.
     timeline: Tidslinje
+    timeline_sub: Hvert initiativs tidsperiode på en tidslinje.
 
 initiative:
     title: Titel

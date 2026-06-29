@@ -26,17 +26,19 @@
             <div class="card span-12">
                 <div class="card__header">
                     <span class="card__title">{{ 'dashboard.themes_heatmap'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.themes_heatmap_sub'|trans }}</p>
                 </div>
                 <div class="card__body">
-                    <p class="card__sub">{{ 'dashboard.themes_heatmap_sub'|trans }}</p>
                     <div class="heat-scroll"><div class="heat" data-dashboard-viz-target="heatmap"></div></div>
                 </div>
             </div>
 
             <div class="card span-12">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.collaboration'|trans }}</span></div>
-                <div class="card__body">
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.collaboration'|trans }}</span>
                     <p class="card__sub">{{ 'dashboard.collaboration_sub'|trans }}</p>
+                </div>
+                <div class="card__body">
                     <div class="collab" data-dashboard-viz-target="collab"></div>
                 </div>
             </div>
@@ -58,32 +60,50 @@
             </div>
 
             <div class="card span-7">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.status_by_dept'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.status_by_dept'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.status_by_dept_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-320"><canvas data-dashboard-viz-target="statusByDept"></canvas></div></div>
             </div>
 
             <div class="card span-5">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.by_status'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.by_status'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.by_status_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-300"><canvas data-dashboard-viz-target="statusDist"></canvas></div></div>
             </div>
 
             <div class="card span-5">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.funding_sources'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.funding_sources'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.funding_sources_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-300"><canvas data-dashboard-viz-target="funding"></canvas></div></div>
             </div>
 
             <div class="card span-7">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.budget_by_dept'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.budget_by_dept'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.budget_by_dept_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-300"><canvas data-dashboard-viz-target="budget"></canvas></div></div>
             </div>
 
             <div class="card span-7">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.timeline'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.timeline'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.timeline_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-320"><canvas data-dashboard-viz-target="timeline"></canvas></div></div>
             </div>
 
             <div class="card span-5">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.reach'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.reach'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.reach_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-320"><canvas data-dashboard-viz-target="reach"></canvas></div></div>
             </div>
         </div>
