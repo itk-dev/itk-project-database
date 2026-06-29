@@ -24,7 +24,14 @@ function initCollections() {
             remove.className = "btn btn--danger btn--sm";
             remove.dataset.collectionRemove = "";
             remove.textContent = collection.dataset.removeLabel || "Remove";
-            remove.addEventListener("click", () => item.remove());
+            remove.addEventListener("click", () => {
+                item.remove();
+                // Autosave is the only save path now — tell it the form changed so
+                // the removed row is persisted (and the media frame re-renders).
+                collection.dispatchEvent(
+                    new Event("change", { bubbles: true }),
+                );
+            });
             item.appendChild(remove);
         };
 
@@ -136,4 +143,10 @@ document.addEventListener("turbo:load", () => {
     initCollections();
     initContactSelect();
     initTermSelect();
+});
+
+// A turbo-frame swap (the media section reloading after a file upload) replaces
+// its collections, so re-bind the add/remove buttons on the fresh markup.
+document.addEventListener("turbo:frame-load", () => {
+    initCollections();
 });
