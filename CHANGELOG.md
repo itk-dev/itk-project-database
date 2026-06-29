@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-18](https://github.com/itk-dev/itk-project-database/pull/18)
+  Rework the dashboard with an outstanding-work panel and a redesigned activity
+  feed, add help text to every graph, and fix the mascot's finish nudges.
 * [PR-16](https://github.com/itk-dev/itk-project-database/pull/16)
   Turn the strategies and tags fields into a searchable,
   shared tag pool where new entries are capitalised and reused as suggestions.
