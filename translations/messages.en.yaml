@@ -308,8 +308,6 @@ login:
     password: Password
     submit: Sign in
     error: Invalid email or password.
-    no_account: Don't have an account?
-    no_account_body: "Access is by invitation. If you're coming from the old platform, you'll need to be invited to get access. Contact %itk% to get started."
 
 flash:
     initiative:

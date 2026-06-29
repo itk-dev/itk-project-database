@@ -1545,41 +1545,30 @@ textarea {
 
 .auth__brand {
     display: flex;
+    align-items: center;
     justify-content: center;
-    margin-bottom: var(--itk-space-5);
+    gap: var(--itk-space-2);
+    font-size: var(--itk-text-md);
+    font-weight: 700;
+    color: var(--itk-ink);
+    margin-bottom: var(--itk-space-6);
 }
 
 .auth__logo {
-    height: 44px;
+    height: 40px;
     width: auto;
     display: block;
 }
 
 .auth__title {
-    font-size: var(--itk-text-xl);
-    font-weight: 700;
+    font-size: var(--itk-text-base);
+    font-weight: 600;
     text-align: center;
-    margin-bottom: var(--itk-space-6);
+    margin-bottom: var(--itk-space-3);
 }
 
 .auth .form-row {
     margin-bottom: var(--itk-space-4);
-}
-
-.auth__divider {
-    border: none;
-    border-top: 1px solid var(--itk-slate-200);
-    margin: var(--itk-space-6) 0 var(--itk-space-5);
-}
-
-.auth__help-title {
-    font-size: var(--itk-text-md);
-    font-weight: 700;
-    margin-bottom: var(--itk-space-2);
-}
-
-.auth__help p {
-    color: var(--itk-slate-500);
 }
 
 .admin-layout {

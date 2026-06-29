@@ -7,8 +7,9 @@
         <div class="auth__card">
             <div class="auth__brand">
                 <img class="auth__logo" src="{{ asset('images/itk-logo.png') }}" alt="ITK">
+                <span>{{ 'app.name'|trans }}</span>
             </div>
-            <h1 class="auth__title">{{ 'login.title'|trans }} – {{ 'app.name'|trans }}</h1>
+            <h1 class="auth__title">{{ 'login.title'|trans }}</h1>
 
             {% if error %}
                 <div class="flash flash--error" style="position: static; box-shadow: none; margin-bottom: var(--itk-space-4);">
@@ -28,13 +29,6 @@
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                 <button type="submit" class="btn btn--primary btn--block">{{ 'login.submit'|trans }}</button>
             </form>
-
-            <hr class="auth__divider">
-
-            <div class="auth__help">
-                <h2 class="auth__help-title">{{ 'login.no_account'|trans }}</h2>
-                <p>{{ 'login.no_account_body'|trans({'%itk%': '<a href="https://itkdev.dk" target="_blank" rel="noopener">ITK</a>'})|raw }}</p>
-            </div>
         </div>
     </div>
 {% endblock %}
