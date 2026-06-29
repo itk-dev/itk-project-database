@@ -25,7 +25,7 @@ final class InitiativeTest extends TestCase
         $initiative = new Initiative();
 
         self::assertNull($initiative->getTitle());
-        self::assertTrue($initiative->isEndorsement());
+        self::assertFalse($initiative->isEndorsement());
         self::assertSame([], $initiative->getFunding());
         self::assertSame([], $initiative->getLinks());
         self::assertCount(0, $initiative->getStrategies());
@@ -86,12 +86,13 @@ final class InitiativeTest extends TestCase
             ->setInitiativeType(InitiativeType::Project)
             ->setStatus(Status::Active)
             ->setOrganizationalAnchoring((new Department())->setName('Teknik og Miljø'))
-            ->setEndorsementAuthor(EndorsementAuthor::CityCouncil)
             ->setBudget(1000)
             ->setFunding([Funding::EuFunds])
             ->setTimePeriodStart(new \DateTimeImmutable())
             ->setTimePeriodEnd(new \DateTimeImmutable());
 
+        // The Vedtagelse (endorsement) fields are intentionally excluded, so this
+        // reaches 100% without setting an endorsement author.
         self::assertSame(100, $full->getCompletionPercentage());
     }
 
