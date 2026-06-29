@@ -160,6 +160,22 @@ class User extends AbstractEntity implements UserInterface, PasswordAuthenticate
         return $this;
     }
 
+    /**
+     * Whether the user has been offered Glimt's guided tour of the platform. It
+     * is proposed once, on the first dashboard visit, then never again.
+     */
+    public function isTourSeen(): bool
+    {
+        return (bool) ($this->userSettings['tourSeen'] ?? false);
+    }
+
+    public function setTourSeen(bool $seen): static
+    {
+        $this->userSettings['tourSeen'] = $seen;
+
+        return $this;
+    }
+
     public function eraseCredentials(): void
     {
     }

@@ -47,6 +47,20 @@ mascot:
         giveup: "Pyha… lad os kalde det uafgjort. 😅"
         escaped: "Argh, du slap væk! Du er alt for hurtig. 🏳️"
 
+tour:
+    propose: "Velkommen! Skal jeg vise dig kort rundt på platformen?"
+    start: Ja tak, vis rundt
+    decline: Nej tak
+    next: Næste
+    skip: Spring over
+    done: Så er jeg klar
+    steps:
+        intro: "Det her er Projektdatabasen — her samler vi afdelingernes initiativer og projekter ét sted, så vi kan se, hvad der sker på tværs."
+        dashboard: "På overblikket ser du nøgletal, status og eventuelle muligheder for samarbejds på tværs af afdelinger."
+        create: "Se alle initiativer via menupunktet Initiativer — eller opret et nyt med det samme via Opret-knappen."
+        admin: "Inde i menuen her finder du menupunktet Administration, hvor du kan oprette, se og redigere afdelinger, områder og kontaktpersoner."
+        outro: "Så er du klar! Jeg er altid lige her i hjørnet, hvis du får brug for et tip. 🌟"
+
 autosave:
     saving: Gemmer…
     saved: Gemt

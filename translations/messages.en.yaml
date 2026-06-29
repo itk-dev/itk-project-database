@@ -47,6 +47,20 @@ mascot:
         giveup: "Phew… let's call it a draw. 😅"
         escaped: "Argh, you got away! Too quick for me. 🏳️"
 
+tour:
+    propose: "Welcome! Shall I give you a quick tour of the platform?"
+    start: "Yes, show me around"
+    decline: No thanks
+    next: Next
+    skip: Skip
+    done: I'm ready
+    steps:
+        intro: "This is the Project database — where we gather the departments' initiatives and projects in one place, so we can see what's happening across them."
+        dashboard: "The overview shows key figures, status and any opportunities for collaboration across departments."
+        create: "Browse every initiative from the Initiativer menu — or create a new one right away with the Opret button."
+        admin: "Inside this menu you'll find Administration, where you can create, view and edit departments, areas and contacts."
+        outro: "You're all set! I'm always right here in the corner if you need a tip. 🌟"
+
 autosave:
     saving: Saving…
     saved: Saved
