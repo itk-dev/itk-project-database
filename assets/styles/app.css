@@ -2146,7 +2146,11 @@ textarea {
 }
 
 .mascot--hero .mascot__avatar {
-    transform: scale(1.35);
+    transform: scale(1.7);
+}
+
+.mascot--hero .mascot__bubble {
+    bottom: calc(100% + var(--itk-space-6));
 }
 
 .mascot--chasing {
