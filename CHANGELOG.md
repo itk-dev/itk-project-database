@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [PR-22](https://github.com/itk-dev/itk-project-database/pull/22)
   Use the ITK logo in the nav and login, tidy the dashboard header, and refresh
   the login screen.
+* [PR-19](https://github.com/itk-dev/itk-project-database/pull/19)
+  Auto-upload files with a progress bar and image preview, view images in an
+  in-page lightbox, and refresh the media field styling.
 * [PR-18](https://github.com/itk-dev/itk-project-database/pull/18)
   Rework the dashboard with an outstanding-work panel and a redesigned activity
   feed, add help text to every graph, and fix the mascot's finish nudges.
