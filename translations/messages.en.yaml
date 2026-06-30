@@ -1,5 +1,5 @@
 app:
-    name: Project database
+    name: Projects
 
 mascot:
     label: Your creative buddy
@@ -83,6 +83,7 @@ nav:
 
 action:
     new: New
+    new_initiative: Create a new initiative
     edit: Edit
     delete: Delete
     save: Save
@@ -125,7 +126,6 @@ filter:
 
 dashboard:
     title: Overview
-    subtitle: The status of every initiative
     total: Total initiatives
     total_hint: registered in total
     in_progress: In progress
