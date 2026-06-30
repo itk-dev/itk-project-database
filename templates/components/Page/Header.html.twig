@@ -1,0 +1,12 @@
+{% props title = null, subtitle = null %}
+
+{% set subtitleContent %}{% block subtitle %}{{ subtitle }}{% endblock %}{% endset %}
+
+<div{{ attributes.defaults({class: 'page__header'}) }}>
+    <div>
+        {% block breadcrumb %}{% endblock %}
+        <h1 class="page__title">{% block title %}{{ title }}{% endblock %}</h1>
+        {% if subtitleContent|trim %}<p class="page__subtitle">{{ subtitleContent }}</p>{% endif %}
+    </div>
+    <div class="page__actions">{% block content %}{% endblock %}</div>
+</div>

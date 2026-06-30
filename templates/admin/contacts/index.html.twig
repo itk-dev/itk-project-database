@@ -3,22 +3,13 @@
 {% block title %}{{ 'contact.index.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
 
 {% block admin_content %}
-    <div class="page__header" style="margin-bottom: var(--itk-space-5);">
-        <div>
-            <h1 class="page__title">{{ 'contact.index.title'|trans }}</h1>
-            <p class="page__subtitle">{{ 'contact.index.subtitle'|trans }}</p>
-        </div>
-        <div class="page__actions">
-            <a href="{{ path('admin_contact_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
-        </div>
-    </div>
+    <twig:Page:Header :title="'contact.index.title'|trans" :subtitle="'contact.index.subtitle'|trans" style="margin-bottom: var(--itk-space-5);">
+        <a href="{{ path('admin_contact_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+    </twig:Page:Header>
 
     <div class="card">
         {% if contacts is empty %}
-            <div class="empty-state">
-                <div class="empty-state__title">{{ 'contact.empty.title'|trans }}</div>
-                <p>{{ 'contact.empty.hint'|trans }}</p>
-            </div>
+            <twig:EmptyState :title="'contact.empty.title'|trans" :hint="'contact.empty.hint'|trans" />
         {% else %}
             <div class="table-wrap">
                 <table class="table">

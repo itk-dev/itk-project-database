@@ -4,16 +4,10 @@
 
 {% block body %}
     <div class="page">
-        <div class="page__header">
-            <div>
-                <h1 class="page__title">{{ 'initiative.index.title'|trans }}</h1>
-                <p class="page__subtitle">{{ 'initiative.index.subtitle'|trans }}</p>
-            </div>
-            <div class="page__actions">
-                <button type="submit" form="initiative-filters" formaction="{{ path('app_initiative_export') }}" formmethod="get" formnovalidate class="btn btn--ghost" data-turbo="false">{{ 'action.export'|trans }}</button>
-                <a href="{{ path('app_initiative_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
-            </div>
-        </div>
+        <twig:Page:Header :title="'initiative.index.title'|trans" :subtitle="'initiative.index.subtitle'|trans">
+            <button type="submit" form="initiative-filters" formaction="{{ path('app_initiative_export') }}" formmethod="get" formnovalidate class="btn btn--ghost" data-turbo="false">{{ 'action.export'|trans }}</button>
+            <a href="{{ path('app_initiative_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+        </twig:Page:Header>
 
         {{ form_start(form, {attr: {
             class: 'filters',

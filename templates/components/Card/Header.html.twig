@@ -1,0 +1,6 @@
+{% props title, sub = null %}
+
+<div{{ attributes.defaults({class: 'card__header'}) }}>
+    <span class="card__title">{{ title }}</span>
+    {% if sub %}<p class="card__sub">{{ sub }}</p>{% endif %}
+</div>

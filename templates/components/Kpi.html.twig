@@ -1,0 +1,7 @@
+{% props accent, label, value, hint, live = null %}
+
+<div{{ attributes.defaults({class: 'kpi kpi--' ~ accent}) }}>
+    <div class="kpi__label">{{ label }}</div>
+    <div class="kpi__value"{% if live %} data-live-text="{{ live }}" data-count="{{ value }}"{% endif %}>{{ value }}</div>
+    <div class="kpi__hint">{{ hint }}</div>
+</div>
