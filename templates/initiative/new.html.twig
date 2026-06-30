@@ -4,15 +4,17 @@
 
 {% block body %}
     <div class="page" data-controller="title-mirror" data-action="autosave:created->title-mirror#linkCrumb">
-        <div class="page__header">
-            <div>
+        <twig:Page:Header>
+            <twig:block name="breadcrumb">
                 <div class="breadcrumb">
                     <a href="{{ path('app_initiative_index') }}">{{ 'nav.initiatives'|trans }}</a>
                     / <span data-title-mirror-target="crumb">{{ 'initiative.new.title'|trans }}</span>
                 </div>
-                <h1 class="page__title" data-title-mirror-target="heading">{{ 'initiative.new.title'|trans }}</h1>
-            </div>
-        </div>
+            </twig:block>
+            <twig:block name="title">
+                <span data-title-mirror-target="heading">{{ 'initiative.new.title'|trans }}</span>
+            </twig:block>
+        </twig:Page:Header>
         {{ include('initiative/_form.html.twig', {button_label: 'action.create', autosave: true}) }}
     </div>
 {% endblock %}

@@ -13,23 +13,20 @@
 {% block body %}
     {% import _self as h %}
     <div class="page">
-        <div class="page__header">
-            <div>
+        <twig:Page:Header :title="initiative.title">
+            <twig:block name="breadcrumb">
                 <div class="breadcrumb"><a href="{{ path('app_initiative_index') }}">{{ 'nav.initiatives'|trans }}</a></div>
-                <h1 class="page__title">{{ initiative.title }}</h1>
-                <p class="page__subtitle">
-                    {% if initiative.status %}<span class="badge badge--status-{{ initiative.status.value }}">{{ initiative.status.labelKey|trans }}</span>{% endif %}
-                </p>
-            </div>
-            <div class="page__actions">
-                <a href="{{ path('app_initiative_edit', {id: initiative.id}) }}" class="btn btn--primary">{{ 'action.edit'|trans }}</a>
-            </div>
-        </div>
+            </twig:block>
+            <twig:block name="subtitle">
+                {% if initiative.status %}<span class="badge badge--status-{{ initiative.status.value }}">{{ initiative.status.labelKey|trans }}</span>{% endif %}
+            </twig:block>
+            <a href="{{ path('app_initiative_edit', {id: initiative.id}) }}" class="btn btn--primary">{{ 'action.edit'|trans }}</a>
+        </twig:Page:Header>
 
         <div class="detail-grid">
             <div class="stack">
                 <div class="card">
-                    <div class="card__header"><span class="card__title">{{ 'initiative.show.details'|trans }}</span></div>
+                    <twig:Card:Header :title="'initiative.show.details'|trans" />
                     <div class="card__body">
                         {% if initiative.description %}<p class="prose">{{ initiative.description }}</p>{% else %}<p class="muted">—</p>{% endif %}
                         {% if initiative.statusAdditional %}
@@ -46,7 +43,7 @@
                 </div>
 
                 <div class="card">
-                    <div class="card__header"><span class="card__title">{{ 'initiative.show.contacts'|trans }}</span></div>
+                    <twig:Card:Header :title="'initiative.show.contacts'|trans" />
                     <div class="card__body">
                         {% if initiative.contacts|length > 0 %}
                             {% for contact in initiative.contacts %}
@@ -67,7 +64,7 @@
 
                 {% if initiative.images|length > 0 or initiative.attachments|length > 0 %}
                     <div class="card">
-                        <div class="card__header"><span class="card__title">{{ 'initiative.show.media'|trans }}</span></div>
+                        <twig:Card:Header :title="'initiative.show.media'|trans" />
                         <div class="card__body">
                             {% if initiative.images|length > 0 %}
                                 <div class="image-grid">
@@ -95,7 +92,7 @@
             </div>
 
             <div class="card">
-                <div class="card__header"><span class="card__title">{{ 'initiative.show.classification'|trans }}</span></div>
+                <twig:Card:Header :title="'initiative.show.classification'|trans" />
                 <div class="card__body">
                     <dl class="detail-list">
                         <dt>{{ 'initiative.area'|trans }}</dt>

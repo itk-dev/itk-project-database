@@ -3,11 +3,10 @@
 {% block title %}{{ 'department.new.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
 
 {% block admin_content %}
-    <div class="page__header" style="margin-bottom: var(--itk-space-5);">
-        <div>
+    <twig:Page:Header :title="'department.new.title'|trans" style="margin-bottom: var(--itk-space-5);">
+        <twig:block name="breadcrumb">
             <div class="breadcrumb"><a href="{{ path('admin_departments') }}">{{ 'nav.departments'|trans }}</a></div>
-            <h1 class="page__title">{{ 'department.new.title'|trans }}</h1>
-        </div>
-    </div>
+        </twig:block>
+    </twig:Page:Header>
     {{ include('admin/departments/_form.html.twig', {button_label: 'action.create'}) }}
 {% endblock %}

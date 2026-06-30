@@ -3,17 +3,14 @@
 {% block title %}{{ 'admin.users.edit'|trans }} · {{ 'app.name'|trans }}{% endblock %}
 
 {% block admin_content %}
-    <div class="page__header" style="margin-bottom: var(--itk-space-5);">
-        <h1 class="page__title">{{ user.email }}</h1>
+    <twig:Page:Header :title="user.email" style="margin-bottom: var(--itk-space-5);">
         {% if user.id != app.user.id %}
-            <div class="page__actions">
-                <form method="post" action="{{ path('admin_user_delete', {id: user.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete-user-' ~ user.id) }}">
-                    <button type="submit" class="btn btn--danger">{{ 'action.delete'|trans }}</button>
-                </form>
-            </div>
+            <form method="post" action="{{ path('admin_user_delete', {id: user.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete-user-' ~ user.id) }}">
+                <button type="submit" class="btn btn--danger">{{ 'action.delete'|trans }}</button>
+            </form>
         {% endif %}
-    </div>
+    </twig:Page:Header>
 
     {{ form_start(form, {attr: {class: 'form'}}) }}
         <div class="form-section">
