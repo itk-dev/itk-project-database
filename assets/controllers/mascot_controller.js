@@ -8,7 +8,14 @@ import { Controller } from "@hotwired/stimulus";
  * pointer until it tags it back. Messages arrive already translated.
  */
 export default class extends Controller {
-    static targets = ["bubble", "text", "cta", "play", "finish"];
+    static targets = [
+        "bubble",
+        "text",
+        "cta",
+        "play",
+        "finish",
+        "finishContact",
+    ];
 
     static values = {
         messages: { type: Array, default: [] },
@@ -20,6 +27,7 @@ export default class extends Controller {
         giveup: String,
         escaped: String,
         finishTexts: { type: Array, default: [] },
+        finishContactTexts: { type: Array, default: [] },
         enabled: { type: Boolean, default: true },
         farewell: String,
         welcome: String,
@@ -193,13 +201,16 @@ export default class extends Controller {
         this.scheduleNext(this.intervalValue);
     }
 
-    // Clicking the avatar only does something during the play-catch game; a plain
-    // idle click is intentionally inert (no message, no animation).
+    // Clicking the avatar plays catch mid-game; an idle click pops a fresh
+    // message and resets the cadence so the next auto-message isn't right behind.
     poke() {
         if ("invited" === this.mode) {
             this.startFlee();
         } else if ("flee" === this.mode) {
             this.caught();
+        } else if ("idle" === this.mode) {
+            this.speak();
+            this.scheduleNext(this.intervalValue);
         }
     }
 
@@ -212,13 +223,29 @@ export default class extends Controller {
             return;
         }
 
+        // A contact created on the fly (name only) gets a gentle reminder to
+        // finish it, linking straight to its edit page.
+        const contactTexts = this.finishContactTextsValue;
+        if (
+            this.hasFinishContactTarget &&
+            contactTexts.length > 0 &&
+            Math.random() < 0.15
+        ) {
+            this.say(
+                contactTexts[Math.floor(Math.random() * contactTexts.length)],
+                "finishContact",
+            );
+
+            return;
+        }
+
         // Now and then, nudge the user to finish their least-complete initiative,
         // picking one of the finish lines at random for variety.
         const finishTexts = this.finishTextsValue;
         if (
             this.hasFinishTarget &&
             finishTexts.length > 0 &&
-            Math.random() < 0.4
+            Math.random() < 0.15
         ) {
             this.say(
                 finishTexts[Math.floor(Math.random() * finishTexts.length)],
@@ -387,6 +414,9 @@ export default class extends Controller {
         }
         if (this.hasFinishTarget) {
             this.finishTarget.hidden = "finish" !== action;
+        }
+        if (this.hasFinishContactTarget) {
+            this.finishContactTarget.hidden = "finishContact" !== action;
         }
         this.bubbleTarget.hidden = false;
         window.requestAnimationFrame(() => {

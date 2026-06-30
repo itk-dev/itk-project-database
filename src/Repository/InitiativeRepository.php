@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Initiative;
+use App\Entity\User;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
@@ -14,7 +15,6 @@ use App\Model\InitiativeFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -165,12 +165,15 @@ class InitiativeRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countByCreator(UserInterface $user): int
+    public function countByCreator(User $user): int
     {
+        // createdBy is a ManyToOne to the UserInterface (resolved to User via
+        // resolve_target_entities); binding the entity to a ULID FK doesn't match,
+        // so compare the raw FK against the user's id with the ulid type applied.
         return (int) $this->createQueryBuilder('i')
             ->select('COUNT(i.id)')
-            ->andWhere('i.createdBy = :user')
-            ->setParameter('user', $user)
+            ->andWhere('IDENTITY(i.createdBy) = :user')
+            ->setParameter('user', $user->getId(), 'ulid')
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -180,11 +183,12 @@ class InitiativeRepository extends ServiceEntityRepository
      * null if none are outstanding. Completion is computed in PHP (not a stored
      * column), so this scans only the creator's 50 most recent initiatives.
      */
-    public function findUnfinishedByCreator(UserInterface $user): ?Initiative
+    public function findUnfinishedByCreator(User $user): ?Initiative
     {
+        // See countByCreator: match the raw ULID FK, not the entity.
         $initiatives = $this->createQueryBuilder('i')
-            ->andWhere('i.createdBy = :user')
-            ->setParameter('user', $user)
+            ->andWhere('IDENTITY(i.createdBy) = :user')
+            ->setParameter('user', $user->getId(), 'ulid')
             ->orderBy('i.createdAt', 'DESC')
             ->setMaxResults(50)
             ->getQuery()

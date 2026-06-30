@@ -17,6 +17,10 @@ mascot:
         ending: "“%title%” is %percent%% done. Give it the ending it deserves! 🏁"
         strong: "“%title%” is %percent%% there — let’s finish strong! 💪"
     finish_cta: Finish it
+    contact:
+        details: "“%name%” is still missing details — shall we finish the contact?"
+        quick: "You added “%name%” on the fly — want to fill in the rest? ✏️"
+        name_only: "“%name%” only has a name so far. Shall we add the details?"
     msg:
         idea: "Got a fresh idea? Let’s give it a home. ✨"
         roll: "You’re on a roll — what’s next?"

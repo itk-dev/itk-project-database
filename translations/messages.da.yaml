@@ -17,6 +17,10 @@ mascot:
         ending: "“%title%” er %percent% % færdig. Giv den en værdig afslutning! 🏁"
         strong: "“%title%” er %percent% % færdig — lad os tage den sidste bid! 💪"
     finish_cta: Gør færdig
+    contact:
+        details: "Kontaktpersonen “%name%” som du har oprettet mangler stadig oplysninger — Vil du gøre den færdig?"
+        quick: "Du tilføjede “%name%” i farten — vil du udfylde resten? ✏️"
+        name_only: "“%name%” har kun et navn endnu. Skal vi tilføje detaljerne?"
     msg:
         idea: "Har du en ny idé? Så er det her, den hører til. ✨"
         roll: "Du er godt i gang — hvad bliver det næste?"

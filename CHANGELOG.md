@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [PR-19](https://github.com/itk-dev/itk-project-database/pull/19)
   Auto-upload files with a progress bar and image preview, view images in an
   in-page lightbox, and refresh the media field styling.
+* [PR-17](https://github.com/itk-dev/itk-project-database/pull/17)
+  Fix the mascot nudges that never appeared, nudge users to finish incomplete
+  contacts with a link to their edit page.
 * [PR-16](https://github.com/itk-dev/itk-project-database/pull/16)
   Turn the strategies and tags fields into a searchable,
   shared tag pool where new entries are capitalised and reused as suggestions.

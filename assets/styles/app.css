@@ -2050,6 +2050,33 @@ body.is-lightbox-open {
     overflow: visible;
 }
 
+.mascot__gold-stop {
+    animation: mascot-gold 9s ease-in-out infinite;
+}
+
+.mascot__gold-stop:nth-child(2) {
+    animation-delay: -3s;
+}
+
+.mascot__gold-stop:nth-child(3) {
+    animation-delay: -6s;
+}
+
+@keyframes mascot-gold {
+    0% {
+        stop-color: #ffe488;
+    }
+    33% {
+        stop-color: #fcc24a;
+    }
+    66% {
+        stop-color: #eaa326;
+    }
+    100% {
+        stop-color: #ffe488;
+    }
+}
+
 @keyframes mascot-bob {
     0%,
     100% {
