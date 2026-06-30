@@ -6,6 +6,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Initiative;
 use App\Entity\InitiativeAttachment;
+use App\Entity\InitiativeImage;
 use App\Tests\FunctionalTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,9 +22,8 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $this->client->request('POST', '/initiatives/new', [
             'initiative' => [
                 'title' => 'Coverage initiative',
-                'newContacts' => [['name' => 'Coverage Contact']],
-                // An empty image row exercises the image branch of removeEmptyMedia().
-                'images' => [['alt' => 'empty image row']],
+                // A typed name creates a new contact on the fly and attaches it.
+                'contacts' => 'Coverage Contact',
                 '_token' => $token,
             ],
         ]);
@@ -33,7 +33,6 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $em = $this->entityManager();
         $initiative = $this->initiatives()->findOneBy(['title' => 'Coverage initiative']);
         self::assertInstanceOf(Initiative::class, $initiative);
-        self::assertCount(0, $initiative->getImages(), 'Empty image rows should be dropped.');
         self::assertGreaterThanOrEqual(1, $initiative->getContacts()->count(), 'Inline contact should be merged in.');
 
         $em->remove($initiative);
@@ -58,8 +57,8 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $this->client->request('POST', sprintf('/initiatives/%s/edit', $id), [
             'initiative' => [
                 'title' => 'Edited initiative',
-                'images' => [['alt' => 'empty']],
-                'attachments' => [[]],
+                'images' => [['imageFile' => '']],
+                'attachments' => [['file' => '']],
                 '_token' => $token,
             ],
         ]);
@@ -127,6 +126,37 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $reloaded = $this->initiatives()->find($id);
         self::assertNotNull($reloaded);
         self::assertCount(0, $reloaded->getAttachments(), 'A file-less attachment should be dropped.');
+
+        $this->removeInitiative($id);
+    }
+
+    public function testEditDropsImagesLeftWithoutAFile(): void
+    {
+        $this->loginAsAdmin();
+        $initiative = $this->createInitiative('Has empty image');
+        $initiative->addImage(new InitiativeImage());
+        $em = $this->entityManager();
+        $em->flush();
+        $id = (string) $initiative->getId();
+
+        $crawler = $this->client->request('GET', sprintf('/initiatives/%s/edit', $id));
+        $token = (string) $crawler->filter('input[name="initiative[_token]"]')->attr('value');
+        $this->client->request('POST', sprintf('/initiatives/%s/edit', $id), [
+            'initiative' => [
+                'title' => 'Has empty image',
+                // Re-submit the file-less image so the form keeps it; the
+                // controller's removeEmptyMedia() then drops it.
+                'images' => [['imageFile' => '']],
+                '_token' => $token,
+            ],
+        ]);
+
+        $this->assertResponseRedirects(sprintf('/initiatives/%s', $id));
+
+        $this->entityManager()->clear();
+        $reloaded = $this->initiatives()->find($id);
+        self::assertNotNull($reloaded);
+        self::assertCount(0, $reloaded->getImages(), 'A file-less image should be dropped.');
 
         $this->removeInitiative($id);
     }

@@ -22,18 +22,22 @@ class ContactType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'contact.name',
+                'help' => 'contact.name_help',
             ])
             ->add('email', EmailType::class, [
                 'label' => 'contact.email',
                 'required' => false,
+                'help' => 'contact.email_help',
             ])
             ->add('phone', TelType::class, [
                 'label' => 'contact.phone',
                 'required' => false,
+                'help' => 'contact.phone_help',
             ])
             ->add('department', TextType::class, [
                 'label' => 'contact.department',
                 'required' => false,
+                'help' => 'contact.department_help',
             ]);
     }
 

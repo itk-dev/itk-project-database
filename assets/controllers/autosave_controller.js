@@ -6,11 +6,13 @@ import { Controller } from "@hotwired/stimulus";
  * On the edit form it posts changes to the edit endpoint without re-rendering,
  * so focus and caret are never lost. On the new form (isNew) the first valid
  * save creates the initiative and the controller swaps to editing that record
- * in place (URL + action). File uploads are skipped on autosave and left for an
- * explicit Save, which keeps the request equivalent to a manual save.
+ * in place (URL + action). Picking a file uploads it straight away via the same
+ * POST; afterwards the media turbo-frame is reloaded so the stored file shows as
+ * a link and its (now redundant) input is cleared — without that the file would
+ * linger in the input and re-upload on every later keystroke.
  */
 export default class extends Controller {
-    static targets = ["status", "statusText", "save"];
+    static targets = ["status", "statusText"];
 
     static values = {
         debounce: { type: Number, default: 800 },
@@ -25,27 +27,26 @@ export default class extends Controller {
             type: String,
             default: "Save failed — your changes are kept here",
         },
-        filesHintText: { type: String, default: "Click Save to upload files" },
+        requiredText: { type: String, default: "Add a title to save" },
         isNew: { type: Boolean, default: false },
     };
 
     initialize() {
         this.timer = null;
-        this.inFlight = null;
-        this.creating = false;
+        this.xhr = null;
+        this.busy = false;
     }
 
     disconnect() {
         window.clearTimeout(this.timer);
-        this.inFlight?.abort();
+        this.xhr?.abort();
     }
 
     schedule(event) {
-        // Picking a file can't autosave, but it reveals the Save button to upload it.
-        this.revealSaveForFiles();
-
-        // Files are uploaded only on an explicit Save.
+        // A picked file uploads on its own — save right away, no debounce.
         if (event?.target?.type === "file") {
+            window.clearTimeout(this.timer);
+            this.save();
             return;
         }
         // No "unsaved" text — the animated pen icon carries that state.
@@ -55,25 +56,24 @@ export default class extends Controller {
     }
 
     async save() {
-        // A picked-but-unsaved file is left for Save so we never half-upload it.
-        if (this.hasPendingFile()) {
-            this.setStatus(this.filesHintTextValue, "unsaved");
+        // A required field (the title) is empty: don't POST an invalid form and
+        // flash a save error. Show a hint and keep the last saved version — once
+        // a title is typed again, the next change saves normally.
+        if (this.hasEmptyRequiredField()) {
+            this.setStatus(this.requiredTextValue, "unsaved");
             return;
         }
 
-        // Hold off while a brand-new initiative is being created so we never
-        // POST the create twice; the next change saves it once it exists.
-        if (this.creating) {
+        // A create or a file upload must run to completion; don't start a second
+        // save on top of one (it would double-create the draft or cut the upload).
+        if (this.busy) {
             return;
         }
 
-        // Edits can supersede an in-flight request; a create must run to completion.
-        const creating = this.isNewValue;
-        if (!creating) {
-            this.inFlight?.abort();
-        }
-        this.inFlight = new AbortController();
-        this.creating = creating;
+        const withFiles = this.hasPendingFile();
+        // Supersede any in-flight plain edit; the new POST carries the whole form.
+        this.xhr?.abort();
+        this.busy = this.isNewValue || withFiles;
 
         // Reveal the saving spinner only for slow saves (> 2s); a quick save jumps
         // straight to "Gemt" with no flicker.
@@ -82,21 +82,26 @@ export default class extends Controller {
             2000,
         );
 
-        try {
-            const response = await fetch(this.element.action, {
-                method: "POST",
-                body: new FormData(this.element),
-                headers: {
-                    "X-Autosave": "1",
-                    "X-Requested-With": "XMLHttpRequest",
-                },
-                credentials: "same-origin",
-                signal: this.inFlight.signal,
-            });
+        // Picking a file drives a progress bar in the upload field via these events.
+        if (withFiles) {
+            this.dispatch("uploadstart", { target: document });
+        }
+        let ok = false;
 
-            if (201 === response.status) {
+        try {
+            const { status, location } = await this.request(
+                withFiles
+                    ? (percent) =>
+                          this.dispatch("uploadprogress", {
+                              target: document,
+                              detail: { percent },
+                          })
+                    : null,
+            );
+
+            if (201 === status) {
+                ok = true;
                 // The draft now exists — edit it in place from here on.
-                const location = response.headers.get("X-Initiative-Location");
                 if (location) {
                     this.element.action = location;
                     this.isNewValue = false;
@@ -111,12 +116,19 @@ export default class extends Controller {
                     `${this.savedTextValue} · ${this.timestamp()}`,
                     "saved",
                 );
-            } else if (204 === response.status) {
+                if (withFiles) {
+                    this.refreshMedia();
+                }
+            } else if (204 === status) {
+                ok = true;
                 this.setStatus(
                     `${this.savedTextValue} · ${this.timestamp()}`,
                     "saved",
                 );
-            } else if (422 === response.status) {
+                if (withFiles) {
+                    this.refreshMedia();
+                }
+            } else if (422 === status) {
                 this.setStatus(this.errorTextValue, "error");
             } else {
                 this.setStatus(this.offlineTextValue, "error");
@@ -127,8 +139,55 @@ export default class extends Controller {
             }
         } finally {
             window.clearTimeout(savingTimer);
-            this.creating = false;
+            this.busy = false;
+            this.xhr = null;
+            if (withFiles) {
+                this.dispatch("uploadend", {
+                    target: document,
+                    detail: { ok },
+                });
+            }
         }
+    }
+
+    // POST the whole form via XHR so file uploads can report real progress.
+    // Resolves with the status and the X-Initiative-Location header (if any);
+    // rejects with an AbortError when superseded.
+    request(onProgress) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            this.xhr = xhr;
+            xhr.open("POST", this.element.action, true);
+            xhr.setRequestHeader("X-Autosave", "1");
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+            if (onProgress && xhr.upload) {
+                xhr.upload.addEventListener("progress", (event) => {
+                    if (event.lengthComputable) {
+                        onProgress(
+                            Math.round((event.loaded / event.total) * 100),
+                        );
+                    }
+                });
+            }
+
+            xhr.addEventListener("load", () =>
+                resolve({
+                    status: xhr.status,
+                    location: xhr.getResponseHeader("X-Initiative-Location"),
+                }),
+            );
+            xhr.addEventListener("error", () =>
+                reject(new Error("Network error")),
+            );
+            xhr.addEventListener("abort", () => {
+                const error = new Error("Aborted");
+                error.name = "AbortError";
+                reject(error);
+            });
+
+            xhr.send(new FormData(this.element));
+        });
     }
 
     hasPendingFile() {
@@ -137,10 +196,24 @@ export default class extends Controller {
         ).some((input) => input.files && input.files.length > 0);
     }
 
-    // Files only upload on an explicit Save, so surface that button while one is staged.
-    revealSaveForFiles() {
-        if (this.hasSaveTarget) {
-            this.saveTarget.hidden = !this.hasPendingFile();
+    hasEmptyRequiredField() {
+        return Array.from(
+            this.element.querySelectorAll("[data-autosave-required]"),
+        ).some((field) => "" === field.value.trim());
+    }
+
+    // Reload just the files/images section so a freshly uploaded file shows as a
+    // link and its input is reset — the rest of the form keeps its state.
+    refreshMedia() {
+        const frame = document.getElementById("initiative-media");
+        if (!frame) {
+            return;
+        }
+        if (frame.src) {
+            frame.reload();
+        } else {
+            // First reload also gives the frame its source (the edit URL).
+            frame.src = this.element.action;
         }
     }
 

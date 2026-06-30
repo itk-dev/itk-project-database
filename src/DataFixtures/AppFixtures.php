@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Entity\Area;
 use App\Entity\Contact;
 use App\Entity\Department;
 use App\Entity\Initiative;
 use App\Entity\Term;
 use App\Entity\User;
-use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
@@ -25,6 +25,7 @@ class AppFixtures extends Fixture
     private const array STAKEHOLDERS = ['Aarhus Kommune', 'Region Midtjylland', 'Aarhus Universitet', 'Erhverv Aarhus', 'Lokale foreninger', 'Boligforeninger', 'VIA University College', 'Business Region Aarhus'];
     private const array STRATEGIES = ['Klimaplan 2030', 'Erhvervsplan', 'Børn- og ungepolitik', 'Mobilitetsplan', 'Digitaliseringsstrategi', 'Sundhedspolitik'];
     private const array DEPARTMENTS = ['ITK Development', 'CFIA', 'Aarhus CityLab', 'Stab', 'OS2', 'AI Lab', 'IOT Lab', 'GTM', 'Fut Lab'];
+    private const array AREAS = ['Klima og miljø', 'Mobilitet', 'Velfærd', 'Kultur og fritid', 'Uddannelse', 'Erhverv', 'Digitalisering', 'Byudvikling'];
 
     public function __construct(private readonly UserPasswordHasherInterface $hasher)
     {
@@ -59,6 +60,13 @@ class AppFixtures extends Fixture
             $department = (new Department())->setName($name);
             $manager->persist($department);
             $departments[] = $department;
+        }
+
+        $areas = [];
+        foreach (self::AREAS as $name) {
+            $area = (new Area())->setName($name);
+            $manager->persist($area);
+            $areas[] = $area;
         }
 
         $contacts = [];
@@ -103,7 +111,6 @@ class AppFixtures extends Fixture
         ];
 
         $statuses = Status::cases();
-        $categories = Category::cases();
         $types = InitiativeType::cases();
         $endorsers = EndorsementAuthor::cases();
         $fundings = Funding::cases();
@@ -111,7 +118,7 @@ class AppFixtures extends Fixture
         foreach ($titles as $index => $title) {
             $initiative = (new Initiative())
                 ->setTitle($title)
-                ->setCategory($categories[array_rand($categories)])
+                ->setArea($areas[array_rand($areas)])
                 ->setInitiativeType($types[array_rand($types)])
                 ->setStatus($statuses[array_rand($statuses)])
                 ->setOrganizationalAnchoring($departments[array_rand($departments)])

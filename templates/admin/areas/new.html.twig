@@ -1,0 +1,12 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'area.new.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block admin_content %}
+    <twig:Page:Header :title="'area.new.title'|trans" style="margin-bottom: var(--itk-space-5);">
+        <twig:block name="breadcrumb">
+            <div class="breadcrumb"><a href="{{ path('admin_areas') }}">{{ 'nav.areas'|trans }}</a></div>
+        </twig:block>
+    </twig:Page:Header>
+    {{ include('admin/areas/_form.html.twig', {button_label: 'action.create'}) }}
+{% endblock %}

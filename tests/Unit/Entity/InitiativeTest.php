@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Entity;
 
+use App\Entity\Area;
 use App\Entity\Contact;
 use App\Entity\Department;
 use App\Entity\Initiative;
 use App\Entity\InitiativeAttachment;
 use App\Entity\InitiativeImage;
 use App\Entity\Term;
-use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
@@ -25,7 +25,7 @@ final class InitiativeTest extends TestCase
         $initiative = new Initiative();
 
         self::assertNull($initiative->getTitle());
-        self::assertTrue($initiative->isEndorsement());
+        self::assertFalse($initiative->isEndorsement());
         self::assertSame([], $initiative->getFunding());
         self::assertSame([], $initiative->getLinks());
         self::assertCount(0, $initiative->getStrategies());
@@ -44,10 +44,11 @@ final class InitiativeTest extends TestCase
         $start = new \DateTimeImmutable('2025-01-01');
         $end = new \DateTimeImmutable('2025-12-31');
         $department = (new Department())->setName('Teknik og Miljø');
+        $area = (new Area())->setName('Klima og miljø');
 
         $initiative = (new Initiative())
             ->setTitle('Grøn omstilling')
-            ->setCategory(Category::Climate)
+            ->setArea($area)
             ->setDescription('Beskrivelse')
             ->setInitiativeType(InitiativeType::Project)
             ->setStatus(Status::Active)
@@ -60,7 +61,7 @@ final class InitiativeTest extends TestCase
             ->setTimePeriodEnd($end);
 
         self::assertSame('Grøn omstilling', $initiative->getTitle());
-        self::assertSame(Category::Climate, $initiative->getCategory());
+        self::assertSame($area, $initiative->getArea());
         self::assertSame('Beskrivelse', $initiative->getDescription());
         self::assertSame(InitiativeType::Project, $initiative->getInitiativeType());
         self::assertSame(Status::Active, $initiative->getStatus());
@@ -80,18 +81,39 @@ final class InitiativeTest extends TestCase
 
         $full = (new Initiative())
             ->setTitle('T')
-            ->setCategory(Category::Climate)
+            ->setArea((new Area())->setName('Klima og miljø'))
             ->setDescription('D')
             ->setInitiativeType(InitiativeType::Project)
             ->setStatus(Status::Active)
             ->setOrganizationalAnchoring((new Department())->setName('Teknik og Miljø'))
-            ->setEndorsementAuthor(EndorsementAuthor::CityCouncil)
             ->setBudget(1000)
             ->setFunding([Funding::EuFunds])
             ->setTimePeriodStart(new \DateTimeImmutable())
             ->setTimePeriodEnd(new \DateTimeImmutable());
 
+        // The Vedtagelse (endorsement) fields are intentionally excluded, so this
+        // reaches 100% without setting an endorsement author.
         self::assertSame(100, $full->getCompletionPercentage());
+    }
+
+    public function testWasUpdatedAfterCreation(): void
+    {
+        // No timestamps yet (entity not persisted) — treated as not updated.
+        self::assertFalse((new Initiative())->wasUpdatedAfterCreation());
+
+        $created = new \DateTimeImmutable('2025-01-01 10:00:00');
+
+        // Edited within a day of creation: still reads as "created".
+        $fresh = new Initiative();
+        $fresh->setCreatedAt($created);
+        $fresh->setUpdatedAt($created->modify('+5 hours'));
+        self::assertFalse($fresh->wasUpdatedAfterCreation());
+
+        // Edited more than a day after creation.
+        $edited = new Initiative();
+        $edited->setCreatedAt($created);
+        $edited->setUpdatedAt($created->modify('+2 days'));
+        self::assertTrue($edited->wasUpdatedAfterCreation());
     }
 
     public function testFundingRoundTrip(): void

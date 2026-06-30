@@ -3,17 +3,14 @@
 {% block title %}{{ 'department.edit.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
 
 {% block admin_content %}
-    <div class="page__header" style="margin-bottom: var(--itk-space-5);">
-        <div>
+    <twig:Page:Header :title="department.name" style="margin-bottom: var(--itk-space-5);">
+        <twig:block name="breadcrumb">
             <div class="breadcrumb"><a href="{{ path('admin_departments') }}">{{ 'nav.departments'|trans }}</a></div>
-            <h1 class="page__title">{{ department.name }}</h1>
-        </div>
-        <div class="page__actions">
-            <form method="post" action="{{ path('admin_department_delete', {id: department.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete-department-' ~ department.id) }}">
-                <button type="submit" class="btn btn--danger">{{ 'action.delete'|trans }}</button>
-            </form>
-        </div>
-    </div>
+        </twig:block>
+        <form method="post" action="{{ path('admin_department_delete', {id: department.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete-department-' ~ department.id) }}">
+            <button type="submit" class="btn btn--danger">{{ 'action.delete'|trans }}</button>
+        </form>
+    </twig:Page:Header>
     {{ include('admin/departments/_form.html.twig', {button_label: 'action.save'}) }}
 {% endblock %}

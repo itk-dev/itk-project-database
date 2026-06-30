@@ -3,15 +3,9 @@
 {% block title %}{{ 'admin.users.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
 
 {% block admin_content %}
-    <div class="page__header" style="margin-bottom: var(--itk-space-5);">
-        <div>
-            <h1 class="page__title">{{ 'admin.users.title'|trans }}</h1>
-            <p class="page__subtitle">{{ 'admin.users.subtitle'|trans }}</p>
-        </div>
-        <div class="page__actions">
-            <a href="{{ path('admin_user_new') }}" class="btn btn--primary">{{ 'admin.users.new'|trans }}</a>
-        </div>
-    </div>
+    <twig:Page:Header :title="'admin.users.title'|trans" :subtitle="'admin.users.subtitle'|trans" style="margin-bottom: var(--itk-space-5);">
+        <a href="{{ path('admin_user_new') }}" class="btn btn--primary">{{ 'admin.users.new'|trans }}</a>
+    </twig:Page:Header>
 
     <div class="card">
         <div class="table-wrap">

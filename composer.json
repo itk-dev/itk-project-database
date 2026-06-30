@@ -26,6 +26,7 @@
         "symfony/translation": "~8.1.0",
         "symfony/twig-bundle": "~8.1.0",
         "symfony/ux-turbo": "^3.2",
+        "symfony/ux-twig-component": "^3.2",
         "symfony/validator": "~8.1.0",
         "symfony/yaml": "~8.1.0",
         "twig/extra-bundle": "^2.12 || ^3.0",

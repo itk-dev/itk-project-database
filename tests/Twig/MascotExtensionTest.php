@@ -16,7 +16,7 @@ final class MascotExtensionTest extends KernelTestCase
         \assert($extension instanceof MascotExtension);
 
         // No user is logged in, so the mascot has no personal numbers to show.
-        self::assertSame(['count' => 0, 'unfinished' => null], $extension->context());
+        self::assertSame(['count' => 0, 'unfinished' => null, 'incompleteContact' => null], $extension->context());
     }
 
     public function testRegistersTheMascotContextFunction(): void

@@ -3,22 +3,13 @@
 {% block title %}{{ 'department.index.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
 
 {% block admin_content %}
-    <div class="page__header" style="margin-bottom: var(--itk-space-5);">
-        <div>
-            <h1 class="page__title">{{ 'department.index.title'|trans }}</h1>
-            <p class="page__subtitle">{{ 'department.index.subtitle'|trans }}</p>
-        </div>
-        <div class="page__actions">
-            <a href="{{ path('admin_department_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
-        </div>
-    </div>
+    <twig:Page:Header :title="'department.index.title'|trans" :subtitle="'department.index.subtitle'|trans" style="margin-bottom: var(--itk-space-5);">
+        <a href="{{ path('admin_department_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+    </twig:Page:Header>
 
     <div class="card">
         {% if departments is empty %}
-            <div class="empty-state">
-                <div class="empty-state__title">{{ 'department.empty.title'|trans }}</div>
-                <p>{{ 'department.empty.hint'|trans }}</p>
-            </div>
+            <twig:EmptyState :title="'department.empty.title'|trans" :hint="'department.empty.hint'|trans" />
         {% else %}
             <div class="table-wrap">
                 <table class="table">

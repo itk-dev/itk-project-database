@@ -4,21 +4,18 @@
 
 {% block body %}
     <div class="page" data-controller="title-mirror">
-        <div class="page__header">
-            <div>
+        <twig:Page:Header :title="'initiative.edit.title'|trans">
+            <twig:block name="breadcrumb">
                 <div class="breadcrumb">
                     <a href="{{ path('app_initiative_index') }}">{{ 'nav.initiatives'|trans }}</a>
                     / <a href="{{ path('app_initiative_show', {id: initiative.id}) }}" data-title-mirror-target="crumb">{{ initiative.title }}</a>
                 </div>
-                <h1 class="page__title">{{ 'initiative.edit.title'|trans }}</h1>
-            </div>
-            <div class="page__actions">
-                <form method="post" action="{{ path('app_initiative_delete', {id: initiative.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete-initiative-' ~ initiative.id) }}">
-                    <button type="submit" class="btn btn--danger">{{ 'action.delete'|trans }}</button>
-                </form>
-            </div>
-        </div>
+            </twig:block>
+            <form method="post" action="{{ path('app_initiative_delete', {id: initiative.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete-initiative-' ~ initiative.id) }}">
+                <button type="submit" class="btn btn--danger">{{ 'action.delete'|trans }}</button>
+            </form>
+        </twig:Page:Header>
         {{ include('initiative/_form.html.twig', {button_label: 'action.save', autosave: true}) }}
     </div>
 {% endblock %}

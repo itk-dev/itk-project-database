@@ -20,6 +20,7 @@ class DepartmentType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'department.name',
+                'help' => 'department.name_help',
             ]);
     }
 

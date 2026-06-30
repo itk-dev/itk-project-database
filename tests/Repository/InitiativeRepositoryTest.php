@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Repository;
 
 use App\Entity\Initiative;
-use App\Enum\Category;
 use App\Enum\InitiativeType;
 use App\Enum\Status;
 use App\Model\InitiativeFilter;
+use App\Repository\AreaRepository;
 use App\Repository\DepartmentRepository;
 use App\Repository\InitiativeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,11 +30,13 @@ final class InitiativeRepositoryTest extends KernelTestCase
     {
         $departments = static::getContainer()->get(DepartmentRepository::class);
         \assert($departments instanceof DepartmentRepository);
+        $areas = static::getContainer()->get(AreaRepository::class);
+        \assert($areas instanceof AreaRepository);
 
         $filter = new InitiativeFilter();
         $filter->q = '100%_'; // also exercises LIKE wildcard escaping
         $filter->status = Status::Active;
-        $filter->category = Category::Climate;
+        $filter->area = $areas->findAllOrdered()[0];
         $filter->initiativeType = InitiativeType::Project;
         $filter->organizationalAnchoring = $departments->findAllOrdered()[0];
         $filter->endorsement = true;

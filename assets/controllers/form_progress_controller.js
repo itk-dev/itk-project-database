@@ -19,6 +19,7 @@ export default class extends Controller {
 
     static values = {
         fields: { type: Array, default: [] },
+        stars: { type: Boolean, default: true },
     };
 
     connect() {
@@ -127,11 +128,19 @@ export default class extends Controller {
     realRect(star) {
         const gone = star.classList.contains("completion-star--gone");
         if (gone) {
+            // Drop the transition while measuring so the box reflects the star's
+            // settled size, not its collapsed (mid-transition) one.
+            star.style.transition = "none";
             star.classList.remove("completion-star--gone");
         }
         const rect = star.getBoundingClientRect();
         if (gone) {
             star.classList.add("completion-star--gone");
+            // Flush the collapsed state while the transition is still off, so
+            // re-enabling it below doesn't animate the star from full back to
+            // hidden — that was the brief flash beside the label.
+            void star.offsetWidth;
+            star.style.transition = "";
         }
 
         return rect;
@@ -174,7 +183,9 @@ export default class extends Controller {
         const dx = toRect.left + toRect.width / 2 - startX;
         const dy = toRect.top + toRect.height / 2 - startY;
 
-        if (this.prefersReducedMotion) {
+        // No flight when the user turned stars off (or prefers reduced motion):
+        // the bar still advances, the star just doesn't fly.
+        if (!this.animateStars) {
             onArrive();
 
             return;
@@ -250,7 +261,7 @@ export default class extends Controller {
     }
 
     popTrophy() {
-        if (!this.hasStarTarget || this.prefersReducedMotion) {
+        if (!this.hasStarTarget || !this.animateStars) {
             return;
         }
 
@@ -266,6 +277,10 @@ export default class extends Controller {
 
     get prefersReducedMotion() {
         return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    get animateStars() {
+        return this.starsValue && !this.prefersReducedMotion;
     }
 
     // "initiative[links][0]" -> "links", "initiative[funding][]" -> "funding".

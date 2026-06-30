@@ -60,12 +60,54 @@ final class UserSettingsControllerTest extends FunctionalTestCase
         self::assertTrue($this->reloadEditor()->isMascotEnabled());
     }
 
+    public function testStarsToggleRedirectsAndFlipsThePreference(): void
+    {
+        $this->loginAsEditor();
+        $crawler = $this->client->request('GET', '/');
+        $this->assertResponseIsSuccessful();
+        $token = (string) $crawler->filter('#starsToggleForm input[name="_token"]')->attr('value');
+
+        $this->client->request('POST', '/settings/stars/toggle', ['_token' => $token, 'return' => '/initiatives']);
+
+        $this->assertResponseRedirects('/initiatives');
+        self::assertFalse($this->reloadEditor()->isStarsEnabled());
+    }
+
+    public function testTourSeenAjaxReturnsNoContentAndPersists(): void
+    {
+        $this->loginAsEditor();
+        $token = $this->tourSeenToken();
+
+        $this->client->request('POST', '/settings/tour/seen', ['_token' => $token], [], ['HTTP_X-Requested-With' => 'fetch']);
+        $this->assertResponseStatusCodeSame(204);
+        self::assertTrue($this->reloadEditor()->isTourSeen());
+    }
+
+    public function testTourSeenPlainFormRedirectsToReturn(): void
+    {
+        $this->loginAsEditor();
+        $token = $this->tourSeenToken();
+
+        $this->client->request('POST', '/settings/tour/seen', ['_token' => $token, 'return' => '/initiatives']);
+
+        $this->assertResponseRedirects('/initiatives');
+        self::assertTrue($this->reloadEditor()->isTourSeen());
+    }
+
     private function mascotToggleToken(): string
     {
         $crawler = $this->client->request('GET', '/');
         $this->assertResponseIsSuccessful();
 
         return (string) $crawler->filter('#mascotToggleForm input[name="_token"]')->attr('value');
+    }
+
+    private function tourSeenToken(): string
+    {
+        $crawler = $this->client->request('GET', '/');
+        $this->assertResponseIsSuccessful();
+
+        return (string) $crawler->filter('.mascot')->attr('data-mascot-tour-seen-token-value');
     }
 
     private function reloadEditor(): User

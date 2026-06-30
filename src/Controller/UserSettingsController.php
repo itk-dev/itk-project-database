@@ -36,6 +36,44 @@ class UserSettingsController extends AbstractController
     }
 
     /**
+     * Toggle whether the completion stars fly into the trophy. A plain redirect:
+     * the page re-renders with the new preference and the bar is unaffected.
+     */
+    #[Route('/settings/stars/toggle', name: 'app_settings_stars_toggle', methods: ['POST'])]
+    public function toggleStars(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        if ($user instanceof User
+            && $this->isCsrfTokenValid('toggle-stars', (string) $request->request->get('_token'))) {
+            $user->setStarsEnabled(!$user->isStarsEnabled());
+            $entityManager->flush();
+        }
+
+        return $this->redirect($this->safeReturn($request));
+    }
+
+    /**
+     * Mark Glimt's guided tour as seen, so it is proposed only once. Answers 204
+     * to the mascot's fetch and otherwise redirects back for the no-JS path.
+     */
+    #[Route('/settings/tour/seen', name: 'app_settings_tour_seen', methods: ['POST'])]
+    public function markTourSeen(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        if ($user instanceof User
+            && $this->isCsrfTokenValid('tour-seen', (string) $request->request->get('_token'))) {
+            $user->setTourSeen(true);
+            $entityManager->flush();
+        }
+
+        if ('fetch' === $request->headers->get('X-Requested-With')) {
+            return new Response(null, Response::HTTP_NO_CONTENT);
+        }
+
+        return $this->redirect($this->safeReturn($request));
+    }
+
+    /**
      * Only follow local, relative return paths to avoid open redirects (same
      * guard as the locale switcher).
      */

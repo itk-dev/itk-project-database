@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
@@ -27,8 +26,8 @@ class Initiative extends AbstractEntity
      * @var list<string>
      */
     public const array COMPLETION_FIELDS = [
-        'title', 'category', 'description', 'initiativeType', 'status',
-        'organizationalAnchoring', 'endorsementAuthor',
+        'title', 'area', 'description', 'initiativeType', 'status',
+        'organizationalAnchoring',
         'budget', 'funding', 'timePeriodStart', 'timePeriodEnd',
     ];
 
@@ -36,8 +35,9 @@ class Initiative extends AbstractEntity
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 32, nullable: true, enumType: Category::class)]
-    private ?Category $category = null;
+    #[ORM\ManyToOne(targetEntity: Area::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Area $area = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
@@ -61,7 +61,7 @@ class Initiative extends AbstractEntity
     private ?Department $organizationalAnchoring = null;
 
     #[ORM\Column]
-    private bool $endorsement = true;
+    private bool $endorsement = false;
 
     #[ORM\Column(length: 32, nullable: true, enumType: EndorsementAuthor::class)]
     private ?EndorsementAuthor $endorsementAuthor = null;
@@ -134,14 +134,14 @@ class Initiative extends AbstractEntity
         return $this;
     }
 
-    public function getCategory(): ?Category
+    public function getArea(): ?Area
     {
-        return $this->category;
+        return $this->area;
     }
 
-    public function setCategory(?Category $category): static
+    public function setArea(?Area $area): static
     {
-        $this->category = $category;
+        $this->area = $area;
 
         return $this;
     }
@@ -486,12 +486,11 @@ class Initiative extends AbstractEntity
     {
         $checks = [
             null !== $this->title && '' !== $this->title,
-            null !== $this->category,
+            null !== $this->area,
             null !== $this->description && '' !== $this->description,
             null !== $this->initiativeType,
             null !== $this->status,
             null !== $this->organizationalAnchoring,
-            null !== $this->endorsementAuthor,
             null !== $this->budget,
             [] !== $this->funding,
             null !== $this->timePeriodStart,
@@ -499,6 +498,24 @@ class Initiative extends AbstractEntity
         ];
 
         return (int) round(\count(array_filter($checks)) / \count($checks) * 100);
+    }
+
+    /**
+     * Whether the initiative has been edited since it was created — drives the
+     * "updated" vs "created" label in the dashboard activity feed. Only counts as
+     * an edit once it's more than a day past creation, so the initial save and any
+     * same-day tweaks still read as "created".
+     */
+    public function wasUpdatedAfterCreation(): bool
+    {
+        $created = $this->getCreatedAt();
+        $updated = $this->getUpdatedAt();
+
+        if (null === $created || null === $updated) {
+            return false;
+        }
+
+        return $updated->getTimestamp() - $created->getTimestamp() > 60 * 60 * 24;
     }
 
     public function __toString(): string

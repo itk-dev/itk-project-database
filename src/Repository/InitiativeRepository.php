@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Initiative;
-use App\Enum\Category;
+use App\Entity\User;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
@@ -15,7 +15,6 @@ use App\Model\InitiativeFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -52,16 +51,16 @@ class InitiativeRepository extends ServiceEntityRepository
                 sprintf('i.id IN (SELECT istr.id FROM %s istr JOIN istr.strategies st WHERE LOWER(st.name) LIKE :q)', Initiative::class),
                 sprintf('i.id IN (SELECT isth.id FROM %s isth JOIN isth.stakeholders sh WHERE LOWER(sh.name) LIKE :q)', Initiative::class),
                 sprintf('i.id IN (SELECT icon.id FROM %s icon JOIN icon.contacts co WHERE LOWER(co.name) LIKE :q)', Initiative::class),
-                // Department is a related entity searched by its stored name
-                // ("nik" should find "Teknik og Miljø").
+                // Department and area are related entities searched by their stored
+                // name ("nik" should find "Teknik og Miljø").
                 sprintf('i.id IN (SELECT idep.id FROM %s idep JOIN idep.organizationalAnchoring dep WHERE LOWER(dep.name) LIKE :q)', Initiative::class),
+                sprintf('i.id IN (SELECT iare.id FROM %s iare JOIN iare.area ar WHERE LOWER(ar.name) LIKE :q)', Initiative::class),
             ];
 
             // Enum columns store slugs, but the user searches their translated
             // labels ("nik" should find "Teknik og Miljø"); map labels to values.
             $enumFields = [
                 'status' => Status::cases(),
-                'category' => Category::cases(),
                 'initiativeType' => InitiativeType::cases(),
                 'endorsementAuthor' => EndorsementAuthor::cases(),
             ];
@@ -87,8 +86,8 @@ class InitiativeRepository extends ServiceEntityRepository
             $qb->andWhere('i.status = :status')->setParameter('status', $filter->status->value);
         }
 
-        if (null !== $filter->category) {
-            $qb->andWhere('i.category = :category')->setParameter('category', $filter->category->value);
+        if (null !== $filter->area) {
+            $qb->andWhere('i.area = :area')->setParameter('area', $filter->area);
         }
 
         if (null !== $filter->initiativeType) {
@@ -166,26 +165,41 @@ class InitiativeRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function countByCreator(UserInterface $user): int
+    public function countByCreator(User $user): int
     {
+        // createdBy is a ManyToOne to the UserInterface (resolved to User via
+        // resolve_target_entities); binding the entity to a ULID FK doesn't match,
+        // so compare the raw FK against the user's id with the ulid type applied.
         return (int) $this->createQueryBuilder('i')
             ->select('COUNT(i.id)')
-            ->andWhere('i.createdBy = :user')
-            ->setParameter('user', $user)
+            ->andWhere('IDENTITY(i.createdBy) = :user')
+            ->setParameter('user', $user->getId(), 'ulid')
             ->getQuery()
             ->getSingleScalarResult();
     }
 
     /**
      * The creator's least-complete initiative that isn't fully filled in yet, or
-     * null if none are outstanding. Completion is computed in PHP (not a stored
-     * column), so this scans only the creator's 50 most recent initiatives.
+     * null if none are outstanding.
      */
-    public function findUnfinishedByCreator(UserInterface $user): ?Initiative
+    public function findUnfinishedByCreator(User $user): ?Initiative
     {
+        return $this->findUnfinishedListByCreator($user, 1)[0] ?? null;
+    }
+
+    /**
+     * The creator's incomplete initiatives (completion below 100 %), least-complete
+     * first, capped at $limit. Completion is computed in PHP (not a stored column),
+     * so this scans only the creator's 50 most recent initiatives.
+     *
+     * @return Initiative[]
+     */
+    public function findUnfinishedListByCreator(User $user, int $limit = 6): array
+    {
+        // See countByCreator: match the raw ULID FK, not the entity.
         $initiatives = $this->createQueryBuilder('i')
-            ->andWhere('i.createdBy = :user')
-            ->setParameter('user', $user)
+            ->andWhere('IDENTITY(i.createdBy) = :user')
+            ->setParameter('user', $user->getId(), 'ulid')
             ->orderBy('i.createdAt', 'DESC')
             ->setMaxResults(50)
             ->getQuery()
@@ -201,7 +215,7 @@ class InitiativeRepository extends ServiceEntityRepository
             static fn (Initiative $a, Initiative $b): int => $a->getCompletionPercentage() <=> $b->getCompletionPercentage(),
         );
 
-        return $unfinished[0] ?? null;
+        return \array_slice($unfinished, 0, $limit);
     }
 
     /**
@@ -229,12 +243,15 @@ class InitiativeRepository extends ServiceEntityRepository
     }
 
     /**
+     * Most recently touched initiatives (created or edited) for the activity feed,
+     * newest first. Ordered by updatedAt so an edit resurfaces the initiative.
+     *
      * @return Initiative[]
      */
     public function findRecent(int $limit = 5): array
     {
         return $this->createQueryBuilder('i')
-            ->orderBy('i.createdAt', 'DESC')
+            ->orderBy('i.updatedAt', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
@@ -249,13 +266,13 @@ class InitiativeRepository extends ServiceEntityRepository
      */
     public function dashboardRows(): array
     {
-        // Join and select the department id (rather than IDENTITY()) so Doctrine
+        // Join and select the related ids (rather than IDENTITY()) so Doctrine
         // applies the ULID type: IDENTITY() returns the raw binary FK, which would
         // not match the canonical ULID strings the rest of build() keys on.
         return $this->createQueryBuilder('i')
             ->select(
                 'i.title',
-                'i.category',
+                'ar.id AS area',
                 'i.status',
                 'department.id AS organizationalAnchoring',
                 'i.budget',
@@ -263,6 +280,7 @@ class InitiativeRepository extends ServiceEntityRepository
                 'i.timePeriodStart',
                 'i.timePeriodEnd',
             )
+            ->leftJoin('i.area', 'ar')
             ->leftJoin('i.organizationalAnchoring', 'department')
             ->getQuery()
             ->getArrayResult();

@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-30
+
+* [PR-23](https://github.com/itk-dev/itk-project-database/pull/23)
+  Introduce reusable Twig components (page header, card header, empty state, KPI)
+  to replace repeated markup.
+* [PR-22](https://github.com/itk-dev/itk-project-database/pull/22)
+  Use the ITK logo in the nav and login, tidy the dashboard header, and refresh
+  the login screen.
+* [PR-21](https://github.com/itk-dev/itk-project-database/pull/21)
+  Add a first-login guided tour where Glimt walks new users through the platform,
+  dashboard, creating initiatives and the admin panel.
+* [PR-20](https://github.com/itk-dev/itk-project-database/pull/20)
+  Minor improvements to the user menu styling.
+* [PR-19](https://github.com/itk-dev/itk-project-database/pull/19)
+  Auto-upload files with a progress bar and image preview, view images in an
+  in-page lightbox, and refresh the media field styling.
+* [PR-18](https://github.com/itk-dev/itk-project-database/pull/18)
+  Rework the dashboard with an outstanding-work panel and a redesigned activity
+  feed, add help text to every graph, and fix the mascot's finish nudges.
+* [PR-17](https://github.com/itk-dev/itk-project-database/pull/17)
+  Fix the mascot nudges that never appeared, nudge users to finish incomplete
+  contacts with a link to their edit page.
+* [PR-16](https://github.com/itk-dev/itk-project-database/pull/16)
+  Turn the strategies and tags fields into a searchable,
+  shared tag pool where new entries are capitalised and reused as suggestions.
+* [PR-15](https://github.com/itk-dev/itk-project-database/pull/15)
+  Make Kategori a user-defined Area entity with an admin CRUD, replacing the
+  fixed Category enum.
+
 ## [0.1.0] - 2026-06-26
 
 * [PR-9](https://github.com/itk-dev/itk-project-database/pull/9)
@@ -30,5 +59,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [PR-1](https://github.com/itk-dev/itk-project-database/pull/1)
   Initial Symfony 8 rebuild of the project database.
 
-[Unreleased]: https://github.com/itk-dev/itk-project-database/compare/0.1.0...HEAD
-[0.1.0]: https://github.com/itk-dev/itk-project-database/releases/tag/0.1.0
+[Unreleased]: https://github.com/itk-dev/itk-project-database/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/itk-dev/itk-project-database/compare/0.1.09i876rbhn%3E%20gvfcdevgbhjgnybtfr%20v8decsxz...0.2.0
+[0.1.0]: <https://github.com/itk-dev/itk-project-database/releases/tag/0.1.09i876rbhn> gvfcdevgbhjgnybtfr v8decsxz

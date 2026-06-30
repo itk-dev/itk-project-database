@@ -1,20 +1,4 @@
-<div class="kpi kpi--teal">
-    <div class="kpi__label">{{ 'dashboard.total'|trans }}</div>
-    <div class="kpi__value" data-live-text="kpi-total" data-count="{{ viz.kpis.total }}">{{ viz.kpis.total }}</div>
-    <div class="kpi__hint">{{ 'dashboard.total_hint'|trans }}</div>
-</div>
-<div class="kpi kpi--green">
-    <div class="kpi__label">{{ 'dashboard.in_progress'|trans }}</div>
-    <div class="kpi__value" data-live-text="kpi-in-progress" data-count="{{ viz.kpis.inProgress }}">{{ viz.kpis.inProgress }}</div>
-    <div class="kpi__hint">{{ 'dashboard.in_progress_hint'|trans }}</div>
-</div>
-<div class="kpi kpi--cyan">
-    <div class="kpi__label">{{ 'dashboard.departments_involved'|trans }}</div>
-    <div class="kpi__value" data-live-text="kpi-departments" data-count="{{ viz.kpis.departments }}">{{ viz.kpis.departments }}</div>
-    <div class="kpi__hint">{{ 'dashboard.departments_involved_hint'|trans }}</div>
-</div>
-<div class="kpi kpi--amber">
-    <div class="kpi__label">{{ 'dashboard.collaboration_count'|trans }}</div>
-    <div class="kpi__value" data-live-text="kpi-collaboration" data-count="{{ viz.kpis.collaboration }}">{{ viz.kpis.collaboration }}</div>
-    <div class="kpi__hint">{{ 'dashboard.collaboration_count_hint'|trans }}</div>
-</div>
+<twig:Kpi accent="teal" :label="'dashboard.total'|trans" :value="viz.kpis.total" live="kpi-total" :hint="'dashboard.total_hint'|trans" />
+<twig:Kpi accent="green" :label="'dashboard.in_progress'|trans" :value="viz.kpis.inProgress" live="kpi-in-progress" :hint="'dashboard.in_progress_hint'|trans" />
+<twig:Kpi accent="cyan" :label="'dashboard.departments_involved'|trans" :value="viz.kpis.departments" live="kpi-departments" :hint="'dashboard.departments_involved_hint'|trans" />
+<twig:Kpi accent="amber" :label="'dashboard.collaboration_count'|trans" :value="viz.kpis.collaboration" live="kpi-collaboration" :hint="'dashboard.collaboration_count_hint'|trans" />

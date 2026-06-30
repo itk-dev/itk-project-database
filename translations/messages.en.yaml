@@ -1,5 +1,5 @@
 app:
-    name: Project database
+    name: Projects
 
 mascot:
     label: Your creative buddy
@@ -7,6 +7,7 @@ mascot:
     cta: Create a new initiative
     farewell: "See you around — I'm here whenever you need me! 👋"
     welcome: "Yay, I'm back! Let's make something together. 🌟"
+    intro: "Hi, I'm Glimt — your friend in the corner. Shall we create something?"
     praise: "{1}You've created one initiative — nice start! 🌟|]1,Inf[You've created %count% initiatives — great work! 🌟"
     finish:
         almost: "“%title%” is %percent%% done — want to finish it off?"
@@ -16,6 +17,10 @@ mascot:
         ending: "“%title%” is %percent%% done. Give it the ending it deserves! 🏁"
         strong: "“%title%” is %percent%% there — let’s finish strong! 💪"
     finish_cta: Finish it
+    contact:
+        details: "“%name%” is still missing details — shall we finish the contact?"
+        quick: "You added “%name%” on the fly — want to fill in the rest? ✏️"
+        name_only: "“%name%” only has a name so far. Shall we add the details?"
     msg:
         idea: "Got a fresh idea? Let’s give it a home. ✨"
         roll: "You’re on a roll — what’s next?"
@@ -42,18 +47,33 @@ mascot:
         giveup: "Phew… let's call it a draw. 😅"
         escaped: "Argh, you got away! Too quick for me. 🏳️"
 
+tour:
+    propose: "Welcome! Shall I give you a quick tour of the platform?"
+    start: "Yes, show me around"
+    decline: No thanks
+    next: Next
+    skip: Skip
+    done: I'm ready
+    steps:
+        intro: "This is the Project database — where we gather the departments' initiatives and projects in one place, so we can see what's happening across them."
+        dashboard: "The overview shows key figures, status and any opportunities for collaboration across departments."
+        create: "Browse every initiative from the Initiativer menu — or create a new one right away with the Opret button."
+        admin: "Inside this menu you'll find Administration, where you can create, view and edit departments, areas and contacts."
+        outro: "You're all set! I'm always right here in the corner if you need a tip. 🌟"
+
 autosave:
     saving: Saving…
     saved: Saved
     unsaved: Unsaved changes
+    required: Add a title to save.
     error: Couldn’t save — check the required fields
     offline: Save failed — your changes are kept here
-    files_hint: Click Upload to add the files
     completion: Form completion
-    upload_files: Upload files
 
 activity:
     title: Activity
+    subtitle: Latest activity on the platform
+    empty: No activity to show
     action:
         created: created
         updated: updated
@@ -64,16 +84,19 @@ nav:
     initiatives: Initiatives
     contacts: Contacts
     departments: Departments
+    areas: Areas
     users: Users
     admin: Administration
+    preferences: Preferences
     language: Language
     signed_in_as: Signed in as
     logout: Sign out
-    mascot_disable: Disable mascot
-    mascot_enable: Enable mascot
+    show_mascot: Show Glimt ⭐
+    show_stars: Show flying stars 💫x
 
 action:
     new: New
+    new_initiative: Create a new initiative
     edit: Edit
     delete: Delete
     save: Save
@@ -86,7 +109,6 @@ action:
     reset: Reset
     export: Export CSV
     add_link: Add link
-    add_contact: Add contact
     add_image: Add image
     add_attachment: Add file
     remove: Remove
@@ -100,11 +122,15 @@ common:
     created: Created
     updated: Updated
     optional: optional
+    close: Close
 
 form:
     choose: Choose …
     terms:
         invalid: Invalid values.
+
+media:
+    choose: Choose file
 
 filter:
     search: Search
@@ -117,7 +143,6 @@ filter:
 
 dashboard:
     title: Overview
-    subtitle: The status of every initiative
     total: Total initiatives
     total_hint: registered in total
     in_progress: In progress
@@ -125,49 +150,74 @@ dashboard:
     departments_involved: Departments involved
     departments_involved_hint: with at least one initiative
     collaboration_count: Possible collaborations
-    collaboration_count_hint: themes across departments
+    collaboration_count_hint: areas across departments
     by_status: By status
+    by_status_sub: All initiatives grouped by their current status.
     recent: Recently created
     no_status: No status
     empty: No initiatives have been created yet.
-    themes_heatmap: Themes across departments
-    themes_heatmap_sub: Darker = more initiatives. Marked themes span at least three departments.
+    themes_heatmap: Areas across departments
+    themes_heatmap_sub: Number of initiatives per area in each department. Darker = more; marked areas span at least three departments.
+    themes_heatmap_empty: Add both departments and areas to see this chart.
     collaboration: Possible collaboration
-    collaboration_sub: Initiatives in different departments sharing a theme.
+    collaboration_sub: Initiatives in different departments sharing an area.
     status_by_dept: Status by department
+    status_by_dept_sub: Initiative statuses broken down by department.
     funding_sources: Funding sources
+    funding_sources_sub: Number of initiatives per funding source.
     budget_by_dept: Budget by department
-    reach: Themes by department reach
+    budget_by_dept_sub: Total budget of the initiatives in each department.
+    reach: Areas by department reach
+    reach_sub: How many departments each area appears in.
     timeline: Timeline
+    timeline_sub: Each initiative's time period on a timeline.
+    unfinished:
+        title: Your work
+        sub: Your initiatives and contacts that are still missing details.
+        initiative: Initiative
+        contact: Contact
+        contact_badge: Missing details
+        percent_done: "%percent% % filled in"
+        cta: Finish
+        empty_title: You're all caught up
 
 initiative:
     title: Title
-    category: Category
+    title_help: A short, descriptive name for the initiative.
+    area: Area
+    area_help: The thematic area the initiative belongs to.
     description: Short description
+    description_help: A brief summary of the purpose and content.
     strategies: Strategies and plans
     initiative_type: Type of initiative
+    initiative_type_help: The nature of the initiative, e.g. project or operation.
     status: Status
+    status_help: How far along the initiative is.
     status_additional: Status – additional text
+    status_additional_help: Add detail to the status if needed.
     organizational_anchoring: Department
+    organizational_anchoring_help: The department responsible for the initiative.
     endorsement: Has the initiative been endorsed
     endorsement_author: Where it was endorsed
+    endorsement_author_help: Where the initiative was endorsed.
     budget: Budget (DKK)
+    budget_help: Total budget in whole kroner.
     funding: Funding sources
     stakeholders: Stakeholders and partners
     tags: Tags
     time_period_start: Time period – start
+    time_period_start_help: When the initiative starts.
     time_period_end: Time period – end
+    time_period_end_help: When the initiative is expected to end.
     time_period: Time period
     links: Relevant links
     contacts: Contacts
-    new_contacts: Add new contacts
     author: Filled out by
-    terms_help: Separate multiple values with commas.
+    terms_help: Choose an existing one, or type a new and press Enter.
     completion_field_hint: This field counts towards the completion rate.
     images: Images
     attachments: Files
     image_file: Image file
-    image_alt: Alternative text
     attachment_file: File
     attachment_invalid_type: "The file type is not allowed (allowed: pdf, doc, docx, xls, xlsx)."
     index:
@@ -197,9 +247,13 @@ initiative:
 
 contact:
     name: Name
+    name_help: The contact's full name.
     email: Email
+    email_help: Work email, if known.
     phone: Phone
+    phone_help: Phone number, if known.
     department: Department
+    department_help: The department or unit the person belongs to.
     index:
         title: Contacts
         subtitle: People attached to initiatives.
@@ -213,6 +267,7 @@ contact:
 
 department:
     name: Name
+    name_help: The department name as shown on initiatives.
     name_duplicate: A department with this name already exists.
     index:
         title: Departments
@@ -225,9 +280,26 @@ department:
         title: No departments yet
         hint: Create a department so it can be chosen on initiatives.
 
+area:
+    name: Name
+    name_help: The area name as shown on initiatives.
+    name_duplicate: An area with this name already exists.
+    index:
+        title: Areas
+        subtitle: Thematic area that can be chosen on initiatives.
+    new:
+        title: New area
+    edit:
+        title: Edit area
+    empty:
+        title: No areas yet
+        hint: Create an area so it can be chosen on initiatives.
+
 user:
     email: Email
+    email_help: Used to sign in and for notifications.
     name: Name
+    name_help: Shown in activity and as the author.
     roles: Roles
     password: Password
     email_duplicate: A user with this email already exists.
@@ -266,6 +338,10 @@ flash:
         created: The department was created.
         updated: The department was updated.
         deleted: The department was deleted.
+    area:
+        created: The area was created.
+        updated: The area was updated.
+        deleted: The area was deleted.
     user:
         created: The user was created.
         updated: The user was updated.
@@ -280,15 +356,6 @@ enum:
         on_hold: On hold
         completed: Completed
         cancelled: Cancelled
-    category:
-        climate: Climate and environment
-        mobility: Mobility
-        welfare: Welfare
-        culture: Culture and leisure
-        education: Education
-        business: Business
-        digitalisation: Digitalisation
-        urban_development: Urban development
     initiative_type:
         project: Project
         programme: Programme

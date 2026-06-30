@@ -1,5 +1,5 @@
 app:
-    name: Projektdatabase
+    name: Projects
 
 mascot:
     label: Din kreative makker
@@ -7,6 +7,7 @@ mascot:
     cta: Opret nyt initiativ
     farewell: "Vi ses — jeg er her, hvis du får brug for mig! 👋"
     welcome: "Yes, jeg er tilbage! Lad os skabe noget sammen. 🌟"
+    intro: "Hej, jeg hedder Glimt! Skal vi være produktive i dag?"
     praise: "{1}Du har skabt ét initiativ — godt begyndt! 🌟|]1,Inf[Du har skabt %count% initiativer — flot arbejde! 🌟"
     finish:
         almost: "“%title%” er %percent% % færdig — skal vi gøre den helt færdig?"
@@ -15,7 +16,11 @@ mascot:
         blanks: "“%title%” er %percent% % udfyldt — der mangler stadig et par felter. 📝"
         ending: "“%title%” er %percent% % færdig. Giv den en værdig afslutning! 🏁"
         strong: "“%title%” er %percent% % færdig — lad os tage den sidste bid! 💪"
-    finish_cta: Gør færdig
+    finish_cta: Gå til redigering
+    contact:
+        details: "Kontaktpersonen “%name%” som du har oprettet mangler stadig oplysninger — Vil du gøre den færdig?"
+        quick: "Du tilføjede “%name%” i farten — vil du udfylde resten? ✏️"
+        name_only: "“%name%” har kun et navn endnu. Skal vi tilføje detaljerne?"
     msg:
         idea: "Har du en ny idé? Så er det her, den hører til. ✨"
         roll: "Du er godt i gang — hvad bliver det næste?"
@@ -42,18 +47,33 @@ mascot:
         giveup: "Pyha… lad os kalde det uafgjort. 😅"
         escaped: "Argh, du slap væk! Du er alt for hurtig. 🏳️"
 
+tour:
+    propose: "Velkommen! Skal jeg vise dig kort rundt på platformen?"
+    start: Ja tak, vis rundt
+    decline: Nej tak
+    next: Næste
+    skip: Spring over
+    done: Så er jeg klar
+    steps:
+        intro: "Det her er Projektdatabasen — her samler vi afdelingernes initiativer og projekter ét sted, så vi kan se, hvad der sker på tværs."
+        dashboard: "På overblikket ser du nøgletal, status og eventuelle muligheder for samarbejds på tværs af afdelinger."
+        create: "Se alle initiativer via menupunktet Initiativer — eller opret et nyt med det samme via Opret-knappen."
+        admin: "Inde i menuen her finder du menupunktet Administration, hvor du kan oprette, se og redigere afdelinger, områder og kontaktpersoner."
+        outro: "Så er du klar! Jeg er altid lige her i hjørnet, hvis du får brug for et tip. 🌟"
+
 autosave:
     saving: Gemmer…
     saved: Gemt
     unsaved: Ikke-gemte ændringer
+    required: Tilføj en titel for at gemme.
     error: Kunne ikke gemme — tjek de påkrævede felter
     offline: Kunne ikke gemme — dine ændringer er bevaret her
-    files_hint: Klik på Upload for at tilføje filerne
     completion: Udfyldningsgrad
-    upload_files: Upload filer
 
 activity:
     title: Aktivitet
+    subtitle: Seneste aktivitet på platformen
+    empty: Ingen aktivitet at vise
     action:
         created: oprettede
         updated: opdaterede
@@ -64,16 +84,19 @@ nav:
     initiatives: Initiativer
     contacts: Kontaktpersoner
     departments: Afdelinger
+    areas: Områder
     users: Brugere
     admin: Administration
+    preferences: Indstillinger
     language: Sprog
     signed_in_as: Logget ind som
     logout: Log ud
-    mascot_disable: Slå makker fra
-    mascot_enable: Slå makker til
+    show_mascot: Din ven Glimt ⭐
+    show_stars: Flyvende stjerner 💫
 
 action:
     new: Opret
+    new_initiative: Opret nyt initiativ
     edit: Rediger
     delete: Slet
     save: Gem
@@ -86,7 +109,6 @@ action:
     reset: Nulstil
     export: Eksportér CSV
     add_link: Tilføj link
-    add_contact: Tilføj kontaktperson
     add_image: Tilføj billede
     add_attachment: Tilføj fil
     remove: Fjern
@@ -100,11 +122,15 @@ common:
     created: Oprettet
     updated: Opdateret
     optional: valgfri
+    close: Luk
 
 form:
     choose: Vælg …
     terms:
         invalid: Ugyldige værdier.
+
+media:
+    choose: Vælg fil
 
 filter:
     search: Søg
@@ -117,7 +143,6 @@ filter:
 
 dashboard:
     title: Overblik
-    subtitle: Status på alle initiativer
     total: Initiativer i alt
     total_hint: registrerede i alt
     in_progress: Igangværende
@@ -125,49 +150,74 @@ dashboard:
     departments_involved: Afdelinger involveret
     departments_involved_hint: med mindst ét initiativ
     collaboration_count: Mulige samarbejder
-    collaboration_count_hint: temaer på tværs af afdelinger
+    collaboration_count_hint: områder på tværs af afdelinger
     by_status: Fordeling på status
+    by_status_sub: Alle initiativer fordelt på deres aktuelle status.
     recent: Senest oprettede
     no_status: Uden status
     empty: Der er endnu ikke oprettet nogen initiativer.
-    themes_heatmap: Temaer på tværs af afdelinger
-    themes_heatmap_sub: Mørkere = flere initiativer. Markerede temaer går på tværs af mindst tre afdelinger.
+    themes_heatmap: Områder på tværs af afdelinger
+    themes_heatmap_sub: Antal initiativer pr. område i hver afdeling.
+    themes_heatmap_empty: Tilføj både afdelinger og områder for at se denne graf.
     collaboration: Muligt samarbejde
-    collaboration_sub: Initiativer i forskellige afdelinger med fælles tema.
+    collaboration_sub: Initiativer i forskellige afdelinger med fælles område.
     status_by_dept: Status pr. afdeling
+    status_by_dept_sub: Initiativernes status fordelt på hver afdeling.
     funding_sources: Finansieringskilder
+    funding_sources_sub: Antal initiativer pr. finansieringskilde.
     budget_by_dept: Budget pr. afdeling
-    reach: Temaer med flest afdelinger
+    budget_by_dept_sub: Samlet budget for initiativerne i hver afdeling.
+    reach: Områder med flest afdelinger
+    reach_sub: Hvor mange afdelinger hvert område er repræsenteret i.
     timeline: Tidslinje
+    timeline_sub: Hvert initiativs tidsperiode på en tidslinje.
+    unfinished:
+        title: Dit igangværende arbejde
+        sub: Dine initiativer og kontaktpersoner der mangler de sidste detaljer.
+        initiative: Initiativ
+        contact: Kontaktperson
+        contact_badge: Mangler oplysninger
+        percent_done: "%percent% % udfyldt"
+        cta: Gå til redigering
+        empty_title: Intet igangværende arbejde
 
 initiative:
     title: Titel
-    category: Kategori
+    title_help: Et kort, sigende navn på initiativet.
+    area: Område
+    area_help: Det tematiske område initiativet hører under.
     description: Kort beskrivelse
+    description_help: Kort opsummering af formål og indhold.
     strategies: Strategier og planer
     initiative_type: Initiativets karakter
+    initiative_type_help: Initiativets karakter, fx projekt eller drift.
     status: Status
+    status_help: Hvor langt initiativet er.
     status_additional: Status – supplerende tekst
+    status_additional_help: Uddyb status, hvis der er behov.
     organizational_anchoring: Afdeling
+    organizational_anchoring_help: Den afdeling der er ansvarlig for initiativet.
     endorsement: Er initiativet vedtaget
     endorsement_author: Hvor er det vedtaget
+    endorsement_author_help: Hvor initiativet er vedtaget.
     budget: Budget (kr.)
+    budget_help: Samlet budget i hele kroner.
     funding: Fundingkilder
     stakeholders: Interessenter og samarbejdspartnere
     tags: Tags
     time_period_start: Tidshorisont – start
+    time_period_start_help: Hvornår initiativet starter.
     time_period_end: Tidshorisont – slut
+    time_period_end_help: Hvornår initiativet forventes afsluttet.
     time_period: Tidshorisont
     links: Relevante links
     contacts: Kontaktpersoner
-    new_contacts: Opret nye kontaktpersoner
     author: Udfyldt af
-    terms_help: Adskil flere værdier med komma.
+    terms_help: Vælg eksisterende, eller skriv en ny og tryk Enter.
     completion_field_hint: Dette felt tæller med i udfyldningsgraden.
     images: Billeder
     attachments: Filer
     image_file: Billedfil
-    image_alt: Alternativ tekst
     attachment_file: Fil
     attachment_invalid_type: "Filtypen er ikke tilladt (tilladt: pdf, doc, docx, xls, xlsx)."
     index:
@@ -197,9 +247,13 @@ initiative:
 
 contact:
     name: Navn
+    name_help: Kontaktpersonens fulde navn.
     email: E-mail
+    email_help: Arbejds-e-mail, hvis den kendes.
     phone: Telefon
+    phone_help: Telefonnummer, hvis det kendes.
     department: Afdeling
+    department_help: Afdeling eller enhed, personen hører til.
     index:
         title: Kontaktpersoner
         subtitle: Personer der er tilknyttet initiativer.
@@ -213,6 +267,7 @@ contact:
 
 department:
     name: Navn
+    name_help: Afdelingens navn, som det vises på initiativer.
     name_duplicate: Der findes allerede en afdeling med dette navn.
     index:
         title: Afdelinger
@@ -225,9 +280,26 @@ department:
         title: Ingen afdelinger endnu
         hint: Opret en afdeling, så den kan vælges på initiativer.
 
+area:
+    name: Navn
+    name_help: Områdets navn, som det vises på initiativer.
+    name_duplicate: Der findes allerede et område med dette navn.
+    index:
+        title: Områder
+        subtitle: Tematisk område der kan vælges på initiativer.
+    new:
+        title: Nyt område
+    edit:
+        title: Rediger område
+    empty:
+        title: Ingen områder endnu
+        hint: Opret et område, så det kan vælges på initiativer.
+
 user:
     email: E-mail
+    email_help: Bruges som login og til notifikationer.
     name: Navn
+    name_help: Vises i aktivitet og som forfatter.
     roles: Roller
     password: Adgangskode
     email_duplicate: Der findes allerede en bruger med denne e-mail.
@@ -266,6 +338,10 @@ flash:
         created: Afdelingen blev oprettet.
         updated: Afdelingen blev opdateret.
         deleted: Afdelingen blev slettet.
+    area:
+        created: Området blev oprettet.
+        updated: Området blev opdateret.
+        deleted: Området blev slettet.
     user:
         created: Brugeren blev oprettet.
         updated: Brugeren blev opdateret.
@@ -280,15 +356,6 @@ enum:
         on_hold: Sat i bero
         completed: Afsluttet
         cancelled: Annulleret
-    category:
-        climate: Klima og miljø
-        mobility: Mobilitet
-        welfare: Velfærd
-        culture: Kultur og fritid
-        education: Uddannelse
-        business: Erhverv
-        digitalisation: Digitalisering
-        urban_development: Byudvikling
     initiative_type:
         project: Projekt
         programme: Program

@@ -19,10 +19,7 @@
 {% endmacro %}
 
 {% if pagination.items is empty %}
-    <div class="empty-state">
-        <div class="empty-state__title">{{ 'initiative.empty.title'|trans }}</div>
-        <p>{{ 'initiative.empty.hint'|trans }}</p>
-    </div>
+    <twig:EmptyState :title="'initiative.empty.title'|trans" :hint="'initiative.empty.hint'|trans" />
 {% else %}
     <div class="table-wrap">
         <table class="table">

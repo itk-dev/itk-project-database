@@ -8,7 +8,6 @@ use App\Entity\InitiativeImage;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,10 +33,6 @@ class InitiativeImageType extends AbstractType
                 'constraints' => [
                     new Assert\Image(maxSize: $this->maxImageSize),
                 ],
-            ])
-            ->add('alt', TextType::class, [
-                'label' => 'initiative.image_alt',
-                'required' => false,
             ]);
     }
 
