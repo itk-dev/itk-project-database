@@ -236,9 +236,7 @@ h3 {
 }
 
 .user-menu__header {
-    padding: var(--itk-space-3);
-    border-bottom: 1px solid var(--itk-slate-100);
-    margin-bottom: var(--itk-space-2);
+    padding: var(--itk-space-2) var(--itk-space-3);
 }
 
 .user-menu__eyebrow {
@@ -255,6 +253,22 @@ h3 {
 .user-menu__email {
     font-size: var(--itk-text-sm);
     color: var(--itk-slate-500);
+}
+
+.user-menu__divider {
+    height: 1px;
+    margin: var(--itk-space-2) 0;
+    background-color: var(--itk-slate-100);
+}
+
+.user-menu__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--itk-space-1);
+}
+
+.user-menu__group-label {
+    padding: var(--itk-space-1) var(--itk-space-3);
 }
 
 .user-menu__link,
@@ -287,10 +301,14 @@ h3 {
     cursor: pointer;
 }
 
-.user-menu__toggle {
+.user-menu__pref {
     display: flex;
     align-items: center;
-    gap: var(--itk-space-2);
+    justify-content: space-between;
+    gap: var(--itk-space-3);
+    padding: var(--itk-space-2) var(--itk-space-3);
+    font-size: var(--itk-text-sm);
+    color: var(--itk-slate-700);
 }
 
 .toggle-switch {
@@ -315,20 +333,16 @@ h3 {
     transition: transform 0.15s;
 }
 
-.user-menu__toggle[aria-checked="true"] .toggle-switch {
+.user-menu__pref[aria-checked="true"] .toggle-switch {
     background-color: var(--itk-blue);
 }
 
-.user-menu__toggle[aria-checked="true"] .toggle-switch__knob {
+.user-menu__pref[aria-checked="true"] .toggle-switch__knob {
     transform: translateX(14px);
 }
 
 .user-menu__logout {
     color: var(--itk-danger);
-}
-
-.user-menu__section {
-    padding: var(--itk-space-2) var(--itk-space-3);
 }
 
 .lang-toggle {
@@ -353,10 +367,6 @@ h3 {
 .lang-toggle__option--active {
     background-color: var(--itk-blue);
     color: #fff;
-}
-
-.user-menu__section .lang-toggle {
-    margin-top: 6px;
 }
 
 .page {
@@ -2287,6 +2297,68 @@ body.is-lightbox-open {
     color: var(--itk-ink);
 }
 
+.mascot__tour-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--itk-space-2);
+}
+
+.mascot__tour-actions:has(> :not([hidden])) {
+    margin-top: var(--itk-space-3);
+}
+
+.mascot__tour-next {
+    padding: var(--itk-space-1) var(--itk-space-3);
+    border: none;
+    border-radius: var(--itk-radius-2);
+    background-color: var(--itk-primary);
+    color: #fff;
+    font: inherit;
+    font-size: var(--itk-text-xs);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.mascot__tour-next:hover {
+    background-color: var(--itk-primary-hover);
+}
+
+.mascot__tour-skip {
+    padding: var(--itk-space-1) var(--itk-space-2);
+    border: none;
+    background: none;
+    color: var(--itk-slate-500);
+    font: inherit;
+    font-size: var(--itk-text-xs);
+    cursor: pointer;
+}
+
+.mascot__tour-skip:hover {
+    color: var(--itk-ink);
+}
+
+.mascot__tour-next[hidden],
+.mascot__tour-skip[hidden] {
+    display: none;
+}
+
+.tour-spotlight {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background-color: rgba(17, 19, 24, 0.55);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tour-spotlight.is-visible {
+    opacity: 1;
+    transition:
+        clip-path 0.5s ease,
+        opacity 0.3s ease;
+}
+
 .mascot--playing {
     right: auto;
     bottom: auto;
@@ -2302,6 +2374,20 @@ body.is-lightbox-open {
     bottom: calc(100% + var(--itk-space-2));
     width: max-content;
     max-width: 280px;
+}
+
+.mascot--tour {
+    transition:
+        left 0.6s ease,
+        top 0.6s ease;
+}
+
+.mascot--hero .mascot__avatar {
+    transform: scale(1.7);
+}
+
+.mascot--hero .mascot__bubble {
+    bottom: calc(100% + var(--itk-space-6));
 }
 
 .mascot--chasing {
