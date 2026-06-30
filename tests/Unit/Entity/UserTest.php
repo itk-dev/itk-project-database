@@ -92,6 +92,18 @@ final class UserTest extends TestCase
         self::assertTrue($user->isStarsEnabled());
     }
 
+    public function testTourSeenDefaultsFalseAndPersists(): void
+    {
+        $user = new User();
+
+        // The guided tour has not been offered to a fresh user yet.
+        self::assertFalse($user->isTourSeen());
+
+        $user->setTourSeen(true);
+        self::assertTrue($user->isTourSeen());
+        self::assertSame(['tourSeen' => true], $user->getUserSettings());
+    }
+
     public function testEraseCredentialsDoesNothing(): void
     {
         $user = new User();

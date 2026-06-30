@@ -15,6 +15,8 @@ export default class extends Controller {
         "play",
         "finish",
         "finishContact",
+        "tourNext",
+        "tourSkip",
     ];
 
     static values = {
@@ -32,6 +34,15 @@ export default class extends Controller {
         farewell: String,
         welcome: String,
         intro: String,
+        tour: { type: Array, default: [] },
+        tourPropose: String,
+        tourStart: String,
+        tourDecline: String,
+        tourNext: String,
+        tourSkip: String,
+        tourDone: String,
+        tourSeenUrl: String,
+        tourSeenToken: String,
     };
 
     connect() {
@@ -47,8 +58,16 @@ export default class extends Controller {
         // user turns it back on. Resume where the previous page left off so
         // navigating around doesn't pop a fresh message on every load.
         if (this.enabledValue) {
-            const sinceLast = Date.now() - this.lastShownAt;
-            this.scheduleNext(Math.max(1800, this.intervalValue - sinceLast));
+            if (this.tourValue.length > 0) {
+                // A first-time visitor on the dashboard: offer Glimt's guided tour
+                // instead of the usual cheer cadence.
+                this.startTimer("cycle", () => this.proposeTour(), 1400);
+            } else {
+                const sinceLast = Date.now() - this.lastShownAt;
+                this.scheduleNext(
+                    Math.max(1800, this.intervalValue - sinceLast),
+                );
+            }
         }
     }
 
@@ -418,6 +437,14 @@ export default class extends Controller {
         if (this.hasFinishContactTarget) {
             this.finishContactTarget.hidden = "finishContact" !== action;
         }
+        // A cheer message never carries the tour's own buttons; make sure none
+        // linger after the tour has ended.
+        if (this.hasTourNextTarget) {
+            this.tourNextTarget.hidden = true;
+        }
+        if (this.hasTourSkipTarget) {
+            this.tourSkipTarget.hidden = true;
+        }
         this.bubbleTarget.hidden = false;
         window.requestAnimationFrame(() => {
             this.bubbleTarget.classList.add("is-visible");
@@ -438,11 +465,248 @@ export default class extends Controller {
 
     // The × just closes the current bubble; the mascot stays and cheers again later.
     close() {
+        if ("tour" === this.mode) {
+            this.tourSkip();
+
+            return;
+        }
         if ("invited" === this.mode) {
             this.mode = "idle";
             window.clearTimeout(this.inviteTimer);
         }
         this.hide();
+    }
+
+    // ---- Guided tour -------------------------------------------------------
+    // Offered once to a first-time visitor on the dashboard. Glimt flies to each
+    // area, spotlights it and explains it; the user steps through with Next (or
+    // Skip). Either choice marks the tour seen so it is never proposed again.
+    proposeTour() {
+        this.mode = "tour";
+        this.tourIndex = -1;
+        this.introduced = true;
+        this.tourSay(this.tourProposeValue, {
+            next: this.tourStartValue,
+            skip: this.tourDeclineValue,
+        });
+    }
+
+    tourNext() {
+        if ("tour" !== this.mode) {
+            return;
+        }
+        if (-1 === this.tourIndex) {
+            this.markTourSeen();
+        }
+        this.tourIndex += 1;
+        if (this.tourIndex >= this.tourValue.length) {
+            this.endTour();
+
+            return;
+        }
+        this.showTourStep();
+    }
+
+    tourSkip() {
+        this.markTourSeen();
+        this.endTour();
+    }
+
+    showTourStep() {
+        const step = this.tourValue[this.tourIndex];
+        const last = this.tourIndex === this.tourValue.length - 1;
+        this.spotlight(step.targets);
+        if (!this.element.classList.contains("mascot--playing")) {
+            // Anchor at the avatar's current corner spot before switching to
+            // free positioning, so the first glide starts from where it sits.
+            const box = this.avatar.getBoundingClientRect();
+            this.element.classList.add("mascot--playing");
+            this.moveTo(box.left, box.top);
+        }
+        this.element.classList.add("mascot--tour");
+        // The opening step has no target, so Glimt grows a little and speaks to
+        // the user directly.
+        this.element.classList.toggle("mascot--hero", 0 === this.tourIndex);
+        this.tourSay(step.text, {
+            next: last ? this.tourDoneValue : this.tourNextValue,
+            skip: last ? null : this.tourSkipValue,
+        });
+        // Position after the bubble is laid out so it can be measured and kept
+        // clear of the spotlighted target.
+        window.requestAnimationFrame(() => this.positionNear(step));
+    }
+
+    endTour() {
+        this.spotlight(null);
+        if (this.spotlightEl) {
+            this.spotlightEl.remove();
+            this.spotlightEl = null;
+        }
+        this.hide();
+        this.element.classList.remove(
+            "mascot--playing",
+            "mascot--tour",
+            "mascot--hero",
+        );
+        this.element.style.left = "";
+        this.element.style.top = "";
+        this.mode = "idle";
+        this.scheduleNext(this.intervalValue);
+    }
+
+    // The tour bubble carries its own Next/Skip buttons and never auto-hides —
+    // the user drives it. Hide the cheer-time actions while it is up.
+    tourSay(text, { next, skip } = {}) {
+        if (!this.hasTextTarget) {
+            return;
+        }
+        this.textTarget.textContent = text;
+        for (const target of [
+            this.hasCtaTarget && this.ctaTarget,
+            this.hasPlayTarget && this.playTarget,
+            this.hasFinishTarget && this.finishTarget,
+            this.hasFinishContactTarget && this.finishContactTarget,
+        ]) {
+            if (target) {
+                target.hidden = true;
+            }
+        }
+        if (this.hasTourNextTarget) {
+            this.tourNextTarget.hidden = !next;
+            if (next) {
+                this.tourNextTarget.textContent = next;
+            }
+        }
+        if (this.hasTourSkipTarget) {
+            this.tourSkipTarget.hidden = !skip;
+            if (skip) {
+                this.tourSkipTarget.textContent = skip;
+            }
+        }
+        this.clearNamedTimer("show");
+        this.bubbleTarget.hidden = false;
+        window.requestAnimationFrame(() => {
+            this.bubbleTarget.classList.add("is-visible");
+        });
+    }
+
+    ensureSpotlight() {
+        if (!this.spotlightEl) {
+            this.spotlightEl = document.createElement("div");
+            this.spotlightEl.className = "tour-spotlight";
+            document.body.appendChild(this.spotlightEl);
+        }
+
+        return this.spotlightEl;
+    }
+
+    // One dimming overlay that punches a hole over each target via clip-path.
+    // Reusing a single element lets the holes glide (and grow/shrink) from section
+    // to section instead of the dim flashing off and back on. No targets = the
+    // whole screen dims.
+    spotlight(targets) {
+        const sp = this.ensureSpotlight();
+        const first = !sp.classList.contains("is-visible");
+        const rects = this.rectsFor(targets);
+        sp.style.clipPath = this.dimPath(rects);
+        if (first) {
+            window.requestAnimationFrame(() => sp.classList.add("is-visible"));
+        }
+    }
+
+    rectsFor(targets) {
+        return (targets || [])
+            .map((selector) => document.querySelector(selector))
+            .filter(Boolean)
+            .map((el) => el.getBoundingClientRect());
+    }
+
+    // A full-screen rectangle with up to two rectangular holes (even-odd fill).
+    // Always two holes — an unused one collapses to a point at the centre — so the
+    // path keeps a constant shape and animates between steps rather than jumping.
+    dimPath(rects) {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const pad = 6;
+        const cx = w / 2;
+        const cy = h / 2;
+        const hole = (rect) => {
+            if (!rect) {
+                return `M${cx} ${cy} L${cx} ${cy} L${cx} ${cy} L${cx} ${cy} Z`;
+            }
+            const x1 = rect.left - pad;
+            const y1 = rect.top - pad;
+            const x2 = rect.right + pad;
+            const y2 = rect.bottom + pad;
+            return `M${x1} ${y1} L${x2} ${y1} L${x2} ${y2} L${x1} ${y2} Z`;
+        };
+        const outer = `M0 0 L${w} 0 L${w} ${h} L0 ${h} Z`;
+
+        return `path(evenodd, "${outer} ${hole(rects[0])} ${hole(rects[1])}")`;
+    }
+
+    unionRect(targets) {
+        const rects = this.rectsFor(targets);
+        if (0 === rects.length) {
+            return null;
+        }
+        const left = Math.min(...rects.map((r) => r.left));
+        const top = Math.min(...rects.map((r) => r.top));
+        const right = Math.max(...rects.map((r) => r.right));
+        const bottom = Math.max(...rects.map((r) => r.bottom));
+
+        return { left, top, right, bottom, width: right - left };
+    }
+
+    // Place Glimt relative to the step's target area, per the step's placement.
+    // The bubble grows up-and-left from the avatar, so its measured size drives
+    // where the avatar lands and keeps the bubble on-screen.
+    positionNear(step) {
+        const avatar = 68;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const bubbleW = this.bubbleTarget.offsetWidth || 260;
+        const bubbleH = this.bubbleTarget.offsetHeight || 130;
+        const clampLeft = (x) =>
+            Math.max(bubbleW - 56, Math.min(x, w - avatar - 12));
+        const area = this.unionRect(step.targets);
+        const placement = step.placement || "below";
+
+        let left;
+        let top;
+        if ("corner" === placement) {
+            left = w - avatar - 24;
+            top = h - avatar - 24;
+        } else if (!area || "center" === placement) {
+            left = clampLeft(w / 2 - avatar + bubbleW / 2);
+            top = Math.max(bubbleH + 32, Math.round(h * 0.42));
+        } else if ("right" === placement) {
+            left = w - avatar - 32;
+            top = Math.max(bubbleH + 24, Math.round(h / 2));
+        } else if ("left" === placement) {
+            left = clampLeft(area.left - 20 - avatar);
+            top = Math.max(bubbleH + 16, area.bottom + 16);
+        } else {
+            const centre = area.left + area.width / 2;
+            left = clampLeft(centre - avatar + bubbleW / 2);
+            top = area.bottom + bubbleH + 22;
+        }
+        this.moveTo(left, top);
+    }
+
+    markTourSeen() {
+        if (this.tourSeenSent || !this.tourSeenUrlValue) {
+            return;
+        }
+        this.tourSeenSent = true;
+        fetch(this.tourSeenUrlValue, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "fetch",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({ _token: this.tourSeenTokenValue }),
+        }).catch(() => {});
     }
 
     // Pick a message different from the last one shown, so it never repeats twice.

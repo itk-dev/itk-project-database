@@ -2297,6 +2297,68 @@ body.is-lightbox-open {
     color: var(--itk-ink);
 }
 
+.mascot__tour-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--itk-space-2);
+}
+
+.mascot__tour-actions:has(> :not([hidden])) {
+    margin-top: var(--itk-space-3);
+}
+
+.mascot__tour-next {
+    padding: var(--itk-space-1) var(--itk-space-3);
+    border: none;
+    border-radius: var(--itk-radius-2);
+    background-color: var(--itk-primary);
+    color: #fff;
+    font: inherit;
+    font-size: var(--itk-text-xs);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.mascot__tour-next:hover {
+    background-color: var(--itk-primary-hover);
+}
+
+.mascot__tour-skip {
+    padding: var(--itk-space-1) var(--itk-space-2);
+    border: none;
+    background: none;
+    color: var(--itk-slate-500);
+    font: inherit;
+    font-size: var(--itk-text-xs);
+    cursor: pointer;
+}
+
+.mascot__tour-skip:hover {
+    color: var(--itk-ink);
+}
+
+.mascot__tour-next[hidden],
+.mascot__tour-skip[hidden] {
+    display: none;
+}
+
+.tour-spotlight {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background-color: rgba(17, 19, 24, 0.55);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tour-spotlight.is-visible {
+    opacity: 1;
+    transition:
+        clip-path 0.5s ease,
+        opacity 0.3s ease;
+}
+
 .mascot--playing {
     right: auto;
     bottom: auto;
@@ -2312,6 +2374,20 @@ body.is-lightbox-open {
     bottom: calc(100% + var(--itk-space-2));
     width: max-content;
     max-width: 280px;
+}
+
+.mascot--tour {
+    transition:
+        left 0.6s ease,
+        top 0.6s ease;
+}
+
+.mascot--hero .mascot__avatar {
+    transform: scale(1.7);
+}
+
+.mascot--hero .mascot__bubble {
+    bottom: calc(100% + var(--itk-space-6));
 }
 
 .mascot--chasing {

@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [PR-22](https://github.com/itk-dev/itk-project-database/pull/22)
   Use the ITK logo in the nav and login, tidy the dashboard header, and refresh
   the login screen.
+* [PR-21](https://github.com/itk-dev/itk-project-database/pull/21)
+  Add a first-login guided tour where Glimt walks new users through the platform,
+  dashboard, creating initiatives and the admin panel.
 * [PR-20](https://github.com/itk-dev/itk-project-database/pull/20)
   Minor improvements to the user menu styling.
 * [PR-19](https://github.com/itk-dev/itk-project-database/pull/19)

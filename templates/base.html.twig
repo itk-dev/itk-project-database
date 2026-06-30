@@ -24,7 +24,7 @@
                 </a>
                 <div class="top-nav__menu">
                     <a href="{{ path('app_dashboard') }}" class="top-nav__link {{ route == 'app_dashboard' ? 'is-active' }}">{{ 'nav.dashboard'|trans }}</a>
-                    <a href="{{ path('app_initiative_index') }}" class="top-nav__link {{ route starts with 'app_initiative' ? 'is-active' }}">{{ 'nav.initiatives'|trans }}</a>
+                    <a href="{{ path('app_initiative_index') }}" id="navInitiatives" class="top-nav__link {{ route starts with 'app_initiative' ? 'is-active' }}">{{ 'nav.initiatives'|trans }}</a>
                 </div>
                 <div class="top-nav__right">
                     <div class="top-nav__menu-anchor">
@@ -132,6 +132,14 @@
                     'mascot.contact.name_only'|trans(contactParams),
                 ] %}
             {% endif %}
+            {% set showTour = app.request.attributes.get('_route') == 'app_dashboard' and not app.user.tourSeen %}
+            {% set tourSteps = [
+                {text: 'tour.steps.intro'|trans, targets: [], placement: 'center'},
+                {text: 'tour.steps.dashboard'|trans, targets: ['#dashboard-content'], placement: 'right'},
+                {text: 'tour.steps.create'|trans, targets: ['#navInitiatives', '.page__actions .btn--primary'], placement: 'below'},
+                {text: 'tour.steps.admin'|trans, targets: ['#userMenuToggle'], placement: 'left'},
+                {text: 'tour.steps.outro'|trans, targets: [], placement: 'corner'},
+            ] %}
             <div class="mascot{{ app.user.mascotEnabled ? '' : ' mascot--away' }}" data-controller="mascot"
                  data-action="mouseenter->mascot#pause mouseleave->mascot#resume"
                  data-mascot-enabled-value="{{ app.user.mascotEnabled ? 'true' : 'false' }}"
@@ -145,6 +153,17 @@
                  data-mascot-escaped-value="{{ 'mascot.play.escaped'|trans }}"
                  {% if ctx.unfinished %}data-mascot-finish-texts-value="{{ finishMessages|json_encode }}"{% endif %}
                  {% if ctx.incompleteContact %}data-mascot-finish-contact-texts-value="{{ contactMessages|json_encode }}"{% endif %}
+                 {% if showTour %}
+                 data-mascot-tour-value="{{ tourSteps|json_encode }}"
+                 data-mascot-tour-propose-value="{{ 'tour.propose'|trans }}"
+                 data-mascot-tour-start-value="{{ 'tour.start'|trans }}"
+                 data-mascot-tour-decline-value="{{ 'tour.decline'|trans }}"
+                 data-mascot-tour-next-value="{{ 'tour.next'|trans }}"
+                 data-mascot-tour-skip-value="{{ 'tour.skip'|trans }}"
+                 data-mascot-tour-done-value="{{ 'tour.done'|trans }}"
+                 data-mascot-tour-seen-url-value="{{ path('app_settings_tour_seen') }}"
+                 data-mascot-tour-seen-token-value="{{ csrf_token('tour-seen') }}"
+                 {% endif %}
                  data-mascot-messages-value="{{ messages|json_encode }}">
                 <div class="mascot__bubble" data-mascot-target="bubble" role="status" aria-live="polite" hidden>
                     <button type="button" class="mascot__close" data-action="mascot#close" aria-label="{{ 'mascot.close'|trans }}">×</button>
@@ -157,6 +176,10 @@
                         <a class="mascot__cta" data-mascot-target="finishContact" href="{{ path('admin_contact_edit', {id: ctx.incompleteContact.id}) }}" hidden>{{ 'mascot.finish_cta'|trans }} →</a>
                     {% endif %}
                     <button type="button" class="mascot__play" data-mascot-target="play" data-action="mascot#startFlee" hidden>{{ 'mascot.play.start'|trans }} →</button>
+                    <div class="mascot__tour-actions">
+                        <button type="button" class="mascot__tour-next" data-mascot-target="tourNext" data-action="mascot#tourNext" hidden></button>
+                        <button type="button" class="mascot__tour-skip" data-mascot-target="tourSkip" data-action="mascot#tourSkip" hidden></button>
+                    </div>
                 </div>
                 <button type="button" class="mascot__avatar" data-action="mascot#poke" aria-label="{{ 'mascot.label'|trans }}">
                     <svg viewBox="0 0 24 24" aria-hidden="true">

@@ -16,6 +16,7 @@
         {{ turbo_stream_from('activities') }}
         <script type="application/json" id="dashboard-viz-data" data-dashboard-viz-target="source">{{ include('dashboard/_viz_json.html.twig') }}</script>
 
+        <div id="dashboard-content">
         <div id="dashboard-stats" class="stat-grid">
             {{ include('dashboard/_stats.html.twig') }}
         </div>
@@ -152,6 +153,7 @@
                 </div>
                 <div class="card__body"><div class="chart-box h-320"><canvas data-dashboard-viz-target="reach"></canvas></div></div>
             </div>
+        </div>
         </div>
     </div>
 {% endblock %}
