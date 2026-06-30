@@ -77,6 +77,21 @@ final class UserTest extends TestCase
         self::assertTrue($user->isMascotEnabled());
     }
 
+    public function testStarsPreferenceDefaultsEnabledAndToggles(): void
+    {
+        $user = new User();
+
+        // No stored preference means the stars fly.
+        self::assertTrue($user->isStarsEnabled());
+
+        $user->setStarsEnabled(false);
+        self::assertFalse($user->isStarsEnabled());
+        self::assertSame(['starsEnabled' => false], $user->getUserSettings());
+
+        $user->setStarsEnabled(true);
+        self::assertTrue($user->isStarsEnabled());
+    }
+
     public function testEraseCredentialsDoesNothing(): void
     {
         $user = new User();

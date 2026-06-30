@@ -7,6 +7,7 @@ mascot:
     cta: Opret nyt initiativ
     farewell: "Vi ses — jeg er her, hvis du får brug for mig! 👋"
     welcome: "Yes, jeg er tilbage! Lad os skabe noget sammen. 🌟"
+    intro: "Hej, jeg hedder Glimt! Skal vi være produktive i dag?"
     praise: "{1}Du har skabt ét initiativ — godt begyndt! 🌟|]1,Inf[Du har skabt %count% initiativer — flot arbejde! 🌟"
     finish:
         almost: "“%title%” er %percent% % færdig — skal vi gøre den helt færdig?"
@@ -46,11 +47,10 @@ autosave:
     saving: Gemmer…
     saved: Gemt
     unsaved: Ikke-gemte ændringer
+    required: Tilføj en titel for at gemme.
     error: Kunne ikke gemme — tjek de påkrævede felter
     offline: Kunne ikke gemme — dine ændringer er bevaret her
-    files_hint: Klik på Upload for at tilføje filerne
     completion: Udfyldningsgrad
-    upload_files: Upload filer
 
 activity:
     title: Aktivitet
@@ -70,8 +70,8 @@ nav:
     language: Sprog
     signed_in_as: Logget ind som
     logout: Log ud
-    mascot_disable: Slå makker fra
-    mascot_enable: Slå makker til
+    show_mascot: Din ven Glimt
+    show_stars: Flyvende stjerner
 
 action:
     new: Opret
@@ -87,7 +87,6 @@ action:
     reset: Nulstil
     export: Eksportér CSV
     add_link: Tilføj link
-    add_contact: Tilføj kontaktperson
     add_image: Tilføj billede
     add_attachment: Tilføj fil
     remove: Fjern
@@ -101,11 +100,15 @@ common:
     created: Oprettet
     updated: Opdateret
     optional: valgfri
+    close: Luk
 
 form:
     choose: Vælg …
     terms:
         invalid: Ugyldige værdier.
+
+media:
+    choose: Vælg fil
 
 filter:
     search: Søg
@@ -143,32 +146,41 @@ dashboard:
 
 initiative:
     title: Titel
+    title_help: Et kort, sigende navn på initiativet.
     area: Område
+    area_help: Det tematiske område initiativet hører under.
     description: Kort beskrivelse
+    description_help: Kort opsummering af formål og indhold.
     strategies: Strategier og planer
     initiative_type: Initiativets karakter
+    initiative_type_help: Initiativets karakter, fx projekt eller drift.
     status: Status
+    status_help: Hvor langt initiativet er.
     status_additional: Status – supplerende tekst
+    status_additional_help: Uddyb status, hvis der er behov.
     organizational_anchoring: Afdeling
+    organizational_anchoring_help: Den afdeling der er ansvarlig for initiativet.
     endorsement: Er initiativet vedtaget
     endorsement_author: Hvor er det vedtaget
+    endorsement_author_help: Hvor initiativet er vedtaget.
     budget: Budget (kr.)
+    budget_help: Samlet budget i hele kroner.
     funding: Fundingkilder
     stakeholders: Interessenter og samarbejdspartnere
     tags: Tags
     time_period_start: Tidshorisont – start
+    time_period_start_help: Hvornår initiativet starter.
     time_period_end: Tidshorisont – slut
+    time_period_end_help: Hvornår initiativet forventes afsluttet.
     time_period: Tidshorisont
     links: Relevante links
     contacts: Kontaktpersoner
-    new_contacts: Opret nye kontaktpersoner
     author: Udfyldt af
-    terms_help: Adskil flere værdier med komma.
+    terms_help: Vælg eksisterende, eller skriv en ny og tryk Enter.
     completion_field_hint: Dette felt tæller med i udfyldningsgraden.
     images: Billeder
     attachments: Filer
     image_file: Billedfil
-    image_alt: Alternativ tekst
     attachment_file: Fil
     attachment_invalid_type: "Filtypen er ikke tilladt (tilladt: pdf, doc, docx, xls, xlsx)."
     index:
@@ -198,9 +210,13 @@ initiative:
 
 contact:
     name: Navn
+    name_help: Kontaktpersonens fulde navn.
     email: E-mail
+    email_help: Arbejds-e-mail, hvis den kendes.
     phone: Telefon
+    phone_help: Telefonnummer, hvis det kendes.
     department: Afdeling
+    department_help: Afdeling eller enhed, personen hører til.
     index:
         title: Kontaktpersoner
         subtitle: Personer der er tilknyttet initiativer.
@@ -214,6 +230,7 @@ contact:
 
 department:
     name: Navn
+    name_help: Afdelingens navn, som det vises på initiativer.
     name_duplicate: Der findes allerede en afdeling med dette navn.
     index:
         title: Afdelinger
@@ -228,6 +245,7 @@ department:
 
 area:
     name: Navn
+    name_help: Områdets navn, som det vises på initiativer.
     name_duplicate: Der findes allerede et område med dette navn.
     index:
         title: Områder
@@ -242,7 +260,9 @@ area:
 
 user:
     email: E-mail
+    email_help: Bruges som login og til notifikationer.
     name: Navn
+    name_help: Vises i aktivitet og som forfatter.
     roles: Roller
     password: Adgangskode
     email_duplicate: Der findes allerede en bruger med denne e-mail.

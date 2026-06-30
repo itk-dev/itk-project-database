@@ -53,6 +53,10 @@ class TermRepository extends ServiceEntityRepository
             return $existing;
         }
 
+        // Store new terms capitalised so user-typed lowercase tags join the pool
+        // looking like the rest; the lookup above stays case-insensitive.
+        $name = mb_strtoupper(mb_substr($name, 0, 1)).mb_substr($name, 1);
+
         $term = (new Term($vocabulary))->setName($name);
         $this->getEntityManager()->persist($term);
 

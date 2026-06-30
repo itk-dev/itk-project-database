@@ -27,7 +27,7 @@ class Initiative extends AbstractEntity
      */
     public const array COMPLETION_FIELDS = [
         'title', 'area', 'description', 'initiativeType', 'status',
-        'organizationalAnchoring', 'endorsementAuthor',
+        'organizationalAnchoring',
         'budget', 'funding', 'timePeriodStart', 'timePeriodEnd',
     ];
 
@@ -61,7 +61,7 @@ class Initiative extends AbstractEntity
     private ?Department $organizationalAnchoring = null;
 
     #[ORM\Column]
-    private bool $endorsement = true;
+    private bool $endorsement = false;
 
     #[ORM\Column(length: 32, nullable: true, enumType: EndorsementAuthor::class)]
     private ?EndorsementAuthor $endorsementAuthor = null;
@@ -491,7 +491,6 @@ class Initiative extends AbstractEntity
             null !== $this->initiativeType,
             null !== $this->status,
             null !== $this->organizationalAnchoring,
-            null !== $this->endorsementAuthor,
             null !== $this->budget,
             [] !== $this->funding,
             null !== $this->timePeriodStart,

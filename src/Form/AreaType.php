@@ -19,6 +19,7 @@ class AreaType extends AbstractType
     {
         $builder->add('name', TextType::class, [
             'label' => 'area.name',
+            'help' => 'area.name_help',
         ]);
     }
 

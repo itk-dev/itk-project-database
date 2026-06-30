@@ -23,8 +23,7 @@ export default class extends Controller {
         enabled: { type: Boolean, default: true },
         farewell: String,
         welcome: String,
-        enableLabel: String,
-        disableLabel: String,
+        intro: String,
     };
 
     connect() {
@@ -34,6 +33,7 @@ export default class extends Controller {
         const state = this.loadState();
         this.lastIndex = state.lastIndex ?? -1;
         this.lastShownAt = state.lastShownAt ?? 0;
+        this.introduced = state.introduced ?? false;
         // Only run the cheer cadence while enabled; a disabled mascot is rendered
         // parked off-screen (the `mascot--away` class) and stays silent until the
         // user turns it back on. Resume where the previous page left off so
@@ -98,9 +98,10 @@ export default class extends Controller {
     applyEnabled(enabled) {
         this.enabledValue = enabled;
         if (this.toggleButton) {
-            this.toggleButton.textContent = enabled
-                ? this.disableLabelValue
-                : this.enableLabelValue;
+            this.toggleButton.setAttribute(
+                "aria-checked",
+                enabled ? "true" : "false",
+            );
         }
         window.clearTimeout(this.toggleTimer);
 
@@ -203,6 +204,14 @@ export default class extends Controller {
     }
 
     speak() {
+        // The first time it speaks in a session, Glimt introduces itself by name.
+        if (!this.introduced && this.introValue) {
+            this.introduced = true;
+            this.say(this.introValue, "cta");
+
+            return;
+        }
+
         // Now and then, nudge the user to finish their least-complete initiative,
         // picking one of the finish lines at random for variety.
         const finishTexts = this.finishTextsValue;
@@ -442,6 +451,7 @@ export default class extends Controller {
                 JSON.stringify({
                     lastShownAt: this.lastShownAt ?? 0,
                     lastIndex: this.lastIndex,
+                    introduced: this.introduced,
                 }),
             );
         } catch {

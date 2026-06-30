@@ -36,6 +36,23 @@ class UserSettingsController extends AbstractController
     }
 
     /**
+     * Toggle whether the completion stars fly into the trophy. A plain redirect:
+     * the page re-renders with the new preference and the bar is unaffected.
+     */
+    #[Route('/settings/stars/toggle', name: 'app_settings_stars_toggle', methods: ['POST'])]
+    public function toggleStars(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        if ($user instanceof User
+            && $this->isCsrfTokenValid('toggle-stars', (string) $request->request->get('_token'))) {
+            $user->setStarsEnabled(!$user->isStarsEnabled());
+            $entityManager->flush();
+        }
+
+        return $this->redirect($this->safeReturn($request));
+    }
+
+    /**
      * Only follow local, relative return paths to avoid open redirects (same
      * guard as the locale switcher).
      */

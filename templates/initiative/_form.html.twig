@@ -3,6 +3,7 @@
     'data-controller': 'form-progress',
     'data-action': 'input->form-progress#recompute change->form-progress#recompute',
     'data-form-progress-fields-value': constant('App\\Entity\\Initiative::COMPLETION_FIELDS')|json_encode,
+    'data-form-progress-stars-value': (app.user.starsEnabled ?? true) ? 'true' : 'false',
 } %}
 {% if autosave|default(false) %}
     {% set form_attr = form_attr|merge({
@@ -14,7 +15,7 @@
         'data-autosave-unsaved-text-value': 'autosave.unsaved'|trans,
         'data-autosave-error-text-value': 'autosave.error'|trans,
         'data-autosave-offline-text-value': 'autosave.offline'|trans,
-        'data-autosave-files-hint-text-value': 'autosave.files_hint'|trans,
+        'data-autosave-required-text-value': 'autosave.required'|trans,
         'data-autosave-is-new-value': initiative.id ? 'false' : 'true',
     }) %}
 {% endif %}
@@ -42,7 +43,7 @@
 
     <div class="form-section">
         <div class="form-section__title">{{ 'initiative.section.basics'|trans }}</div>
-        {% set title_attr = {'data-action': 'input->title-mirror#update'} %}
+        {% set title_attr = {'data-action': 'input->title-mirror#update', 'data-autosave-required': true} %}
         {% if not initiative.id %}{% set title_attr = title_attr|merge({autofocus: true}) %}{% endif %}
         {{ form_row(form.title, {attr: title_attr}) }}
         <div class="form-grid">
@@ -89,7 +90,10 @@
                         </div>
                     {% endfor %}
                 </div>
-                <button type="button" class="btn btn--ghost btn--sm" data-collection-add>{{ 'action.add_link'|trans }}</button>
+                <button type="button" class="btn-add" data-collection-add>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                    {{ 'action.add_link'|trans }}
+                </button>
             </div>
         </div>
     </div>
@@ -99,79 +103,78 @@
         {{ form_row(form.stakeholders) }}
 
         {{ form_row(form.contacts) }}
-
-        <div class="form-row">
-            <label>{{ 'initiative.new_contacts'|trans }}</label>
-            <div class="collection" data-collection data-remove-label="{{ 'action.remove'|trans }}"
-                 data-prototype="{{ form_widget(form.newContacts.vars.prototype)|e('html_attr') }}">
-                <div class="collection" data-collection-list>
-                    {% for contact in form.newContacts %}
-                        <div class="collection__item" data-collection-item>
-                            <div class="collection__fields form-grid">
-                                {{ form_widget(contact) }}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                <button type="button" class="btn btn--ghost btn--sm" data-collection-add>{{ 'action.add_contact'|trans }}</button>
-            </div>
-        </div>
     </div>
 
     <div class="form-section">
         <div class="form-section__title">{{ 'initiative.section.media'|trans }}</div>
 
-        <div class="form-row">
-            <label>{{ 'initiative.images'|trans }}</label>
-            <div class="collection" data-collection data-remove-label="{{ 'action.remove'|trans }}"
-                 data-prototype="{{ form_widget(form.images.vars.prototype)|e('html_attr') }}">
-                <div class="collection" data-collection-list>
-                    {% for image in form.images %}
-                        <div class="collection__item" data-collection-item>
-                            <div class="collection__fields">
-                                {% if image.vars.value and image.vars.value.id and image.vars.value.imageName %}
-                                    <a href="{{ path('app_media_image', {id: image.vars.value.id}) }}" target="_blank" rel="noopener">{{ image.vars.value.originalName ?: 'image' }}</a>
-                                {% endif %}
-                                {{ form_widget(image) }}
+        <turbo-frame id="initiative-media">
+            <div class="form-row">
+                <label>{{ 'initiative.images'|trans }}</label>
+                <div class="collection" data-collection data-remove-label="{{ 'action.remove'|trans }}"
+                     data-prototype="{{ form_widget(form.images.vars.prototype.imageFile)|e('html_attr') }}">
+                    <div class="collection" data-collection-list>
+                        {% for image in form.images %}
+                            {% set uploaded = image.vars.value and image.vars.value.id and image.vars.value.imageName %}
+                            <div class="collection__item{{ uploaded ? ' collection__item--uploaded' }}" data-collection-item>
+                                <div class="collection__fields">
+                                    {% if uploaded %}
+                                        <div class="upload-done">
+                                            <a class="upload-done__thumb" href="{{ path('app_media_image', {id: image.vars.value.id}) }}"
+                                               data-controller="lightbox" data-action="click->lightbox#open"
+                                               data-lightbox-close-label-value="{{ 'common.close'|trans }}">
+                                                <img src="{{ path('app_media_image', {id: image.vars.value.id}) }}" alt="" loading="lazy">
+                                            </a>
+                                            <span class="upload-done__name">{{ image.vars.value.originalName ?: 'image' }}</span>
+                                        </div>
+                                    {% endif %}
+                                    {{ form_widget(image.imageFile) }}
+                                </div>
                             </div>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="btn-add" data-collection-add>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                        {{ 'action.add_image'|trans }}
+                    </button>
                 </div>
-                <button type="button" class="btn btn--ghost btn--sm" data-collection-add>{{ 'action.add_image'|trans }}</button>
             </div>
-        </div>
 
-        <div class="form-row">
-            <label>{{ 'initiative.attachments'|trans }}</label>
-            <div class="collection" data-collection data-remove-label="{{ 'action.remove'|trans }}"
-                 data-prototype="{{ form_widget(form.attachments.vars.prototype)|e('html_attr') }}">
-                <div class="collection" data-collection-list>
-                    {% for attachment in form.attachments %}
-                        <div class="collection__item" data-collection-item>
-                            <div class="collection__fields">
-                                {% if attachment.vars.value and attachment.vars.value.id and attachment.vars.value.fileName %}
-                                    <a href="{{ path('app_media_attachment', {id: attachment.vars.value.id}) }}" target="_blank" rel="noopener">{{ attachment.vars.value.originalName ?: 'file' }}</a>
-                                {% endif %}
-                                {{ form_widget(attachment) }}
+            <div class="form-row">
+                <label>{{ 'initiative.attachments'|trans }}</label>
+                <div class="collection" data-collection data-remove-label="{{ 'action.remove'|trans }}"
+                     data-prototype="{{ form_widget(form.attachments.vars.prototype.file)|e('html_attr') }}">
+                    <div class="collection" data-collection-list>
+                        {% for attachment in form.attachments %}
+                            {% set uploaded = attachment.vars.value and attachment.vars.value.id and attachment.vars.value.fileName %}
+                            <div class="collection__item{{ uploaded ? ' collection__item--uploaded' }}" data-collection-item>
+                                <div class="collection__fields">
+                                    {% if uploaded %}
+                                        <div class="upload-done">
+                                            <a class="upload-done__name" href="{{ path('app_media_attachment', {id: attachment.vars.value.id}) }}">{{ attachment.vars.value.originalName ?: 'file' }}</a>
+                                        </div>
+                                    {% endif %}
+                                    {{ form_widget(attachment.file) }}
+                                </div>
                             </div>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="btn-add" data-collection-add>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                        {{ 'action.add_attachment'|trans }}
+                    </button>
                 </div>
-                <button type="button" class="btn btn--ghost btn--sm" data-collection-add>{{ 'action.add_attachment'|trans }}</button>
             </div>
-        </div>
+        </turbo-frame>
     </div>
 
-    <div class="form-actions">
-        {% if autosave|default(false) %}
-            <button type="submit" class="btn btn--primary" data-autosave-target="save" hidden>{{ 'autosave.upload_files'|trans }}</button>
-        {% else %}
+    {% if not (autosave|default(false)) %}
+        <div class="form-actions">
             <button type="submit" class="btn btn--primary">{{ button_label|default('action.save')|trans }}</button>
             <a href="{{ initiative.id ? path('app_initiative_show', {id: initiative.id}) : path('app_initiative_index') }}" class="btn btn--ghost">{{ 'action.cancel'|trans }}</a>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
     {% do form.links.setRendered() %}
-    {% do form.contacts.setRendered() %}
     {% do form.images.setRendered() %}
     {% do form.attachments.setRendered() %}
 {{ form_end(form) }}

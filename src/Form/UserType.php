@@ -34,10 +34,12 @@ class UserType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'user.email',
+                'help' => 'user.email_help',
             ])
             ->add('name', TextType::class, [
                 'label' => 'user.name',
                 'required' => false,
+                'help' => 'user.name_help',
             ])
             // Mapped onto User::$roles, so this field can grant ROLE_ADMIN. It
             // relies on UserController being gated by #[IsGranted('ROLE_ADMIN')];
