@@ -72,7 +72,9 @@
                             {% if initiative.images|length > 0 %}
                                 <div class="image-grid">
                                     {% for image in initiative.images %}
-                                        <a href="{{ path('app_media_image', {id: image.id}) }}" target="_blank" rel="noopener" class="image-thumb">
+                                        <a href="{{ path('app_media_image', {id: image.id}) }}" class="image-thumb"
+                                           data-controller="lightbox" data-action="click->lightbox#open"
+                                           data-lightbox-close-label-value="{{ 'common.close'|trans }}">
                                             <img src="{{ path('app_media_image', {id: image.id}) }}" alt="{{ image.alt }}">
                                         </a>
                                     {% endfor %}
