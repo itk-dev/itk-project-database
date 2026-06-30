@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-30
+
 * [PR-23](https://github.com/itk-dev/itk-project-database/pull/23)
   Introduce reusable Twig components (page header, card header, empty state, KPI)
   to replace repeated markup.
@@ -57,5 +59,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [PR-1](https://github.com/itk-dev/itk-project-database/pull/1)
   Initial Symfony 8 rebuild of the project database.
 
-[Unreleased]: https://github.com/itk-dev/itk-project-database/compare/0.1.0...HEAD
+[Unreleased]: https://github.com/itk-dev/itk-project-database/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/itk-dev/itk-project-database/compare/0.1.09i876rbhn%3E%20gvfcdevgbhjgnybtfr%20v8decsxz...0.2.0
 [0.1.0]: <https://github.com/itk-dev/itk-project-database/releases/tag/0.1.09i876rbhn> gvfcdevgbhjgnybtfr v8decsxz
