@@ -1,5 +1,5 @@
 app:
-    name: Project database
+    name: Projects
 
 mascot:
     label: Your creative buddy
@@ -58,6 +58,8 @@ autosave:
 
 activity:
     title: Activity
+    subtitle: Latest activity on the platform
+    empty: No activity to show
     action:
         created: created
         updated: updated
@@ -79,6 +81,7 @@ nav:
 
 action:
     new: New
+    new_initiative: Create a new initiative
     edit: Edit
     delete: Delete
     save: Save
@@ -125,7 +128,6 @@ filter:
 
 dashboard:
     title: Overview
-    subtitle: The status of every initiative
     total: Total initiatives
     total_hint: registered in total
     in_progress: In progress
@@ -133,20 +135,36 @@ dashboard:
     departments_involved: Departments involved
     departments_involved_hint: with at least one initiative
     collaboration_count: Possible collaborations
-    collaboration_count_hint: themes across departments
+    collaboration_count_hint: areas across departments
     by_status: By status
+    by_status_sub: All initiatives grouped by their current status.
     recent: Recently created
     no_status: No status
     empty: No initiatives have been created yet.
-    themes_heatmap: Themes across departments
-    themes_heatmap_sub: Darker = more initiatives. Marked themes span at least three departments.
+    themes_heatmap: Areas across departments
+    themes_heatmap_sub: Number of initiatives per area in each department. Darker = more; marked areas span at least three departments.
+    themes_heatmap_empty: Add both departments and areas to see this chart.
     collaboration: Possible collaboration
-    collaboration_sub: Initiatives in different departments sharing a theme.
+    collaboration_sub: Initiatives in different departments sharing an area.
     status_by_dept: Status by department
+    status_by_dept_sub: Initiative statuses broken down by department.
     funding_sources: Funding sources
+    funding_sources_sub: Number of initiatives per funding source.
     budget_by_dept: Budget by department
-    reach: Themes by department reach
+    budget_by_dept_sub: Total budget of the initiatives in each department.
+    reach: Areas by department reach
+    reach_sub: How many departments each area appears in.
     timeline: Timeline
+    timeline_sub: Each initiative's time period on a timeline.
+    unfinished:
+        title: Your work
+        sub: Your initiatives and contacts that are still missing details.
+        initiative: Initiative
+        contact: Contact
+        contact_badge: Missing details
+        percent_done: "%percent% % filled in"
+        cta: Finish
+        empty_title: You're all caught up
 
 initiative:
     title: Title

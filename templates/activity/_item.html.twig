@@ -1,9 +1,9 @@
-<div id="activity-item-{{ id }}" class="recent-item">
-    <div>
-        {% if url %}<a href="{{ url }}" class="recent-item__title">{{ title }}</a>{% else %}<span class="recent-item__title">{{ title }}</span>{% endif %}
-        <div class="recent-item__meta">
-            {%- if actor %}{{ actor }} · {% endif -%}
-            {{ ('activity.action.' ~ action)|trans }} · {{ at|date('d.m.Y H:i') }}
-        </div>
-    </div>
-</div>
+{% set row_tag = url ? 'a' : 'div' %}
+<{{ row_tag }} id="activity-item-{{ id }}" class="recent-item"{% if url %} href="{{ url }}"{% endif %}>
+    <span class="recent-item__body">
+        <span class="recent-item__title">{{ title }}</span>
+        <span class="recent-item__meta">{%- if actor %}{{ actor }} · {% endif -%}{{ at|date('d.m.Y H:i') }}</span>
+    </span>
+    <span class="badge">{{ ('activity.action.' ~ action)|trans|capitalize }}</span>
+    {% if url %}<span class="recent-item__cta">{{ 'action.view'|trans }} →</span>{% endif %}
+</{{ row_tag }}>

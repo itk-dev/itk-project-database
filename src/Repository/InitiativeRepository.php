@@ -180,10 +180,21 @@ class InitiativeRepository extends ServiceEntityRepository
 
     /**
      * The creator's least-complete initiative that isn't fully filled in yet, or
-     * null if none are outstanding. Completion is computed in PHP (not a stored
-     * column), so this scans only the creator's 50 most recent initiatives.
+     * null if none are outstanding.
      */
     public function findUnfinishedByCreator(User $user): ?Initiative
+    {
+        return $this->findUnfinishedListByCreator($user, 1)[0] ?? null;
+    }
+
+    /**
+     * The creator's incomplete initiatives (completion below 100 %), least-complete
+     * first, capped at $limit. Completion is computed in PHP (not a stored column),
+     * so this scans only the creator's 50 most recent initiatives.
+     *
+     * @return Initiative[]
+     */
+    public function findUnfinishedListByCreator(User $user, int $limit = 6): array
     {
         // See countByCreator: match the raw ULID FK, not the entity.
         $initiatives = $this->createQueryBuilder('i')
@@ -204,7 +215,7 @@ class InitiativeRepository extends ServiceEntityRepository
             static fn (Initiative $a, Initiative $b): int => $a->getCompletionPercentage() <=> $b->getCompletionPercentage(),
         );
 
-        return $unfinished[0] ?? null;
+        return \array_slice($unfinished, 0, $limit);
     }
 
     /**
@@ -232,12 +243,15 @@ class InitiativeRepository extends ServiceEntityRepository
     }
 
     /**
+     * Most recently touched initiatives (created or edited) for the activity feed,
+     * newest first. Ordered by updatedAt so an edit resurfaces the initiative.
+     *
      * @return Initiative[]
      */
     public function findRecent(int $limit = 5): array
     {
         return $this->createQueryBuilder('i')
-            ->orderBy('i.createdAt', 'DESC')
+            ->orderBy('i.updatedAt', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

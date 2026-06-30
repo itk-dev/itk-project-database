@@ -3,15 +3,13 @@
 {% block title %}{{ 'dashboard.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
 
 {% block body %}
-    <div class="page" data-controller="dashboard-live dashboard-viz">
+    <div class="page" data-controller="dashboard-live dashboard-viz" data-dashboard-viz-empty-value="{{ 'dashboard.themes_heatmap_empty'|trans }}">
         <div class="page__header">
             <div>
                 <h1 class="page__title">{{ 'dashboard.title'|trans }}</h1>
-                <p class="page__subtitle">{{ 'dashboard.subtitle'|trans }}</p>
             </div>
             <div class="page__actions">
-                <a href="{{ path('app_initiative_index') }}" class="btn btn--ghost">{{ 'nav.initiatives'|trans }}</a>
-                <a href="{{ path('app_initiative_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+                <a href="{{ path('app_initiative_new') }}" class="btn btn--primary">{{ 'action.new_initiative'|trans }}</a>
             </div>
         </div>
 
@@ -23,67 +21,135 @@
         </div>
 
         <div class="viz-grid">
+            <div class="card span-6">
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.unfinished.title'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.unfinished.sub'|trans }}</p>
+                </div>
+                <div class="feed-scroll">
+                    {% if unfinishedInitiatives is empty and incompleteContacts is empty %}
+                        <div class="todo-empty">
+                            <div class="todo-empty__title">{{ 'dashboard.unfinished.empty_title'|trans }}</div>
+                        </div>
+                    {% else %}
+                        {% for initiative in unfinishedInitiatives %}
+                            <a class="recent-item" href="{{ path('app_initiative_edit', {id: initiative.id}) }}">
+                                <span class="recent-item__body">
+                                    <span class="recent-item__title">{{ initiative.title }}</span>
+                                    <span class="recent-item__meta">{{ 'dashboard.unfinished.initiative'|trans }}</span>
+                                </span>
+                                <span class="badge">{{ 'dashboard.unfinished.percent_done'|trans({'%percent%': initiative.completionPercentage}) }}</span>
+                                <span class="recent-item__cta">{{ 'dashboard.unfinished.cta'|trans }} →</span>
+                            </a>
+                        {% endfor %}
+                        {% for contact in incompleteContacts %}
+                            <a class="recent-item" href="{{ path('admin_contact_edit', {id: contact.id}) }}">
+                                <span class="recent-item__body">
+                                    <span class="recent-item__title">{{ contact.name }}</span>
+                                    <span class="recent-item__meta">{{ 'dashboard.unfinished.contact'|trans }}</span>
+                                </span>
+                                <span class="badge badge--draft">{{ 'dashboard.unfinished.contact_badge'|trans }}</span>
+                                <span class="recent-item__cta">{{ 'dashboard.unfinished.cta'|trans }} →</span>
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card span-6 card--stretch">
+                <div class="card__header">
+                    <span class="card__title">{{ 'activity.title'|trans }}</span>
+                    <p class="card__sub">{{ 'activity.subtitle'|trans }}</p>
+                </div>
+                <div class="feed-fill">
+                    <div id="activity-feed" class="activity-feed feed-scroll">
+                        {% if recent is empty %}
+                            <div class="todo-empty">
+                                <div class="todo-empty__title">{{ 'activity.empty'|trans }}</div>
+                            </div>
+                        {% else %}
+                            {% for initiative in recent %}
+                                {% set updated = initiative.wasUpdatedAfterCreation %}
+                                {% set actor = updated ? initiative.modifiedBy : initiative.createdBy %}
+                                {{ include('activity/_item.html.twig', {
+                                    id: initiative.id,
+                                    action: updated ? 'updated' : 'created',
+                                    title: initiative.title,
+                                    url: path('app_initiative_show', {id: initiative.id}),
+                                    actor: actor ? actor.name : null,
+                                    at: updated ? initiative.updatedAt : initiative.createdAt,
+                                }) }}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
             <div class="card span-12">
                 <div class="card__header">
                     <span class="card__title">{{ 'dashboard.themes_heatmap'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.themes_heatmap_sub'|trans }}</p>
                 </div>
                 <div class="card__body">
-                    <p class="card__sub">{{ 'dashboard.themes_heatmap_sub'|trans }}</p>
                     <div class="heat-scroll"><div class="heat" data-dashboard-viz-target="heatmap"></div></div>
                 </div>
             </div>
 
             <div class="card span-12">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.collaboration'|trans }}</span></div>
-                <div class="card__body">
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.collaboration'|trans }}</span>
                     <p class="card__sub">{{ 'dashboard.collaboration_sub'|trans }}</p>
+                </div>
+                <div class="card__body">
                     <div class="collab" data-dashboard-viz-target="collab"></div>
                 </div>
             </div>
 
-            <div class="card span-12">
-                <div class="card__header"><span class="card__title">{{ 'activity.title'|trans }}</span></div>
-                <div id="activity-feed" class="activity-feed feed-scroll">
-                    {% for initiative in recent %}
-                        {{ include('activity/_item.html.twig', {
-                            id: initiative.id,
-                            action: 'created',
-                            title: initiative.title,
-                            url: path('app_initiative_show', {id: initiative.id}),
-                            actor: initiative.createdBy ? initiative.createdBy.name : null,
-                            at: initiative.createdAt,
-                        }) }}
-                    {% endfor %}
-                </div>
-            </div>
-
             <div class="card span-7">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.status_by_dept'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.status_by_dept'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.status_by_dept_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-320"><canvas data-dashboard-viz-target="statusByDept"></canvas></div></div>
             </div>
 
             <div class="card span-5">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.by_status'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.by_status'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.by_status_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-300"><canvas data-dashboard-viz-target="statusDist"></canvas></div></div>
             </div>
 
             <div class="card span-5">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.funding_sources'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.funding_sources'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.funding_sources_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-300"><canvas data-dashboard-viz-target="funding"></canvas></div></div>
             </div>
 
             <div class="card span-7">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.budget_by_dept'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.budget_by_dept'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.budget_by_dept_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-300"><canvas data-dashboard-viz-target="budget"></canvas></div></div>
             </div>
 
             <div class="card span-7">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.timeline'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.timeline'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.timeline_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-320"><canvas data-dashboard-viz-target="timeline"></canvas></div></div>
             </div>
 
             <div class="card span-5">
-                <div class="card__header"><span class="card__title">{{ 'dashboard.reach'|trans }}</span></div>
+                <div class="card__header">
+                    <span class="card__title">{{ 'dashboard.reach'|trans }}</span>
+                    <p class="card__sub">{{ 'dashboard.reach_sub'|trans }}</p>
+                </div>
                 <div class="card__body"><div class="chart-box h-320"><canvas data-dashboard-viz-target="reach"></canvas></div></div>
             </div>
         </div>

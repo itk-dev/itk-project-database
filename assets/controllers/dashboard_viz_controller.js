@@ -65,6 +65,10 @@ export default class extends Controller {
         "timeline",
     ];
 
+    static values = {
+        empty: String,
+    };
+
     connect() {
         this.reduce = window.matchMedia(
             "(prefers-reduced-motion: reduce)",
@@ -221,6 +225,18 @@ export default class extends Controller {
     buildHeatmap() {
         const d = this.viz;
         const el = this.heatmapTarget;
+
+        // The heatmap only makes sense once there are both rows (departments) and
+        // columns (areas) to cross; until then show a placeholder, not bare headers.
+        if (!d.areas.length || !d.departments.length) {
+            el.style.gridTemplateColumns = "";
+            el.classList.remove("heat--paused");
+            el.innerHTML = `<p class="heat-empty">${this.esc(this.emptyValue)}</p>`;
+            this.heatColHeads = [];
+            this.heatCells = [];
+            return;
+        }
+
         el.style.gridTemplateColumns = `minmax(120px, 168px) repeat(${d.areas.length}, minmax(40px, 1fr))`;
         if (!this.reduce) {
             el.classList.add("heat--paused");
@@ -254,6 +270,9 @@ export default class extends Controller {
 
     updateHeatmap(initial = false) {
         const d = this.viz;
+        if (!d.areas.length || !d.departments.length) {
+            return;
+        }
         let max = 1;
         d.heatmap.forEach((row) =>
             row.forEach((v) => {
@@ -308,7 +327,7 @@ export default class extends Controller {
         el.innerHTML = "";
         if (!this.viz.collaboration.length) {
             el.innerHTML =
-                '<p class="collab-empty">Ingen tværgående temaer endnu — kategorisér initiativer for at finde sammenfald.</p>';
+                '<p class="collab-empty">Ingen tværgående områder endnu — kategorisér initiativer for at finde sammenfald.</p>';
             return;
         }
         // Hold the entrance paused until the panel scrolls into view; once seen,

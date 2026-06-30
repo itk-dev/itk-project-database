@@ -1,5 +1,5 @@
 app:
-    name: Projektdatabase
+    name: Projects
 
 mascot:
     label: Din kreative makker
@@ -16,7 +16,7 @@ mascot:
         blanks: "“%title%” er %percent% % udfyldt — der mangler stadig et par felter. 📝"
         ending: "“%title%” er %percent% % færdig. Giv den en værdig afslutning! 🏁"
         strong: "“%title%” er %percent% % færdig — lad os tage den sidste bid! 💪"
-    finish_cta: Gør færdig
+    finish_cta: Gå til redigering
     contact:
         details: "Kontaktpersonen “%name%” som du har oprettet mangler stadig oplysninger — Vil du gøre den færdig?"
         quick: "Du tilføjede “%name%” i farten — vil du udfylde resten? ✏️"
@@ -58,6 +58,8 @@ autosave:
 
 activity:
     title: Aktivitet
+    subtitle: Seneste aktivitet på platformen
+    empty: Ingen aktivitet at vise
     action:
         created: oprettede
         updated: opdaterede
@@ -79,6 +81,7 @@ nav:
 
 action:
     new: Opret
+    new_initiative: Opret nyt initiativ
     edit: Rediger
     delete: Slet
     save: Gem
@@ -125,7 +128,6 @@ filter:
 
 dashboard:
     title: Overblik
-    subtitle: Status på alle initiativer
     total: Initiativer i alt
     total_hint: registrerede i alt
     in_progress: Igangværende
@@ -133,20 +135,36 @@ dashboard:
     departments_involved: Afdelinger involveret
     departments_involved_hint: med mindst ét initiativ
     collaboration_count: Mulige samarbejder
-    collaboration_count_hint: temaer på tværs af afdelinger
+    collaboration_count_hint: områder på tværs af afdelinger
     by_status: Fordeling på status
+    by_status_sub: Alle initiativer fordelt på deres aktuelle status.
     recent: Senest oprettede
     no_status: Uden status
     empty: Der er endnu ikke oprettet nogen initiativer.
-    themes_heatmap: Temaer på tværs af afdelinger
-    themes_heatmap_sub: Mørkere = flere initiativer. Markerede temaer går på tværs af mindst tre afdelinger.
+    themes_heatmap: Områder på tværs af afdelinger
+    themes_heatmap_sub: Antal initiativer pr. område i hver afdeling.
+    themes_heatmap_empty: Tilføj både afdelinger og områder for at se denne graf.
     collaboration: Muligt samarbejde
-    collaboration_sub: Initiativer i forskellige afdelinger med fælles tema.
+    collaboration_sub: Initiativer i forskellige afdelinger med fælles område.
     status_by_dept: Status pr. afdeling
+    status_by_dept_sub: Initiativernes status fordelt på hver afdeling.
     funding_sources: Finansieringskilder
+    funding_sources_sub: Antal initiativer pr. finansieringskilde.
     budget_by_dept: Budget pr. afdeling
-    reach: Temaer med flest afdelinger
+    budget_by_dept_sub: Samlet budget for initiativerne i hver afdeling.
+    reach: Områder med flest afdelinger
+    reach_sub: Hvor mange afdelinger hvert område er repræsenteret i.
     timeline: Tidslinje
+    timeline_sub: Hvert initiativs tidsperiode på en tidslinje.
+    unfinished:
+        title: Dit igangværende arbejde
+        sub: Dine initiativer og kontaktpersoner der mangler de sidste detaljer.
+        initiative: Initiativ
+        contact: Kontaktperson
+        contact_badge: Mangler oplysninger
+        percent_done: "%percent% % udfyldt"
+        cta: Gå til redigering
+        empty_title: Intet igangværende arbejde
 
 initiative:
     title: Titel
