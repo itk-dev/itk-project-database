@@ -38,30 +38,44 @@
                                 <div class="user-menu__name">{{ app.user.name }}</div>
                                 <div class="user-menu__email">{{ app.user.email }}</div>
                             </div>
-                            <div class="user-menu__section">
-                                <div class="user-menu__eyebrow">{{ 'nav.language'|trans }}</div>
-                                <div class="lang-toggle">
-                                    <a href="{{ path('app_locale', {locale: 'da', return: app.request.requestUri}) }}" class="lang-toggle__option {{ app.request.locale == 'da' ? 'lang-toggle__option--active' }}">DA</a>
-                                    <a href="{{ path('app_locale', {locale: 'en', return: app.request.requestUri}) }}" class="lang-toggle__option {{ app.request.locale == 'en' ? 'lang-toggle__option--active' }}">EN</a>
-                                </div>
+
+                            <div class="user-menu__divider"></div>
+
+                            <div class="user-menu__group">
+                                <a href="{{ path(is_granted('ROLE_ADMIN') ? 'admin_users' : 'admin_contacts') }}" class="user-menu__link">{{ 'nav.admin'|trans }}</a>
                             </div>
-                            <a href="{{ path(is_granted('ROLE_ADMIN') ? 'admin_users' : 'admin_contacts') }}" class="user-menu__link">{{ 'nav.admin'|trans }}</a>
-                            <form id="mascotToggleForm" method="post" action="{{ path('app_settings_mascot_toggle') }}" class="user-menu__form">
-                                <input type="hidden" name="_token" value="{{ csrf_token('toggle-mascot') }}">
-                                <input type="hidden" name="return" value="{{ app.request.requestUri }}">
-                                <button type="submit" class="user-menu__button user-menu__toggle" role="switch" aria-checked="{{ app.user.mascotEnabled ? 'true' : 'false' }}">
-                                    <span class="toggle-switch" aria-hidden="true"><span class="toggle-switch__knob"></span></span>
-                                    {{ 'nav.show_mascot'|trans }}
-                                </button>
-                            </form>
-                            <form id="starsToggleForm" method="post" action="{{ path('app_settings_stars_toggle') }}" class="user-menu__form">
-                                <input type="hidden" name="_token" value="{{ csrf_token('toggle-stars') }}">
-                                <input type="hidden" name="return" value="{{ app.request.requestUri }}">
-                                <button type="submit" class="user-menu__button user-menu__toggle" role="switch" aria-checked="{{ app.user.starsEnabled ? 'true' : 'false' }}">
-                                    <span class="toggle-switch" aria-hidden="true"><span class="toggle-switch__knob"></span></span>
-                                    {{ 'nav.show_stars'|trans }}
-                                </button>
-                            </form>
+
+                            <div class="user-menu__divider"></div>
+
+                            <div class="user-menu__group">
+                                <div class="user-menu__eyebrow user-menu__group-label">{{ 'nav.preferences'|trans }}</div>
+                                <div class="user-menu__pref">
+                                    <span>{{ 'nav.language'|trans }}</span>
+                                    <div class="lang-toggle">
+                                        <a href="{{ path('app_locale', {locale: 'da', return: app.request.requestUri}) }}" class="lang-toggle__option {{ app.request.locale == 'da' ? 'lang-toggle__option--active' }}">DA</a>
+                                        <a href="{{ path('app_locale', {locale: 'en', return: app.request.requestUri}) }}" class="lang-toggle__option {{ app.request.locale == 'en' ? 'lang-toggle__option--active' }}">EN</a>
+                                    </div>
+                                </div>
+                                <form id="mascotToggleForm" method="post" action="{{ path('app_settings_mascot_toggle') }}" class="user-menu__form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle-mascot') }}">
+                                    <input type="hidden" name="return" value="{{ app.request.requestUri }}">
+                                    <button type="submit" class="user-menu__button user-menu__pref" role="switch" aria-checked="{{ app.user.mascotEnabled ? 'true' : 'false' }}">
+                                        {{ 'nav.show_mascot'|trans }}
+                                        <span class="toggle-switch" aria-hidden="true"><span class="toggle-switch__knob"></span></span>
+                                    </button>
+                                </form>
+                                <form id="starsToggleForm" method="post" action="{{ path('app_settings_stars_toggle') }}" class="user-menu__form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle-stars') }}">
+                                    <input type="hidden" name="return" value="{{ app.request.requestUri }}">
+                                    <button type="submit" class="user-menu__button user-menu__pref" role="switch" aria-checked="{{ app.user.starsEnabled ? 'true' : 'false' }}">
+                                        {{ 'nav.show_stars'|trans }}
+                                        <span class="toggle-switch" aria-hidden="true"><span class="toggle-switch__knob"></span></span>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="user-menu__divider"></div>
+
                             <a href="{{ path('app_logout') }}" class="user-menu__logout">{{ 'nav.logout'|trans }}</a>
                         </div>
                     </div>

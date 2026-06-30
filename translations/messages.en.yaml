@@ -73,11 +73,12 @@ nav:
     areas: Areas
     users: Users
     admin: Administration
+    preferences: Preferences
     language: Language
     signed_in_as: Signed in as
     logout: Sign out
-    show_mascot: Show mascot
-    show_stars: Show flying stars
+    show_mascot: Show Glimt ⭐
+    show_stars: Show flying stars 💫x
 
 action:
     new: New

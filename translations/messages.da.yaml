@@ -73,11 +73,12 @@ nav:
     areas: Områder
     users: Brugere
     admin: Administration
+    preferences: Indstillinger
     language: Sprog
     signed_in_as: Logget ind som
     logout: Log ud
-    show_mascot: Din ven Glimt
-    show_stars: Flyvende stjerner
+    show_mascot: Din ven Glimt ⭐
+    show_stars: Flyvende stjerner 💫
 
 action:
     new: Opret
