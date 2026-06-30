@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Area;
 use App\Entity\Contact;
 use App\Entity\Department;
 use App\Entity\Initiative;
-use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType as InitiativeTypeEnum;
@@ -42,12 +42,12 @@ class InitiativeType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => 'initiative.title',
             ])
-            ->add('category', EnumType::class, [
-                'label' => 'initiative.category',
-                'class' => Category::class,
+            ->add('area', EntityType::class, [
+                'label' => 'initiative.area',
+                'class' => Area::class,
+                'choice_label' => 'name',
                 'required' => false,
                 'placeholder' => 'form.choose',
-                'choice_label' => static fn (Category $value): string => $value->labelKey(),
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'initiative.description',

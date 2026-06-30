@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Area;
 use App\Entity\Department;
-use App\Enum\Category;
 use App\Enum\InitiativeType as InitiativeTypeEnum;
 use App\Enum\Status;
 use App\Model\InitiativeFilter;
@@ -39,12 +39,12 @@ class InitiativeFilterType extends AbstractType
                 'placeholder' => 'filter.all',
                 'choice_label' => static fn (Status $value): string => $value->labelKey(),
             ])
-            ->add('category', EnumType::class, [
-                'label' => 'initiative.category',
-                'class' => Category::class,
+            ->add('area', EntityType::class, [
+                'label' => 'initiative.area',
+                'class' => Area::class,
+                'choice_label' => 'name',
                 'required' => false,
                 'placeholder' => 'filter.all',
-                'choice_label' => static fn (Category $value): string => $value->labelKey(),
             ])
             ->add('initiativeType', EnumType::class, [
                 'label' => 'initiative.initiative_type',

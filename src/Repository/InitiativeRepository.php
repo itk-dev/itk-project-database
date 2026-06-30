@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Initiative;
-use App\Enum\Category;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
 use App\Enum\InitiativeType;
@@ -52,16 +51,16 @@ class InitiativeRepository extends ServiceEntityRepository
                 sprintf('i.id IN (SELECT istr.id FROM %s istr JOIN istr.strategies st WHERE LOWER(st.name) LIKE :q)', Initiative::class),
                 sprintf('i.id IN (SELECT isth.id FROM %s isth JOIN isth.stakeholders sh WHERE LOWER(sh.name) LIKE :q)', Initiative::class),
                 sprintf('i.id IN (SELECT icon.id FROM %s icon JOIN icon.contacts co WHERE LOWER(co.name) LIKE :q)', Initiative::class),
-                // Department is a related entity searched by its stored name
-                // ("nik" should find "Teknik og Miljø").
+                // Department and area are related entities searched by their stored
+                // name ("nik" should find "Teknik og Miljø").
                 sprintf('i.id IN (SELECT idep.id FROM %s idep JOIN idep.organizationalAnchoring dep WHERE LOWER(dep.name) LIKE :q)', Initiative::class),
+                sprintf('i.id IN (SELECT iare.id FROM %s iare JOIN iare.area ar WHERE LOWER(ar.name) LIKE :q)', Initiative::class),
             ];
 
             // Enum columns store slugs, but the user searches their translated
             // labels ("nik" should find "Teknik og Miljø"); map labels to values.
             $enumFields = [
                 'status' => Status::cases(),
-                'category' => Category::cases(),
                 'initiativeType' => InitiativeType::cases(),
                 'endorsementAuthor' => EndorsementAuthor::cases(),
             ];
@@ -87,8 +86,8 @@ class InitiativeRepository extends ServiceEntityRepository
             $qb->andWhere('i.status = :status')->setParameter('status', $filter->status->value);
         }
 
-        if (null !== $filter->category) {
-            $qb->andWhere('i.category = :category')->setParameter('category', $filter->category->value);
+        if (null !== $filter->area) {
+            $qb->andWhere('i.area = :area')->setParameter('area', $filter->area);
         }
 
         if (null !== $filter->initiativeType) {
@@ -249,13 +248,13 @@ class InitiativeRepository extends ServiceEntityRepository
      */
     public function dashboardRows(): array
     {
-        // Join and select the department id (rather than IDENTITY()) so Doctrine
+        // Join and select the related ids (rather than IDENTITY()) so Doctrine
         // applies the ULID type: IDENTITY() returns the raw binary FK, which would
         // not match the canonical ULID strings the rest of build() keys on.
         return $this->createQueryBuilder('i')
             ->select(
                 'i.title',
-                'i.category',
+                'ar.id AS area',
                 'i.status',
                 'department.id AS organizationalAnchoring',
                 'i.budget',
@@ -263,6 +262,7 @@ class InitiativeRepository extends ServiceEntityRepository
                 'i.timePeriodStart',
                 'i.timePeriodEnd',
             )
+            ->leftJoin('i.area', 'ar')
             ->leftJoin('i.organizationalAnchoring', 'department')
             ->getQuery()
             ->getArrayResult();

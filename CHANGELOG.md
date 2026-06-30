@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-15](https://github.com/itk-dev/itk-project-database/pull/15)
+  Make Kategori a user-defined Area entity with an admin CRUD, replacing the
+  fixed Category enum
+
 ## [0.1.0] - 2026-06-26
 
 * [PR-9](https://github.com/itk-dev/itk-project-database/pull/9)

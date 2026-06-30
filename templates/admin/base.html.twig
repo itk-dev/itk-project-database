@@ -9,6 +9,7 @@
             {% endif %}
             <a href="{{ path('admin_contacts') }}" class="admin-sidebar__link {{ route starts with 'admin_contact' ? 'is-active' }}">{{ 'nav.contacts'|trans }}</a>
             <a href="{{ path('admin_departments') }}" class="admin-sidebar__link {{ route starts with 'admin_department' ? 'is-active' }}">{{ 'nav.departments'|trans }}</a>
+            <a href="{{ path('admin_areas') }}" class="admin-sidebar__link {{ route starts with 'admin_area' ? 'is-active' }}">{{ 'nav.areas'|trans }}</a>
         </aside>
         <div>
             {% block admin_content %}{% endblock %}

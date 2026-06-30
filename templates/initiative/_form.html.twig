@@ -46,7 +46,7 @@
         {% if not initiative.id %}{% set title_attr = title_attr|merge({autofocus: true}) %}{% endif %}
         {{ form_row(form.title, {attr: title_attr}) }}
         <div class="form-grid">
-            {{ form_row(form.category) }}
+            {{ form_row(form.area) }}
             {{ form_row(form.initiativeType) }}
         </div>
         {{ form_row(form.description) }}

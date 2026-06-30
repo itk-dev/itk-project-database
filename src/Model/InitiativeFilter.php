@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use App\Entity\Area;
 use App\Entity\Department;
-use App\Enum\Category;
 use App\Enum\InitiativeType;
 use App\Enum\Status;
 
@@ -19,7 +19,7 @@ class InitiativeFilter
 
     public ?Status $status = null;
 
-    public ?Category $category = null;
+    public ?Area $area = null;
 
     public ?InitiativeType $initiativeType = null;
 

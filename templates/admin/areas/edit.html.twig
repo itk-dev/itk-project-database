@@ -1,0 +1,20 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'area.edit.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block admin_content %}
+    <div class="page__header" style="margin-bottom: var(--itk-space-5);">
+        <div>
+            <div class="breadcrumb"><a href="{{ path('admin_areas') }}">{{ 'nav.areas'|trans }}</a></div>
+            <h1 class="page__title">{{ area.name }}</h1>
+        </div>
+        <div class="page__actions">
+            <form method="post" action="{{ path('admin_area_delete', {id: area.id}) }}"
+                  onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete-area-' ~ area.id) }}">
+                <button type="submit" class="btn btn--danger">{{ 'action.delete'|trans }}</button>
+            </form>
+        </div>
+    </div>
+    {{ include('admin/areas/_form.html.twig', {button_label: 'action.save'}) }}
+{% endblock %}

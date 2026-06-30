@@ -221,14 +221,14 @@ export default class extends Controller {
     buildHeatmap() {
         const d = this.viz;
         const el = this.heatmapTarget;
-        el.style.gridTemplateColumns = `minmax(120px, 168px) repeat(${d.categories.length}, minmax(40px, 1fr))`;
+        el.style.gridTemplateColumns = `minmax(120px, 168px) repeat(${d.areas.length}, minmax(40px, 1fr))`;
         if (!this.reduce) {
             el.classList.add("heat--paused");
         }
         el.innerHTML = "";
         el.appendChild(document.createElement("div"));
 
-        this.heatColHeads = d.categories.map((c) => {
+        this.heatColHeads = d.areas.map((c) => {
             const head = document.createElement("div");
             head.className = "heat__collabel";
             head.innerHTML = `<span class="heat__synbadge" hidden>★ samarbejde</span><span>${this.esc(c.label)}</span>`;
@@ -241,7 +241,7 @@ export default class extends Controller {
             label.className = "heat__rowlabel";
             label.textContent = dep.label;
             el.appendChild(label);
-            return d.categories.map(() => {
+            return d.areas.map(() => {
                 const cell = document.createElement("div");
                 cell.className = "heat__cell";
                 el.appendChild(cell);
@@ -265,7 +265,7 @@ export default class extends Controller {
             row.forEach((v, ci) => {
                 const cell = this.heatCells[di][ci];
                 cell.textContent = v === 0 ? "·" : v;
-                cell.title = `${d.departments[di].label} · ${d.categories[ci].label}: ${v}`;
+                cell.title = `${d.departments[di].label} · ${d.areas[ci].label}: ${v}`;
                 const col = this.colorFor(v, max);
                 if (col) {
                     cell.classList.remove("is-zero");
@@ -278,12 +278,12 @@ export default class extends Controller {
                 }
                 if (initial && !this.reduce) {
                     cell.style.animationDelay =
-                        (di * d.categories.length + ci) * 14 + "ms";
+                        (di * d.areas.length + ci) * 14 + "ms";
                 }
             }),
         );
 
-        d.categories.forEach((c, ci) => {
+        d.areas.forEach((c, ci) => {
             const depts = d.heatmap.reduce(
                 (n, row) => n + (row[ci] > 0 ? 1 : 0),
                 0,

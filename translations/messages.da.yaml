@@ -64,6 +64,7 @@ nav:
     initiatives: Initiativer
     contacts: Kontaktpersoner
     departments: Afdelinger
+    areas: Områder
     users: Brugere
     admin: Administration
     language: Sprog
@@ -142,7 +143,7 @@ dashboard:
 
 initiative:
     title: Titel
-    category: Kategori
+    area: Område
     description: Kort beskrivelse
     strategies: Strategier og planer
     initiative_type: Initiativets karakter
@@ -225,6 +226,20 @@ department:
         title: Ingen afdelinger endnu
         hint: Opret en afdeling, så den kan vælges på initiativer.
 
+area:
+    name: Navn
+    name_duplicate: Der findes allerede et område med dette navn.
+    index:
+        title: Områder
+        subtitle: Tematisk område der kan vælges på initiativer.
+    new:
+        title: Nyt område
+    edit:
+        title: Rediger område
+    empty:
+        title: Ingen områder endnu
+        hint: Opret et område, så det kan vælges på initiativer.
+
 user:
     email: E-mail
     name: Navn
@@ -266,6 +281,10 @@ flash:
         created: Afdelingen blev oprettet.
         updated: Afdelingen blev opdateret.
         deleted: Afdelingen blev slettet.
+    area:
+        created: Området blev oprettet.
+        updated: Området blev opdateret.
+        deleted: Området blev slettet.
     user:
         created: Brugeren blev oprettet.
         updated: Brugeren blev opdateret.
@@ -280,15 +299,6 @@ enum:
         on_hold: Sat i bero
         completed: Afsluttet
         cancelled: Annulleret
-    category:
-        climate: Klima og miljø
-        mobility: Mobilitet
-        welfare: Velfærd
-        culture: Kultur og fritid
-        education: Uddannelse
-        business: Erhverv
-        digitalisation: Digitalisering
-        urban_development: Byudvikling
     initiative_type:
         project: Projekt
         programme: Program
