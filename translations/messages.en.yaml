@@ -1,5 +1,5 @@
 app:
-    name: Project database
+    name: Projects
 
 mascot:
     label: Your creative buddy
@@ -54,9 +54,7 @@ autosave:
     required: Add a title to save.
     error: Couldn’t save — check the required fields
     offline: Save failed — your changes are kept here
-    files_hint: Click Upload to add the files
     completion: Form completion
-    upload_files: Upload files
 
 activity:
     title: Activity
@@ -84,6 +82,7 @@ nav:
 
 action:
     new: New
+    new_initiative: Create a new initiative
     edit: Edit
     delete: Delete
     save: Save
@@ -109,11 +108,15 @@ common:
     created: Created
     updated: Updated
     optional: optional
+    close: Close
 
 form:
     choose: Choose …
     terms:
         invalid: Invalid values.
+
+media:
+    choose: Choose file
 
 filter:
     search: Search
@@ -126,7 +129,6 @@ filter:
 
 dashboard:
     title: Overview
-    subtitle: The status of every initiative
     total: Total initiatives
     total_hint: registered in total
     in_progress: In progress
@@ -202,7 +204,6 @@ initiative:
     images: Images
     attachments: Files
     image_file: Image file
-    image_alt: Alternative text
     attachment_file: File
     attachment_invalid_type: "The file type is not allowed (allowed: pdf, doc, docx, xls, xlsx)."
     index:
