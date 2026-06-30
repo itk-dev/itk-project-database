@@ -4,9 +4,8 @@
 
 {% block body %}
     <div class="page" data-controller="dashboard-live dashboard-viz" data-dashboard-viz-empty-value="{{ 'dashboard.themes_heatmap_empty'|trans }}">
-        <twig:Page:Header :title="'dashboard.title'|trans" :subtitle="'dashboard.subtitle'|trans">
-            <a href="{{ path('app_initiative_index') }}" class="btn btn--ghost">{{ 'nav.initiatives'|trans }}</a>
-            <a href="{{ path('app_initiative_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+        <twig:Page:Header :title="'dashboard.title'|trans">
+            <a href="{{ path('app_initiative_new') }}" class="btn btn--primary">{{ 'action.new_initiative'|trans }}</a>
         </twig:Page:Header>
 
         {{ turbo_stream_from('activities') }}
