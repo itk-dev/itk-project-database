@@ -9,18 +9,6 @@ The project follows the itk-dev
 [`symfony` Docker template](https://github.com/itk-dev/devops_itkdev-docker) and
 runs on PHP 8.4 / Symfony 8.
 
-## Features
-
-- Dashboard with key figures and a status overview of all initiatives.
-- List of initiatives with full-text search, faceted filters, column sorting,
-  pagination and CSV export.
-- Create and edit initiatives, including inline creation of contacts,
-  free-tagging of tags, stakeholders and strategies, and image/file uploads.
-- Contact management.
-- Private file/image uploads, served only to signed-in users.
-- Local username/password login with user administration for administrators.
-- Bilingual interface (Danish and English).
-
 ## Requirements
 
 - [Docker](https://www.docker.com/) and the itk-dev
@@ -46,7 +34,7 @@ docker compose exec phpfpm bin/console doctrine:fixtures:load --no-interaction
 ```
 
 The site is served on the domain configured in `.env`
-(`COMPOSE_DOMAIN`, e.g. `https://itk-project-database.local.itkdev.dk`).
+(`COMPOSE_DOMAIN`, e.g. `https://itk-projects.local.itkdev.dk`).
 
 ### Signing in
 
@@ -92,10 +80,3 @@ task static-analysis      # run PHPStan
 task test                 # run the test suite
 task ci                   # run everything CI runs
 ```
-
-### Note on controlled vocabularies
-
-The controlled vocabularies (status, category, type, organisational anchoring,
-endorsement author and funding) are modelled as PHP enums in `src/Enum/` with
-placeholder values. Adjust the enum cases and their translations
-(`translations/messages.*.yaml`) to match the real domain values.
