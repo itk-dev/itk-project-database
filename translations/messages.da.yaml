@@ -279,6 +279,16 @@ partner:
     description_help: En kort beskrivelse af samarbejdspartneren.
     website: Hjemmeside
     website_help: Link til samarbejdspartnerens hjemmeside, hvis den findes.
+    usage: Bruges i
+    usage_none: Ikke i brug
+    usage_count: "{1}1 initiativ|]1,Inf[%count% initiativer"
+    delete:
+        title: 'Slet "%name%"?'
+        in_use: "{1}Samarbejdspartneren er tilknyttet ét initiativ:|]1,Inf[Samarbejdspartneren er tilknyttet %count% initiativer:"
+        unused: Samarbejdspartneren er ikke tilknyttet nogen initiativer.
+        consequence: Sletningen fjerner samarbejdspartneren fra initiativerne ovenfor.
+        irreversible: Denne handling kan ikke fortrydes.
+        confirm: Slet alligevel
     index:
         title: Samarbejdspartnere
         subtitle: Samarbejdspartnere der kan tilknyttes initiativer.

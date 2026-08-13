@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller\Admin;
 
+use App\Entity\Initiative;
 use App\Entity\Partner;
 use App\Tests\FunctionalTestCase;
 
@@ -15,6 +16,25 @@ final class PartnerControllerTest extends FunctionalTestCase
         $this->client->request('GET', '/admin/partners');
 
         $this->assertResponseIsSuccessful();
+    }
+
+    public function testIndexDeleteDialogLinksTheAffectedInitiatives(): void
+    {
+        $this->loginAsAdmin();
+        $partner = $this->createPartner('Linked Partner '.uniqid());
+        $initiative = $this->createInitiativeUsing($partner, 'Linked Initiative '.uniqid());
+
+        $crawler = $this->client->request('GET', '/admin/partners');
+        $this->assertResponseIsSuccessful();
+
+        // The confirmation has to name what deleting would strip the partner off, and
+        // link straight to it — the count alone doesn't tell the admin what breaks.
+        $link = $crawler->filter(sprintf('dialog a[href="/initiatives/%s"]', $initiative->getId()));
+        self::assertCount(1, $link);
+        self::assertSame($initiative->getTitle(), trim($link->text()));
+
+        $this->removeInitiative((string) $initiative->getId());
+        $this->removePartner((string) $partner->getId());
     }
 
     public function testNewCreatesPartner(): void
@@ -119,6 +139,31 @@ final class PartnerControllerTest extends FunctionalTestCase
         self::assertNull($this->partners()->find($id));
     }
 
+    public function testDeleteDetachesThePartnerButKeepsTheInitiative(): void
+    {
+        $this->loginAsAdmin();
+        $partner = $this->createPartner('Detachable Partner '.uniqid());
+        $partnerId = (string) $partner->getId();
+        $initiative = $this->createInitiativeUsing($partner, 'Surviving Initiative '.uniqid());
+        $initiativeId = (string) $initiative->getId();
+
+        $crawler = $this->client->request('GET', sprintf('/admin/partners/%s/edit', $partnerId));
+        self::assertStringContainsString($initiative->getTitle(), (string) $this->client->getResponse()->getContent());
+
+        $this->client->submit($crawler->filter('form[action$="/delete"]')->form());
+        $this->assertResponseRedirects('/admin/partners');
+
+        // The join table is cleared by its ON DELETE CASCADE rather than by Doctrine,
+        // so pin both halves: the partner is gone, the initiative is not.
+        $this->entityManager()->clear();
+        self::assertNull($this->partners()->find($partnerId));
+        $survivor = $this->initiatives()->find($initiativeId);
+        self::assertInstanceOf(Initiative::class, $survivor);
+        self::assertCount(0, $survivor->getPartners());
+
+        $this->removeInitiative($initiativeId);
+    }
+
     public function testDeleteIgnoresAnInvalidToken(): void
     {
         $this->loginAsAdmin();
@@ -142,6 +187,17 @@ final class PartnerControllerTest extends FunctionalTestCase
         return $partner;
     }
 
+    private function createInitiativeUsing(Partner $partner, string $title): Initiative
+    {
+        $initiative = (new Initiative())->setTitle($title);
+        $initiative->addPartner($partner);
+        $em = $this->entityManager();
+        $em->persist($initiative);
+        $em->flush();
+
+        return $initiative;
+    }
+
     private function removePartner(string $id): void
     {
         $this->entityManager()->clear();
@@ -149,6 +205,17 @@ final class PartnerControllerTest extends FunctionalTestCase
         if (null !== $partner) {
             $em = $this->entityManager();
             $em->remove($partner);
+            $em->flush();
+        }
+    }
+
+    private function removeInitiative(string $id): void
+    {
+        $this->entityManager()->clear();
+        $initiative = $this->initiatives()->find($id);
+        if (null !== $initiative) {
+            $em = $this->entityManager();
+            $em->remove($initiative);
             $em->flush();
         }
     }

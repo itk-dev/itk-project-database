@@ -22,9 +22,19 @@ class PartnerController extends AbstractController
     #[Route('', name: 'admin_partners', methods: ['GET'])]
     public function index(PartnerRepository $partners): Response
     {
-        return $this->render('admin/partners/index.html.twig', [
-            'partners' => $partners->findAllOrdered(),
-        ]);
+        $usage = $partners->findInitiativeUsage();
+
+        // Pair each partner with its initiatives here rather than looking the usage
+        // up per row, which would mean keying a Twig array by a Ulid object.
+        $rows = [];
+        foreach ($partners->findAllOrdered() as $partner) {
+            $rows[] = [
+                'partner' => $partner,
+                'initiatives' => $usage[(string) $partner->getId()] ?? [],
+            ];
+        }
+
+        return $this->render('admin/partners/index.html.twig', ['rows' => $rows]);
     }
 
     #[Route('/new', name: 'admin_partner_new', methods: ['GET', 'POST'])]
@@ -46,7 +56,7 @@ class PartnerController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'admin_partner_edit', requirements: ['id' => Requirement::ULID], methods: ['GET', 'POST'])]
-    public function edit(Request $request, Partner $partner, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Partner $partner, EntityManagerInterface $entityManager, PartnerRepository $partners): Response
     {
         $form = $this->createForm(PartnerType::class, $partner);
         $form->handleRequest($request);
@@ -61,9 +71,18 @@ class PartnerController extends AbstractController
         return $this->render('admin/partners/edit.html.twig', [
             'form' => $form,
             'partner' => $partner,
+            'initiatives' => $partners->findInitiativesUsing($partner),
         ]);
     }
 
+    /**
+     * Deleting a partner also pulls it off every initiative that referenced it —
+     * `initiative_partner` is cleared by the join table's ON DELETE CASCADE, which
+     * Doctrine never sees because the association is unidirectional. The admin is
+     * told which initiatives are affected before confirming. Recording who went
+     * ahead anyway is still to come: that belongs here, and needs
+     * findInitiativesUsing() called before the flush destroys the evidence.
+     */
     #[Route('/{id}/delete', name: 'admin_partner_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     public function delete(Request $request, Partner $partner, EntityManagerInterface $entityManager): Response
     {

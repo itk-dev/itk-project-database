@@ -8,7 +8,7 @@
     </twig:Page:Header>
 
     <div class="card">
-        {% if partners is empty %}
+        {% if rows is empty %}
             <twig:EmptyState :title="'partner.empty.title'|trans" :hint="'partner.empty.hint'|trans" />
         {% else %}
             <div class="table-wrap">
@@ -16,24 +16,22 @@
                     <thead>
                         <tr>
                             <th>{{ 'partner.name'|trans }}</th>
-                            <th>{{ 'partner.description'|trans }}</th>
                             <th>{{ 'partner.website'|trans }}</th>
+                            <th>{{ 'partner.usage'|trans }}</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for partner in partners %}
+                        {% for row in rows %}
+                            {% set partner = row.partner %}
                             <tr>
                                 <td class="cell-title">{{ partner.name }}</td>
-                                <td>{{ partner.description ? partner.description|slice(0, 80) ~ (partner.description|length > 80 ? '…') : '—' }}</td>
                                 <td>{% if partner.website %}<a href="{{ partner.website }}" target="_blank" rel="noopener">{{ partner.website }}</a>{% else %}—{% endif %}</td>
+                                <td>{% if row.initiatives is empty %}<span class="muted">{{ 'partner.usage_none'|trans }}</span>{% else %}{{ 'partner.usage_count'|trans({'%count%': row.initiatives|length}) }}{% endif %}</td>
                                 <td>
                                     <div class="cell-actions">
                                         <a href="{{ path('admin_partner_edit', {id: partner.id}) }}" class="btn btn--ghost btn--sm">{{ 'action.edit'|trans }}</a>
-                                        <form method="post" action="{{ path('admin_partner_delete', {id: partner.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('delete-partner-' ~ partner.id) }}">
-                                            <button type="submit" class="btn btn--danger btn--sm">{{ 'action.delete'|trans }}</button>
-                                        </form>
+                                        {{ include('admin/partners/_delete.html.twig', {partner: partner, initiatives: row.initiatives, small: true}) }}
                                     </div>
                                 </td>
                             </tr>

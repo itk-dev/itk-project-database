@@ -1,0 +1,28 @@
+{% set count = initiatives|length %}
+<form method="post" action="{{ path('admin_partner_delete', {id: partner.id}) }}" data-controller="confirm-delete">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete-partner-' ~ partner.id) }}">
+    {# A real submit button, so the form still posts if the dialog never opens. #}
+    <button type="submit" class="btn btn--danger {{ small|default(false) ? 'btn--sm' }}" data-action="confirm-delete#open">{{ 'action.delete'|trans }}</button>
+
+    <dialog class="confirm" data-confirm-delete-target="dialog" data-action="click->confirm-delete#backdrop">
+        <div class="confirm__body">
+            <h2 class="confirm__title">{{ 'partner.delete.title'|trans({'%name%': partner.name}) }}</h2>
+            {% if count > 0 %}
+                <p>{{ 'partner.delete.in_use'|trans({'%count%': count}) }}</p>
+                <ul class="confirm__list">
+                    {% for initiative in initiatives %}
+                        <li><a href="{{ path('app_initiative_show', {id: initiative.id}) }}" target="_blank" rel="noopener">{{ initiative.title }}</a></li>
+                    {% endfor %}
+                </ul>
+                <p class="confirm__warning">{{ 'partner.delete.consequence'|trans }}</p>
+                <p class="confirm__warning">{{ 'partner.delete.irreversible'|trans }}</p>
+            {% else %}
+                <p>{{ 'partner.delete.unused'|trans }}</p>
+            {% endif %}
+        </div>
+        <div class="confirm__actions">
+            <button type="button" class="btn btn--ghost" data-action="confirm-delete#cancel">{{ 'action.cancel'|trans }}</button>
+            <button type="submit" class="btn btn--danger">{{ (count > 0 ? 'partner.delete.confirm' : 'action.delete')|trans }}</button>
+        </div>
+    </dialog>
+</form>

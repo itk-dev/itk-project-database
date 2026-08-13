@@ -279,6 +279,16 @@ partner:
     description_help: A brief description of the partner.
     website: Website
     website_help: Link to the partner's website, if any.
+    usage: Used in
+    usage_none: Not in use
+    usage_count: "{1}1 initiative|]1,Inf[%count% initiatives"
+    delete:
+        title: 'Delete "%name%"?'
+        in_use: "{1}This partner is attached to one initiative:|]1,Inf[This partner is attached to %count% initiatives:"
+        unused: This partner is not attached to any initiatives.
+        consequence: Deleting removes the partner from the initiatives above.
+        irreversible: This action cannot be undone.
+        confirm: Delete anyway
     index:
         title: Partners
         subtitle: Partners that can be attached to initiatives.
