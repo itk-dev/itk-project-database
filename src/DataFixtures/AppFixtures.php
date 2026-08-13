@@ -8,6 +8,7 @@ use App\Entity\Area;
 use App\Entity\Contact;
 use App\Entity\Department;
 use App\Entity\Initiative;
+use App\Entity\Partner;
 use App\Entity\Term;
 use App\Entity\User;
 use App\Enum\EndorsementAuthor;
@@ -25,6 +26,7 @@ class AppFixtures extends Fixture
     private const array STAKEHOLDERS = ['Aarhus Kommune', 'Region Midtjylland', 'Aarhus Universitet', 'Erhverv Aarhus', 'Lokale foreninger', 'Boligforeninger', 'VIA University College', 'Business Region Aarhus'];
     private const array STRATEGIES = ['Klimaplan 2030', 'Erhvervsplan', 'Børn- og ungepolitik', 'Mobilitetsplan', 'Digitaliseringsstrategi', 'Sundhedspolitik'];
     private const array DEPARTMENTS = ['ITK Development', 'CFIA', 'Aarhus CityLab', 'Stab', 'OS2', 'AI Lab', 'IOT Lab', 'GTM', 'Fut Lab'];
+    private const array PARTNERS = ['Aarhus Universitet', 'VIA University College', 'Alexandra Instituttet', 'Teknologisk Institut', 'Region Midtjylland', 'Erhverv Aarhus', 'Danmarks Tekniske Universitet', 'Aarhus Vand', 'AffaldVarme Aarhus', 'Dansk Industri'];
     private const array AREAS = ['Klima og miljø', 'Mobilitet', 'Velfærd', 'Kultur og fritid', 'Uddannelse', 'Erhverv', 'Digitalisering', 'Byudvikling'];
 
     public function __construct(private readonly UserPasswordHasherInterface $hasher)
@@ -67,6 +69,16 @@ class AppFixtures extends Fixture
             $area = (new Area())->setName($name);
             $manager->persist($area);
             $areas[] = $area;
+        }
+
+        $partners = [];
+        foreach (self::PARTNERS as $name) {
+            $partner = (new Partner())
+                ->setName($name)
+                ->setDescription($name.' samarbejder med kommunen om udvikling, viden og afprøvning i konkrete initiativer.')
+                ->setWebsite('https://www.'.strtolower(str_replace(' ', '', $this->ascii($name))).'.dk');
+            $manager->persist($partner);
+            $partners[] = $partner;
         }
 
         $contacts = [];
@@ -148,6 +160,10 @@ class AppFixtures extends Fixture
             }
             foreach (\array_slice($this->shuffleCopy($contacts), 0, mt_rand(1, 3)) as $contact) {
                 $initiative->addContact($contact);
+            }
+            // Every initiative gets at least one partner — the form requires it.
+            foreach (\array_slice($this->shuffleCopy($partners), 0, mt_rand(1, 3)) as $partner) {
+                $initiative->addPartner($partner);
             }
 
             $initiative->setLinks(['https://www.aarhus.dk']);

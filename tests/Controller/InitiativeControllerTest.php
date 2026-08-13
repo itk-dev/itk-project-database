@@ -24,6 +24,8 @@ final class InitiativeControllerTest extends FunctionalTestCase
                 'title' => 'Coverage initiative',
                 // A typed name creates a new contact on the fly and attaches it.
                 'contacts' => 'Coverage Contact',
+                // Same free-tagging behaviour for partners, of which at least one is required.
+                'partners' => 'Coverage Partner',
                 '_token' => $token,
             ],
         ]);
@@ -34,6 +36,7 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $initiative = $this->initiatives()->findOneBy(['title' => 'Coverage initiative']);
         self::assertInstanceOf(Initiative::class, $initiative);
         self::assertGreaterThanOrEqual(1, $initiative->getContacts()->count(), 'Inline contact should be merged in.');
+        self::assertGreaterThanOrEqual(1, $initiative->getPartners()->count(), 'Inline partner should be merged in.');
 
         $em->remove($initiative);
         $em->flush();
@@ -42,6 +45,25 @@ final class InitiativeControllerTest extends FunctionalTestCase
             $em->remove($contact);
         }
         $em->flush();
+    }
+
+    public function testNewRejectsAnInitiativeWithoutAPartner(): void
+    {
+        $this->loginAsAdmin();
+        $crawler = $this->client->request('GET', '/initiatives/new');
+
+        $token = (string) $crawler->filter('input[name="initiative[_token]"]')->attr('value');
+        $this->client->request('POST', '/initiatives/new', [
+            'initiative' => [
+                'title' => 'Partnerless initiative',
+                'partners' => '',
+                '_token' => $token,
+            ],
+        ]);
+
+        // Assert\Count(min: 1) rejects it: the form redisplays with a 422 and nothing is saved.
+        $this->assertResponseStatusCodeSame(422);
+        self::assertNull($this->initiatives()->findOneBy(['title' => 'Partnerless initiative']));
     }
 
     public function testEditUpdatesInitiative(): void
@@ -57,6 +79,7 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $this->client->request('POST', sprintf('/initiatives/%s/edit', $id), [
             'initiative' => [
                 'title' => 'Edited initiative',
+                'partners' => 'Coverage Partner',
                 'images' => [['imageFile' => '']],
                 'attachments' => [['file' => '']],
                 '_token' => $token,
@@ -113,6 +136,7 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $this->client->request('POST', sprintf('/initiatives/%s/edit', $id), [
             'initiative' => [
                 'title' => 'Has empty attachment',
+                'partners' => 'Coverage Partner',
                 // Re-submit the file-less attachment (empty file, no upload) so the
                 // form keeps it; the controller's removeEmptyMedia() then drops it.
                 'attachments' => [['file' => '']],
@@ -144,6 +168,7 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $this->client->request('POST', sprintf('/initiatives/%s/edit', $id), [
             'initiative' => [
                 'title' => 'Has empty image',
+                'partners' => 'Coverage Partner',
                 // Re-submit the file-less image so the form keeps it; the
                 // controller's removeEmptyMedia() then drops it.
                 'images' => [['imageFile' => '']],
@@ -167,7 +192,7 @@ final class InitiativeControllerTest extends FunctionalTestCase
 
         // Autosave posts via fetch with the X-Autosave header and no CSRF token.
         $this->client->request('POST', '/initiatives/new', [
-            'initiative' => ['title' => 'Autosaved initiative'],
+            'initiative' => ['title' => 'Autosaved initiative', 'partners' => 'Coverage Partner'],
         ], [], ['HTTP_X-Autosave' => '1']);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
@@ -199,7 +224,7 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $id = (string) $initiative->getId();
 
         $this->client->request('POST', sprintf('/initiatives/%s/edit', $id), [
-            'initiative' => ['title' => 'Autosave edited'],
+            'initiative' => ['title' => 'Autosave edited', 'partners' => 'Coverage Partner'],
         ], [], ['HTTP_X-Autosave' => '1']);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
@@ -222,10 +247,16 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $this->removeInitiative($id);
     }
 
+    /**
+     * An initiative must have at least one partner, so give it one up front —
+     * otherwise every form post in these tests fails validation.
+     */
     private function createInitiative(string $title): Initiative
     {
-        $initiative = (new Initiative())->setTitle($title);
         $em = $this->entityManager();
+        $initiative = (new Initiative())
+            ->setTitle($title)
+            ->addPartner($this->partners()->findOrCreate('Coverage Partner'));
         $em->persist($initiative);
         $em->flush();
 

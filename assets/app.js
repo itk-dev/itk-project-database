@@ -117,6 +117,14 @@ function initContactSelect() {
     );
 }
 
+function initPartnerSelect() {
+    initCreatableSelect(
+        "[data-partner-select]",
+        "partnerPool",
+        (value) => value,
+    );
+}
+
 // One delegated handler on the document (which survives Turbo navigations and
 // cache restores) both opens the menu — when the click lands on the toggle —
 // and closes it on any outside click. Delegation avoids per-page binding, which
@@ -142,6 +150,7 @@ document.addEventListener("click", (event) => {
 document.addEventListener("turbo:load", () => {
     initCollections();
     initContactSelect();
+    initPartnerSelect();
     initTermSelect();
 });
 
