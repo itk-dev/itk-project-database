@@ -76,7 +76,9 @@ class AppFixtures extends Fixture
             $partner = (new Partner())
                 ->setName($name)
                 ->setDescription($name.' samarbejder med kommunen om udvikling, viden og afprøvning i konkrete initiativer.')
-                ->setWebsite('https://www.'.strtolower(str_replace(' ', '', $this->ascii($name))).'.dk');
+                // ascii() turns spaces into dots (it also builds e-mail addresses), which
+                // a domain does not want, so drop them again.
+                ->setWebsite('https://www.'.strtolower(str_replace('.', '', $this->ascii($name))).'.dk');
             $manager->persist($partner);
             $partners[] = $partner;
         }
@@ -161,7 +163,6 @@ class AppFixtures extends Fixture
             foreach (\array_slice($this->shuffleCopy($contacts), 0, mt_rand(1, 3)) as $contact) {
                 $initiative->addContact($contact);
             }
-            // Every initiative gets at least one partner — the form requires it.
             foreach (\array_slice($this->shuffleCopy($partners), 0, mt_rand(1, 3)) as $partner) {
                 $initiative->addPartner($partner);
             }
