@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 * [PR-25](https://github.com/itk-dev/itk-projects/pull/25)
-  Add partners to initiatives, with an admin CRUD and CSV export.
+  Add partners to initiatives, with an admin CRUD and CSV export. Deleting a
+  partner now confirms in a dialog that lists and links the initiatives it would
+  be detached from.
 
 ## [0.2.0] - 2026-06-30
 
