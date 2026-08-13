@@ -144,7 +144,7 @@ class InitiativeRepository extends ServiceEntityRepository
             return [];
         }
 
-        foreach (['strategies', 'stakeholders', 'tags', 'contacts'] as $association) {
+        foreach (['strategies', 'stakeholders', 'tags', 'contacts', 'partners'] as $association) {
             $this->createQueryBuilder('i')
                 ->addSelect('rel')
                 ->leftJoin('i.'.$association, 'rel')
