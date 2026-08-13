@@ -7,9 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-* Add a Partner entity (name, description, website) with an admin CRUD, and
-  require every initiative to have at least one partner — attached through a
-  searchable multiselect that can create new partners on the fly.
+* [PR-25](https://github.com/itk-dev/itk-projects/pull/25)
+  Add partners to initiatives, with an admin CRUD and CSV export.
 
 ## [0.2.0] - 2026-06-30
 
