@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
+use App\Entity\Initiative;
 use App\Entity\Partner;
 use App\Repository\PartnerRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,6 +56,52 @@ final class PartnerRepositoryTest extends KernelTestCase
 
         $found = $repository->findOrCreate(mb_strtolower($name));
         self::assertSame($partner->getId(), $found->getId());
+
+        $em->remove($partner);
+        $em->flush();
+    }
+
+    public function testFindInitiativeUsageNamesTheReferencingInitiatives(): void
+    {
+        self::bootKernel();
+        $repository = static::getContainer()->get(PartnerRepository::class);
+        \assert($repository instanceof PartnerRepository);
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        \assert($em instanceof EntityManagerInterface);
+
+        $partner = (new Partner())->setName('Usage Partner '.uniqid());
+        $initiative = (new Initiative())->setTitle('Usage Initiative '.uniqid());
+        $initiative->addPartner($partner);
+        $em->persist($partner);
+        $em->persist($initiative);
+        $em->flush();
+
+        $expected = [['id' => (string) $initiative->getId(), 'title' => $initiative->getTitle()]];
+        self::assertSame($expected, $repository->findInitiativesUsing($partner));
+
+        // The bulk variant backing the admin list must agree with the single lookup.
+        $usage = $repository->findInitiativeUsage();
+        self::assertSame($expected, $usage[(string) $partner->getId()] ?? []);
+
+        $em->remove($initiative);
+        $em->remove($partner);
+        $em->flush();
+    }
+
+    public function testFindInitiativeUsageOmitsUnusedPartners(): void
+    {
+        self::bootKernel();
+        $repository = static::getContainer()->get(PartnerRepository::class);
+        \assert($repository instanceof PartnerRepository);
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        \assert($em instanceof EntityManagerInterface);
+
+        $partner = (new Partner())->setName('Unused Partner '.uniqid());
+        $em->persist($partner);
+        $em->flush();
+
+        self::assertSame([], $repository->findInitiativesUsing($partner));
+        self::assertArrayNotHasKey((string) $partner->getId(), $repository->findInitiativeUsage());
 
         $em->remove($partner);
         $em->flush();
