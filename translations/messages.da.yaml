@@ -274,6 +274,7 @@ partner:
     name: Navn
     name_help: Samarbejdspartnerens navn, som det vises på initiativer.
     name_duplicate: Der findes allerede en samarbejdspartner med dette navn.
+    name_comma: Navnet må ikke indeholde komma.
     description: Beskrivelse
     description_help: En kort beskrivelse af samarbejdspartneren.
     website: Hjemmeside

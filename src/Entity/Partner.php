@@ -15,6 +15,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Partner extends AbstractEntity
 {
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
+    // Comma is the separator of the free-tagging field on the initiative form, so a
+    // name containing one would be split into two partners on the next edit.
+    #[Assert\Regex(pattern: '/,/', match: false, message: 'partner.name_comma')]
     #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
@@ -23,6 +27,7 @@ class Partner extends AbstractEntity
 
     // Rejects non-http(s) URLs (e.g. javascript:) since the value is rendered as a link.
     #[Assert\Url(protocols: ['http', 'https'])]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $website = null;
 

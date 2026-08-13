@@ -75,6 +75,21 @@ final class PartnerControllerTest extends FunctionalTestCase
         self::assertCount(0, $this->partners()->findBy(['name' => $name]));
     }
 
+    public function testNewRejectsANameContainingAComma(): void
+    {
+        $this->loginAsAdmin();
+        $crawler = $this->client->request('GET', '/admin/partners/new');
+
+        // Comma is the separator of the free-tagging field on the initiative form,
+        // so such a name would later be split into two partners.
+        $name = 'Aarhus Kommune, Teknik og Miljø '.uniqid();
+        $form = $crawler->filter('button.btn--primary')->form(['partner[name]' => $name]);
+        $this->client->submit($form);
+
+        $this->assertResponseStatusCodeSame(422);
+        self::assertCount(0, $this->partners()->findBy(['name' => $name]));
+    }
+
     public function testEditUpdatesPartner(): void
     {
         $this->loginAsAdmin();

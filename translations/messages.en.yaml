@@ -274,6 +274,7 @@ partner:
     name: Name
     name_help: The partner's name as shown on initiatives.
     name_duplicate: A partner with this name already exists.
+    name_comma: The name cannot contain a comma.
     description: Description
     description_help: A brief description of the partner.
     website: Website
