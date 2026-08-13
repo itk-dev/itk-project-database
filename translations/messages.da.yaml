@@ -58,14 +58,14 @@ tour:
         intro: "Det her er Projektdatabasen — her samler vi afdelingernes initiativer og projekter ét sted, så vi kan se, hvad der sker på tværs."
         dashboard: "På overblikket ser du nøgletal, status og eventuelle muligheder for samarbejds på tværs af afdelinger."
         create: "Se alle initiativer via menupunktet Initiativer — eller opret et nyt med det samme via Opret-knappen."
-        admin: "Inde i menuen her finder du menupunktet Administration, hvor du kan oprette, se og redigere afdelinger, områder og kontaktpersoner."
+        admin: "Inde i menuen her finder du menupunktet Administration, hvor du kan oprette, se og redigere afdelinger, områder, samarbejdspartnere og kontaktpersoner."
         outro: "Så er du klar! Jeg er altid lige her i hjørnet, hvis du får brug for et tip. 🌟"
 
 autosave:
     saving: Gemmer…
     saved: Gemt
     unsaved: Ikke-gemte ændringer
-    required: Tilføj en titel for at gemme.
+    required: Tilføj en titel og mindst én samarbejdspartner for at gemme.
     error: Kunne ikke gemme — tjek de påkrævede felter
     offline: Kunne ikke gemme — dine ændringer er bevaret her
     completion: Udfyldningsgrad
@@ -83,6 +83,7 @@ nav:
     dashboard: Overblik
     initiatives: Initiativer
     contacts: Kontaktpersoner
+    partners: Samarbejdspartnere
     departments: Afdelinger
     areas: Områder
     users: Brugere
@@ -212,6 +213,9 @@ initiative:
     time_period: Tidshorisont
     links: Relevante links
     contacts: Kontaktpersoner
+    partners: Samarbejdspartnere
+    partners_help: Vælg en eksisterende samarbejdspartner, eller skriv en ny og tryk Enter. Mindst én er påkrævet.
+    partners_required: Tilknyt mindst én samarbejdspartner.
     author: Udfyldt af
     terms_help: Vælg eksisterende, eller skriv en ny og tryk Enter.
     completion_field_hint: Dette felt tæller med i udfyldningsgraden.
@@ -230,9 +234,11 @@ initiative:
     show:
         details: Detaljer
         contacts: Kontaktpersoner
+        partners: Samarbejdspartnere
         classification: Klassificering
         media: Filer og billeder
         no_contacts: Ingen kontaktpersoner tilknyttet.
+        no_partners: Ingen samarbejdspartnere tilknyttet.
     empty:
         title: Ingen initiativer fundet
         hint: Prøv at justere dine filtre, eller opret et nyt initiativ.
@@ -241,7 +247,7 @@ initiative:
         classification: Klassificering
         endorsement: Vedtagelse
         economy: Økonomi og tid
-        relations: Interessenter og kontakter
+        relations: Interessenter, samarbejdspartnere og kontakter
         media: Filer og billeder
         meta: Øvrigt
 
@@ -264,6 +270,25 @@ contact:
     empty:
         title: Ingen kontaktpersoner endnu
         hint: Opret en kontaktperson, eller tilføj en direkte på et initiativ.
+
+partner:
+    name: Navn
+    name_help: Samarbejdspartnerens navn, som det vises på initiativer.
+    name_duplicate: Der findes allerede en samarbejdspartner med dette navn.
+    description: Beskrivelse
+    description_help: En kort beskrivelse af samarbejdspartneren.
+    website: Hjemmeside
+    website_help: Link til samarbejdspartnerens hjemmeside, hvis den findes.
+    index:
+        title: Samarbejdspartnere
+        subtitle: Samarbejdspartnere der kan tilknyttes initiativer.
+    new:
+        title: Ny samarbejdspartner
+    edit:
+        title: Rediger samarbejdspartner
+    empty:
+        title: Ingen samarbejdspartnere endnu
+        hint: Opret en samarbejdspartner, eller tilføj en direkte på et initiativ.
 
 department:
     name: Navn
@@ -334,6 +359,10 @@ flash:
         created: Kontaktpersonen blev oprettet.
         updated: Kontaktpersonen blev opdateret.
         deleted: Kontaktpersonen blev slettet.
+    partner:
+        created: Samarbejdspartneren blev oprettet.
+        updated: Samarbejdspartneren blev opdateret.
+        deleted: Samarbejdspartneren blev slettet.
     department:
         created: Afdelingen blev oprettet.
         updated: Afdelingen blev opdateret.

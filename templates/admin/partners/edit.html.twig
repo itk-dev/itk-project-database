@@ -1,0 +1,16 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'partner.edit.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block admin_content %}
+    <twig:Page:Header :title="partner.name" style="margin-bottom: var(--itk-space-5);">
+        <twig:block name="breadcrumb">
+            <div class="breadcrumb"><a href="{{ path('admin_partners') }}">{{ 'nav.partners'|trans }}</a></div>
+        </twig:block>
+        <form method="post" action="{{ path('admin_partner_delete', {id: partner.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete-partner-' ~ partner.id) }}">
+            <button type="submit" class="btn btn--danger">{{ 'action.delete'|trans }}</button>
+        </form>
+    </twig:Page:Header>
+    {{ include('admin/partners/_form.html.twig', {button_label: 'action.save'}) }}
+{% endblock %}

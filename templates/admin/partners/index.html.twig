@@ -1,0 +1,46 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'partner.index.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block admin_content %}
+    <twig:Page:Header :title="'partner.index.title'|trans" :subtitle="'partner.index.subtitle'|trans" style="margin-bottom: var(--itk-space-5);">
+        <a href="{{ path('admin_partner_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
+    </twig:Page:Header>
+
+    <div class="card">
+        {% if partners is empty %}
+            <twig:EmptyState :title="'partner.empty.title'|trans" :hint="'partner.empty.hint'|trans" />
+        {% else %}
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>{{ 'partner.name'|trans }}</th>
+                            <th>{{ 'partner.description'|trans }}</th>
+                            <th>{{ 'partner.website'|trans }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for partner in partners %}
+                            <tr>
+                                <td class="cell-title">{{ partner.name }}</td>
+                                <td>{{ partner.description ? partner.description|slice(0, 80) ~ (partner.description|length > 80 ? '…') : '—' }}</td>
+                                <td>{% if partner.website %}<a href="{{ partner.website }}" target="_blank" rel="noopener">{{ partner.website }}</a>{% else %}—{% endif %}</td>
+                                <td>
+                                    <div class="cell-actions">
+                                        <a href="{{ path('admin_partner_edit', {id: partner.id}) }}" class="btn btn--ghost btn--sm">{{ 'action.edit'|trans }}</a>
+                                        <form method="post" action="{{ path('admin_partner_delete', {id: partner.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete-partner-' ~ partner.id) }}">
+                                            <button type="submit" class="btn btn--danger btn--sm">{{ 'action.delete'|trans }}</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

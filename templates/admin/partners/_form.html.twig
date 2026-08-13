@@ -1,0 +1,12 @@
+{{ form_start(form, {attr: {class: 'form'}}) }}
+    <div class="form-section">
+        {{ form_errors(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.website) }}
+    </div>
+    <div class="form-actions">
+        <button type="submit" class="btn btn--primary">{{ button_label|default('action.save')|trans }}</button>
+        <a href="{{ path('admin_partners') }}" class="btn btn--ghost">{{ 'action.cancel'|trans }}</a>
+    </div>
+{{ form_end(form) }}
