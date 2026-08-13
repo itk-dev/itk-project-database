@@ -16,12 +16,28 @@ final class PartnerRepositoryTest extends KernelTestCase
         self::bootKernel();
         $repository = static::getContainer()->get(PartnerRepository::class);
         \assert($repository instanceof PartnerRepository);
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        \assert($em instanceof EntityManagerInterface);
 
-        $partners = $repository->findAllOrdered();
+        // A shared prefix keeps the two apart from whatever else the fixtures hold,
+        // and they are persisted in reverse so the ordering cannot come from
+        // insertion order.
+        $prefix = 'Ordered '.uniqid().' ';
+        $second = (new Partner())->setName($prefix.'B');
+        $first = (new Partner())->setName($prefix.'A');
+        $em->persist($second);
+        $em->persist($first);
+        $em->flush();
 
-        // Ordering is delegated to the database collation, so we only assert the
-        // method returns the persisted partners.
-        self::assertNotEmpty($partners);
+        $names = array_values(array_filter(
+            array_map(static fn (Partner $partner): string => (string) $partner->getName(), $repository->findAllOrdered()),
+            static fn (string $name): bool => str_starts_with($name, $prefix),
+        ));
+        self::assertSame([$prefix.'A', $prefix.'B'], $names);
+
+        $em->remove($first);
+        $em->remove($second);
+        $em->flush();
     }
 
     public function testFindOrCreateReturnsAnExistingPartnerCaseInsensitively(): void
