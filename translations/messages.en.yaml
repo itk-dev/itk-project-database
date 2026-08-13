@@ -65,7 +65,7 @@ autosave:
     saving: Saving…
     saved: Saved
     unsaved: Unsaved changes
-    required: Add a title and at least one partner to save.
+    required: Add a title to save.
     error: Couldn’t save — check the required fields
     offline: Save failed — your changes are kept here
     completion: Form completion
@@ -214,8 +214,7 @@ initiative:
     links: Relevant links
     contacts: Contacts
     partners: Partners
-    partners_help: Choose an existing partner, or type a new and press Enter. At least one is required.
-    partners_required: Attach at least one partner.
+    partners_help: Choose an existing partner, or type a new and press Enter.
     author: Filled out by
     terms_help: Choose an existing one, or type a new and press Enter.
     completion_field_hint: This field counts towards the completion rate.

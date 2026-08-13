@@ -65,7 +65,7 @@ autosave:
     saving: Gemmer…
     saved: Gemt
     unsaved: Ikke-gemte ændringer
-    required: Tilføj en titel og mindst én samarbejdspartner for at gemme.
+    required: Tilføj en titel for at gemme.
     error: Kunne ikke gemme — tjek de påkrævede felter
     offline: Kunne ikke gemme — dine ændringer er bevaret her
     completion: Udfyldningsgrad
@@ -214,8 +214,7 @@ initiative:
     links: Relevante links
     contacts: Kontaktpersoner
     partners: Samarbejdspartnere
-    partners_help: Vælg en eksisterende samarbejdspartner, eller skriv en ny og tryk Enter. Mindst én er påkrævet.
-    partners_required: Tilknyt mindst én samarbejdspartner.
+    partners_help: Vælg en eksisterende samarbejdspartner, eller skriv en ny og tryk Enter.
     author: Udfyldt af
     terms_help: Vælg eksisterende, eller skriv en ny og tryk Enter.
     completion_field_hint: Dette felt tæller med i udfyldningsgraden.

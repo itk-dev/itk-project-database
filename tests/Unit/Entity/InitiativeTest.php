@@ -216,11 +216,6 @@ final class InitiativeTest extends TestCase
 
         $initiative->removePartner($partner);
         self::assertCount(0, $initiative->getPartners());
-
-        $initiative->setPartners([(new Partner())->setName('A'), (new Partner())->setName('B')]);
-        self::assertCount(2, $initiative->getPartners());
-        $initiative->setPartners([]);
-        self::assertCount(0, $initiative->getPartners());
     }
 
     public function testImageCollectionLinksBackToInitiative(): void

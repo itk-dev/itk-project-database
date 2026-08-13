@@ -72,7 +72,7 @@ class Initiative extends AbstractEntity
     private Collection $contacts;
 
     /** @var Collection<int, Partner> */
-    #[Assert\Count(min: 1, minMessage: 'initiative.partners_required')]
+    #[Assert\Valid]
     #[ORM\ManyToMany(targetEntity: Partner::class, cascade: ['persist'])]
     #[ORM\JoinTable(name: 'initiative_partner')]
     private Collection $partners;
@@ -310,17 +310,6 @@ class Initiative extends AbstractEntity
     public function removePartner(Partner $partner): static
     {
         $this->partners->removeElement($partner);
-
-        return $this;
-    }
-
-    /** @param iterable<Partner> $partners */
-    public function setPartners(iterable $partners): static
-    {
-        $this->partners->clear();
-        foreach ($partners as $partner) {
-            $this->addPartner($partner);
-        }
 
         return $this;
     }
