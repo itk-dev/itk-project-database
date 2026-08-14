@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-26](https://github.com/itk-dev/itk-projects/pull/26)
+  Reflect the initiative list's filters in the address bar so they can be
+  deeplinked.
+
 ## [0.2.0] - 2026-06-30
 
 * [PR-23](https://github.com/itk-dev/itk-projects/pull/23)
