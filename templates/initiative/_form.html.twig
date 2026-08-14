@@ -46,6 +46,7 @@
         {% set title_attr = {'data-action': 'input->title-mirror#update', 'data-autosave-required': true} %}
         {% if not initiative.id %}{% set title_attr = title_attr|merge({autofocus: true}) %}{% endif %}
         {{ form_row(form.title, {attr: title_attr}) }}
+        {{ form_row(form.topic) }}
         <div class="form-grid">
             {{ form_row(form.area) }}
             {{ form_row(form.initiativeType) }}

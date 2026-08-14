@@ -184,6 +184,8 @@ dashboard:
 initiative:
     title: Title
     title_help: A short, descriptive name for the initiative.
+    topic: Topic
+    topic_help: "The wider programme this initiative is part of, e.g. “Digital Europe Blueprint for Data Space for smart and sustainable cities and communities”."
     area: Area
     area_help: The thematic area the initiative belongs to.
     description: Short description

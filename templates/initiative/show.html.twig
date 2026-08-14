@@ -29,6 +29,10 @@
                     <twig:Card:Header :title="'initiative.show.details'|trans" />
                     <div class="card__body">
                         {% if initiative.description %}<p class="prose">{{ initiative.description }}</p>{% else %}<p class="muted">—</p>{% endif %}
+                        {% if initiative.topic %}
+                            <h3 class="detail-subhead">{{ 'initiative.topic'|trans }}</h3>
+                            <p class="prose">{{ initiative.topic }}</p>
+                        {% endif %}
                         {% if initiative.statusAdditional %}
                             <h3 class="detail-subhead">{{ 'initiative.status_additional'|trans }}</h3>
                             <p class="prose">{{ initiative.statusAdditional }}</p>

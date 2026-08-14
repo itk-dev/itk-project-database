@@ -48,6 +48,7 @@ final class InitiativeTest extends TestCase
 
         $initiative = (new Initiative())
             ->setTitle('Grøn omstilling')
+            ->setTopic('Digital Europe Blueprint for Data Space')
             ->setArea($area)
             ->setDescription('Beskrivelse')
             ->setInitiativeType(InitiativeType::Project)
@@ -61,6 +62,7 @@ final class InitiativeTest extends TestCase
             ->setTimePeriodEnd($end);
 
         self::assertSame('Grøn omstilling', $initiative->getTitle());
+        self::assertSame('Digital Europe Blueprint for Data Space', $initiative->getTopic());
         self::assertSame($area, $initiative->getArea());
         self::assertSame('Beskrivelse', $initiative->getDescription());
         self::assertSame(InitiativeType::Project, $initiative->getInitiativeType());
