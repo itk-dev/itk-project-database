@@ -185,7 +185,7 @@ initiative:
     title: Titel
     title_help: Et kort, sigende navn på initiativet.
     topic: Emne
-    topic_help: "Det overordnede program, initiativet er en del af, fx “Digital Europe Blueprint for Data Space for smart and sustainable cities and communities”."
+    topic_help: Det overordnede program, initiativet er en del af.
     area: Område
     area_help: Det tematiske område initiativet hører under.
     description: Kort beskrivelse
