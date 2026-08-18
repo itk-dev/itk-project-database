@@ -1,17 +1,18 @@
 import { Controller } from "@hotwired/stimulus";
 
 /*
- * Guards a destructive submit behind a modal that spells out the consequences —
- * a plain confirm() can only carry text, and the point here is to link the
- * records that would be affected. Attached to the form; the trigger is a real
- * submit button, so with JavaScript off the form still posts unguarded rather
- * than the button going dead. showModal() brings Escape and focus trapping.
+ * The one way this app asks "are you sure?" — a modal that can spell out what a
+ * deletion takes with it, which confirm() cannot.
+ *
+ * The trigger is a plain button rather than a submit, so a click that lands
+ * before this controller has hydrated does nothing instead of deleting
+ * unguarded. Only the button inside the dialog submits. showModal() brings
+ * Escape and focus trapping with it.
  */
 export default class extends Controller {
     static targets = ["dialog"];
 
-    open(event) {
-        event.preventDefault();
+    open() {
         this.dialogTarget.showModal();
     }
 

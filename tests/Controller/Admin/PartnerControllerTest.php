@@ -177,6 +177,38 @@ final class PartnerControllerTest extends FunctionalTestCase
         $this->removePartner($id);
     }
 
+    public function testInitiativesAreSearchableByPartnerName(): void
+    {
+        $this->loginAsEditor();
+        $partner = $this->createPartner('Searchable Partner '.uniqid());
+        $initiative = $this->createInitiativeUsing($partner, 'Findable Initiative '.uniqid());
+
+        $crawler = $this->client->request('GET', '/initiatives?q='.urlencode((string) $partner->getName()));
+
+        $this->assertResponseIsSuccessful();
+        self::assertStringContainsString((string) $initiative->getTitle(), $crawler->filter('#initiative-results')->text());
+
+        $this->removeInitiative((string) $initiative->getId());
+        $this->removePartner((string) $partner->getId());
+    }
+
+    public function testTheDeleteTriggerCannotSubmitOnItsOwn(): void
+    {
+        $this->loginAsAdmin();
+        $id = (string) $this->createPartner('Guarded Partner '.uniqid())->getId();
+
+        $crawler = $this->client->request('GET', sprintf('/admin/partners/%s/edit', $id));
+
+        // The only submit lives inside the dialog, so a click that lands before
+        // Stimulus has hydrated cannot delete anything.
+        $buttons = $crawler->filter('form[action$="/delete"] button');
+        self::assertSame('button', $buttons->eq(0)->attr('type'));
+        self::assertCount(1, $crawler->filter('form[action$="/delete"] button[type="submit"]'));
+        self::assertCount(1, $crawler->filter('form[action$="/delete"] dialog button[type="submit"]'));
+
+        $this->removePartner($id);
+    }
+
     private function createPartner(string $name): Partner
     {
         $partner = (new Partner())->setName($name);

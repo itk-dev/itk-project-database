@@ -51,6 +51,7 @@ class InitiativeRepository extends ServiceEntityRepository
                 sprintf('i.id IN (SELECT istr.id FROM %s istr JOIN istr.strategies st WHERE LOWER(st.name) LIKE :q)', Initiative::class),
                 sprintf('i.id IN (SELECT isth.id FROM %s isth JOIN isth.stakeholders sh WHERE LOWER(sh.name) LIKE :q)', Initiative::class),
                 sprintf('i.id IN (SELECT icon.id FROM %s icon JOIN icon.contacts co WHERE LOWER(co.name) LIKE :q)', Initiative::class),
+                sprintf('i.id IN (SELECT ipar.id FROM %s ipar JOIN ipar.partners pa WHERE LOWER(pa.name) LIKE :q)', Initiative::class),
                 // Department and area are related entities searched by their stored
                 // name ("nik" should find "Teknik og Miljø").
                 sprintf('i.id IN (SELECT idep.id FROM %s idep JOIN idep.organizationalAnchoring dep WHERE LOWER(dep.name) LIKE :q)', Initiative::class),

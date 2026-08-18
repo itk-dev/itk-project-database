@@ -5,10 +5,10 @@
 {% block admin_content %}
     <twig:Page:Header :title="user.email" style="margin-bottom: var(--itk-space-5);">
         {% if user.id != app.user.id %}
-            <form method="post" action="{{ path('admin_user_delete', {id: user.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete-user-' ~ user.id) }}">
-                <button type="submit" class="btn btn--danger">{{ 'action.delete'|trans }}</button>
-            </form>
+            <twig:ConfirmDelete
+                :action="path('admin_user_delete', {id: user.id})"
+                :token="csrf_token('delete-user-' ~ user.id)"
+                :title="'action.confirm_delete_title'|trans({'%name%': user.email})" />
         {% endif %}
     </twig:Page:Header>
 

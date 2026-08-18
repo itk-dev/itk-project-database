@@ -8,6 +8,7 @@ use App\Entity\Partner;
 use App\Form\DataTransformer\PartnersTextTransformer;
 use App\Repository\PartnerRepository;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 
 final class PartnersTextTransformerTest extends TestCase
 {
@@ -47,6 +48,18 @@ final class PartnersTextTransformerTest extends TestCase
 
         // "aarhus universitet" duplicates "Aarhus Universitet" (case-insensitive) and the empty segment is skipped.
         self::assertCount(2, $transformer->reverseTransform('Aarhus Universitet, Alexandra Instituttet, , aarhus universitet'));
+    }
+
+    public function testReverseTransformRejectsANameTooLongForTheColumn(): void
+    {
+        try {
+            $this->transformer()->reverseTransform(str_repeat('a', Partner::NAME_MAX_LENGTH + 1));
+            self::fail('An over-long partner name should not reach the database.');
+        } catch (TransformationFailedException $failure) {
+            // Reported on the partners field itself, which a cascaded entity
+            // violation could not be.
+            self::assertSame('partner.name_too_long', $failure->getInvalidMessage());
+        }
     }
 
     private function transformer(): PartnersTextTransformer

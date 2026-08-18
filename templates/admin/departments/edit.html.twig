@@ -7,10 +7,10 @@
         <twig:block name="breadcrumb">
             <div class="breadcrumb"><a href="{{ path('admin_departments') }}">{{ 'nav.departments'|trans }}</a></div>
         </twig:block>
-        <form method="post" action="{{ path('admin_department_delete', {id: department.id}) }}" onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
-            <input type="hidden" name="_token" value="{{ csrf_token('delete-department-' ~ department.id) }}">
-            <button type="submit" class="btn btn--danger">{{ 'action.delete'|trans }}</button>
-        </form>
+        <twig:ConfirmDelete
+            :action="path('admin_department_delete', {id: department.id})"
+            :token="csrf_token('delete-department-' ~ department.id)"
+            :title="'action.confirm_delete_title'|trans({'%name%': department.name})" />
     </twig:Page:Header>
     {{ include('admin/departments/_form.html.twig', {button_label: 'action.save'}) }}
 {% endblock %}

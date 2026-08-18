@@ -1,0 +1,23 @@
+{% props action, token, title, triggerClass = 'btn btn--danger', triggerTitle = null, triggerContent = null, confirmLabel = null, frame = null %}
+
+<form method="post" action="{{ action }}"{% if frame %} data-turbo-frame="{{ frame }}"{% endif %} data-controller="confirm-delete">
+    <input type="hidden" name="_token" value="{{ token }}">
+    {# Deliberately not a submit button: the dialog is the only way through, so a
+       click landing before Stimulus has hydrated does nothing at all. #}
+    <button type="button" class="{{ triggerClass }}" data-action="confirm-delete#open"
+            {% if triggerTitle %}title="{{ triggerTitle }}" aria-label="{{ triggerTitle }}"{% endif %}>
+        {{- triggerContent ?? 'action.delete'|trans -}}
+    </button>
+
+    <dialog class="confirm" data-confirm-delete-target="dialog" data-action="click->confirm-delete#backdrop">
+        <div class="confirm__body">
+            <h2 class="confirm__title">{{ title }}</h2>
+            {% block content %}{% endblock %}
+            <p class="confirm__warning">{{ 'action.irreversible'|trans }}</p>
+        </div>
+        <div class="confirm__actions">
+            <button type="button" class="btn btn--ghost" data-action="confirm-delete#cancel">{{ 'action.cancel'|trans }}</button>
+            <button type="submit" class="btn btn--danger">{{ confirmLabel ?? 'action.delete'|trans }}</button>
+        </div>
+    </dialog>
+</form>
