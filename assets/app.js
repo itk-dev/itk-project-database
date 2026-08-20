@@ -159,3 +159,11 @@ document.addEventListener("turbo:load", () => {
 document.addEventListener("turbo:frame-load", () => {
     initCollections();
 });
+
+// Submitting from inside a confirm dialog caches the page with the dialog still
+// open; restoring that snapshot would render it inline, out of the top layer.
+document.addEventListener("turbo:before-cache", () => {
+    document.querySelectorAll("dialog[open]").forEach((dialog) => {
+        dialog.close();
+    });
+});
