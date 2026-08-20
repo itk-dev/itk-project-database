@@ -9,7 +9,7 @@
         {{- triggerContent ?? 'action.delete'|trans -}}
     </button>
 
-    <dialog class="confirm" data-confirm-delete-target="dialog" data-action="click->confirm-delete#backdrop">
+    <dialog class="confirm" aria-label="{{ title }}" data-confirm-delete-target="dialog" data-action="click->confirm-delete#backdrop">
         <div class="confirm__body">
             <h2 class="confirm__title">{{ title }}</h2>
             {% block content %}{% endblock %}
