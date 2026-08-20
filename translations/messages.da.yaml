@@ -113,7 +113,7 @@ action:
     add_image: Tilføj billede
     add_attachment: Tilføj fil
     remove: Fjern
-    confirm_delete_title: 'Slet “%name%”?'
+    confirm_delete_title: "Slet “%name%”?"
     irreversible: Denne handling kan ikke fortrydes.
 
 common:
@@ -276,7 +276,6 @@ partner:
     name_help: Samarbejdspartnerens navn, som det vises på initiativer.
     name_duplicate: Der findes allerede en samarbejdspartner med dette navn.
     name_comma: Navnet må ikke indeholde komma.
-    name_too_long: "En samarbejdspartners navn må højst være på %limit% tegn."
     description: Beskrivelse
     description_help: En kort beskrivelse af samarbejdspartneren.
     website: Hjemmeside

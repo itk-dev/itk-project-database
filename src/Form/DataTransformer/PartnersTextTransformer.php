@@ -9,7 +9,6 @@ use App\Repository\PartnerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Exception\TransformationFailedException;
 
 /**
  * Bridges a comma-separated text input and a collection of {@see Partner}s:
@@ -54,21 +53,15 @@ final readonly class PartnersTextTransformer implements DataTransformerInterface
 
         $seen = [];
         foreach (explode(',', $value) as $name) {
-            $name = trim($name);
+            // Clamped rather than rejected: autosave is this form's only save path
+            // and it cannot redraw to show a field error, so refusing the value
+            // would block every later save with no way to see why.
+            $name = mb_substr(trim($name), 0, Partner::NAME_MAX_LENGTH);
             $key = mb_strtolower($name);
             if ('' === $name || isset($seen[$key])) {
                 continue;
             }
             $seen[$key] = true;
-
-            // Caught here rather than by a constraint on Partner: an error raised
-            // inside the entity would land on a path this single input cannot show.
-            if (mb_strlen($name) > Partner::NAME_MAX_LENGTH) {
-                $failure = new TransformationFailedException(sprintf('Partner name of %d characters exceeds the %d the column holds.', mb_strlen($name), Partner::NAME_MAX_LENGTH));
-                $failure->setInvalidMessage('partner.name_too_long', ['%limit%' => Partner::NAME_MAX_LENGTH]);
-
-                throw $failure;
-            }
 
             $partners->add($this->partnerRepository->findOrCreate($name));
         }

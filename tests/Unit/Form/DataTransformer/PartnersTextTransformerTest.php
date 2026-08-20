@@ -8,7 +8,6 @@ use App\Entity\Partner;
 use App\Form\DataTransformer\PartnersTextTransformer;
 use App\Repository\PartnerRepository;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\Exception\TransformationFailedException;
 
 final class PartnersTextTransformerTest extends TestCase
 {
@@ -50,16 +49,18 @@ final class PartnersTextTransformerTest extends TestCase
         self::assertCount(2, $transformer->reverseTransform('Aarhus Universitet, Alexandra Instituttet, , aarhus universitet'));
     }
 
-    public function testReverseTransformRejectsANameTooLongForTheColumn(): void
+    public function testReverseTransformClampsANameTooLongForTheColumn(): void
     {
-        try {
-            $this->transformer()->reverseTransform(str_repeat('a', Partner::NAME_MAX_LENGTH + 1));
-            self::fail('An over-long partner name should not reach the database.');
-        } catch (TransformationFailedException $failure) {
-            // Reported on the partners field itself, which a cascaded entity
-            // violation could not be.
-            self::assertSame('partner.name_too_long', $failure->getInvalidMessage());
-        }
+        $repository = $this->createMock(PartnerRepository::class);
+        $repository->expects(self::once())
+            ->method('findOrCreate')
+            ->willReturnCallback(static fn (string $name): Partner => (new Partner())->setName($name));
+
+        $transformer = new PartnersTextTransformer($repository);
+        $partners = $transformer->reverseTransform(str_repeat('a', Partner::NAME_MAX_LENGTH + 10));
+
+        // Clamping keeps the save going; rejecting would stall autosave silently.
+        self::assertSame(str_repeat('a', Partner::NAME_MAX_LENGTH), $partners->first()->getName());
     }
 
     private function transformer(): PartnersTextTransformer

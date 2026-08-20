@@ -113,7 +113,7 @@ action:
     add_image: Add image
     add_attachment: Add file
     remove: Remove
-    confirm_delete_title: 'Delete “%name%”?'
+    confirm_delete_title: "Delete “%name%”?"
     irreversible: This action cannot be undone.
 
 common:
@@ -276,7 +276,6 @@ partner:
     name_help: The partner's name as shown on initiatives.
     name_duplicate: A partner with this name already exists.
     name_comma: The name cannot contain a comma.
-    name_too_long: "A partner name cannot be longer than %limit% characters."
     description: Description
     description_help: A brief description of the partner.
     website: Website
