@@ -75,14 +75,8 @@ class PartnerController extends AbstractController
         ]);
     }
 
-    /**
-     * Deleting a partner also pulls it off every initiative that referenced it —
-     * `initiative_partner` is cleared by the join table's ON DELETE CASCADE, which
-     * Doctrine never sees because the association is unidirectional. The admin is
-     * told which initiatives are affected before confirming. Recording who went
-     * ahead anyway is still to come: that belongs here, and needs
-     * findInitiativesUsing() called before the flush destroys the evidence.
-     */
+    // Also detaches the partner from every initiative: the join table is cleared by
+    // its ON DELETE CASCADE, which Doctrine never sees (unidirectional association).
     #[Route('/{id}/delete', name: 'admin_partner_delete', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     public function delete(Request $request, Partner $partner, EntityManagerInterface $entityManager): Response
     {

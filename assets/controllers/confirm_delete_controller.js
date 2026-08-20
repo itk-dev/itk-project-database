@@ -1,14 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
-/*
- * The one way this app asks "are you sure?" — a modal that can spell out what a
- * deletion takes with it, which confirm() cannot.
- *
- * The trigger is a plain button rather than a submit, so a click that lands
- * before this controller has hydrated does nothing instead of deleting
- * unguarded. Only the button inside the dialog submits. showModal() brings
- * Escape and focus trapping with it.
- */
+// The trigger is a plain button, so a click landing before this controller has
+// hydrated does nothing; only the button inside the dialog submits.
 export default class extends Controller {
     static targets = ["dialog"];
 

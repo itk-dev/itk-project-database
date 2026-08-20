@@ -72,12 +72,8 @@ class Initiative extends AbstractEntity
     private Collection $contacts;
 
     /**
-     * No cascading validation, as on the other free-tagging collections: a
-     * violation inside a Partner would carry the path partners[0].name, which the
-     * single text input on the initiative form cannot render, and autosave — the
-     * form's only save path — never redraws to show it. What the initiative form
-     * can put wrong is the name it types, so {@see \App\Form\DataTransformer\PartnersTextTransformer}
-     * checks that and reports it on the field itself.
+     * Not cascade-validated, as on the other free-tagging collections: a violation
+     * would carry the path partners[0].name, which the single text input cannot render.
      *
      * @var Collection<int, Partner>
      */

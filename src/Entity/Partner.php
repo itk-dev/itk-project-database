@@ -17,15 +17,9 @@ class Partner extends AbstractEntity
 {
     public const int NAME_MAX_LENGTH = 255;
 
-    /**
-     * Duplicate names are kept out by {@see UniqueEntity} and by the
-     * case-insensitive lookup in {@see PartnerRepository::findOrCreate()},
-     * not by a unique index. Partners are created inline from the autosaving
-     * initiative form, where lookup and insert are separate steps: a unique index
-     * would turn two saves racing on the same new name into an uncaught driver
-     * exception, where the worst this can do is leave two rows for an admin to
-     * merge. Contact and Term, created the same way, are modelled the same.
-     */
+    // UniqueEntity only guards the admin form; partners created inline from the
+    // initiative form are not cascade-validated, so duplicates there are kept out
+    // only by findOrCreate()'s lookup, which two concurrent saves can race past.
     #[Assert\NotBlank]
     #[Assert\Length(max: self::NAME_MAX_LENGTH)]
     // Comma is the separator of the free-tagging field on the initiative form, so a
