@@ -14,7 +14,7 @@ final class Version20260627134918 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add the area table and replace the initiative category column with an area reference.';
     }
 
     public function up(Schema $schema): void
