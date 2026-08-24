@@ -7,11 +7,51 @@ namespace App\Tests\Controller;
 use App\Entity\Initiative;
 use App\Entity\InitiativeAttachment;
 use App\Entity\InitiativeImage;
+use App\Enum\Status;
 use App\Tests\FunctionalTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 final class InitiativeControllerTest extends FunctionalTestCase
 {
+    public function testIndexAppliesFiltersFromTheQueryString(): void
+    {
+        $this->loginAsAdmin();
+        $match = $this->createInitiative('Deeplinked initiative', Status::Active);
+        $other = $this->createInitiative('Deeplinked other initiative', Status::Cancelled);
+
+        // Opening a shared link must narrow the list, not just fill the form.
+        $crawler = $this->client->request('GET', '/initiatives?q=Deeplinked&status=active&sort=title&direction=ASC');
+
+        $this->assertResponseIsSuccessful();
+        self::assertSame('active', $crawler->filter('#initiative-filters select[name="status"] option[selected]')->attr('value'));
+        self::assertSame('Deeplinked', $crawler->filter('#initiative-filters input[name="q"]')->attr('value'));
+
+        $titles = $crawler->filter('#initiative-results .cell-title')->each(static fn ($node): string => $node->text());
+        self::assertContains('Deeplinked initiative', $titles);
+        self::assertNotContains('Deeplinked other initiative', $titles);
+
+        $this->removeInitiative((string) $match->getId());
+        $this->removeInitiative((string) $other->getId());
+    }
+
+    public function testIndexSearchFieldDoesNotSubmitOnEnter(): void
+    {
+        $this->loginAsAdmin();
+        $crawler = $this->client->request('GET', '/initiatives');
+
+        $this->assertResponseIsSuccessful();
+
+        // Enter clicks the form's default button, so an owned submit button
+        // anywhere would turn it into a CSV download.
+        self::assertCount(0, $crawler->filter('#initiative-filters button[type="submit"], #initiative-filters input[type="submit"]'));
+        self::assertCount(0, $crawler->filter('button[form="initiative-filters"], input[form="initiative-filters"]'));
+
+        $search = $crawler->filter('#initiative-filters input[name="q"]');
+        self::assertStringContainsString('keydown.enter->live-search#ignoreEnter', (string) $search->attr('data-action'));
+        // Merged onto the field's attributes, not swapped in.
+        self::assertNotEmpty($search->attr('placeholder'));
+    }
+
     public function testNewPersistsInitiativeWithInlineContactAndDropsEmptyMedia(): void
     {
         $this->loginAsAdmin();
@@ -253,9 +293,9 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $this->removeInitiative($id);
     }
 
-    private function createInitiative(string $title): Initiative
+    private function createInitiative(string $title, ?Status $status = null): Initiative
     {
-        $initiative = (new Initiative())->setTitle($title);
+        $initiative = (new Initiative())->setTitle($title)->setStatus($status);
         $em = $this->entityManager();
         $em->persist($initiative);
         $em->flush();
