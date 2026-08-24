@@ -186,6 +186,8 @@ dashboard:
 initiative:
     title: Title
     title_help: A short, descriptive name for the initiative.
+    topic: Topic
+    topic_help: The wider programme this initiative is part of.
     area: Area
     area_help: The thematic area the initiative belongs to.
     description: Short description

@@ -28,6 +28,12 @@ class AppFixtures extends Fixture
     private const array DEPARTMENTS = ['ITK Development', 'CFIA', 'Aarhus CityLab', 'Stab', 'OS2', 'AI Lab', 'IOT Lab', 'GTM', 'Fut Lab'];
     private const array PARTNERS = ['Aarhus Universitet', 'VIA University College', 'Alexandra Instituttet', 'Teknologisk Institut', 'Region Midtjylland', 'Erhverv Aarhus', 'Danmarks Tekniske Universitet', 'Aarhus Vand', 'AffaldVarme Aarhus', 'Dansk Industri'];
     private const array AREAS = ['Klima og miljø', 'Mobilitet', 'Velfærd', 'Kultur og fritid', 'Uddannelse', 'Erhverv', 'Digitalisering', 'Byudvikling'];
+    private const array TOPICS = [
+        'Digital Europe Blueprint for Data Space for smart and sustainable cities and communities.',
+        'Horizon Europe — Climate-neutral and smart cities mission.',
+        'Den fællesoffentlige digitaliseringsstrategi 2022–2026.',
+        'Interreg Øresund-Kattegat-Skagerrak.',
+    ];
 
     public function __construct(private readonly UserPasswordHasherInterface $hasher)
     {
@@ -140,6 +146,11 @@ class AppFixtures extends Fixture
                 ->setEndorsement(0 === $index % 3 ? false : true)
                 ->setBudget(mt_rand(1, 40) * 50000);
             $initiative->setCreatedBy($users[array_rand($users)]);
+
+            // Not every initiative belongs to a wider programme.
+            if (0 !== $index % 3) {
+                $initiative->setTopic(self::TOPICS[$index % \count(self::TOPICS)]);
+            }
 
             if (0 !== $index % 4) {
                 $initiative->setEndorsementAuthor($endorsers[array_rand($endorsers)]);

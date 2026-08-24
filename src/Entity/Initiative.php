@@ -35,6 +35,14 @@ class Initiative extends AbstractEntity
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    /**
+     * Which wider programme the initiative is a part of — the title names this
+     * project, the topic places it ("DS4SSCC" → "Digital Europe Blueprint for
+     * Data Space for smart and sustainable cities and communities").
+     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $topic = null;
+
     #[ORM\ManyToOne(targetEntity: Area::class)]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Area $area = null;
@@ -141,6 +149,18 @@ class Initiative extends AbstractEntity
     public function setTitle(?string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getTopic(): ?string
+    {
+        return $this->topic;
+    }
+
+    public function setTopic(?string $topic): static
+    {
+        $this->topic = $topic;
 
         return $this;
     }

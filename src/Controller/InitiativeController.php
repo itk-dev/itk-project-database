@@ -64,7 +64,8 @@ class InitiativeController extends AbstractController
         $response = new StreamedResponse(function () use ($rows, $translator, $translate): void {
             $csv = Writer::createFromStream(fopen('php://output', 'w'));
             $csv->insertOne([
-                'id', $translator->trans('initiative.title'), $translator->trans('initiative.status'),
+                'id', $translator->trans('initiative.title'), $translator->trans('initiative.topic'),
+                $translator->trans('initiative.status'),
                 $translator->trans('initiative.area'), $translator->trans('initiative.initiative_type'),
                 $translator->trans('initiative.organizational_anchoring'), $translator->trans('initiative.endorsement'),
                 $translator->trans('initiative.endorsement_author'), $translator->trans('initiative.budget'),
@@ -81,6 +82,7 @@ class InitiativeController extends AbstractController
                 $csv->insertOne([
                     (string) $row->getId(),
                     $row->getTitle(),
+                    $row->getTopic(),
                     $translate($row->getStatus()),
                     $row->getArea()?->getName(),
                     $translate($row->getInitiativeType()),

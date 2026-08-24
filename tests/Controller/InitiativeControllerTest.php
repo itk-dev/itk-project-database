@@ -90,6 +90,37 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $em->flush();
     }
 
+    public function testTopicIsSavedShownSearchableAndExported(): void
+    {
+        $this->loginAsAdmin();
+        $topic = 'Digital Europe Blueprint '.uniqid();
+
+        $crawler = $this->client->request('GET', '/initiatives/new');
+        $token = (string) $crawler->filter('input[name="initiative[_token]"]')->attr('value');
+        $this->client->request('POST', '/initiatives/new', [
+            'initiative' => ['title' => 'Topic initiative', 'topic' => $topic, '_token' => $token],
+        ]);
+        $this->assertResponseRedirects();
+
+        $initiative = $this->initiatives()->findOneBy(['title' => 'Topic initiative']);
+        self::assertInstanceOf(Initiative::class, $initiative);
+        self::assertSame($topic, $initiative->getTopic());
+        $id = (string) $initiative->getId();
+
+        $crawler = $this->client->request('GET', '/initiatives/'.$id);
+        self::assertStringContainsString($topic, $crawler->filter('.card__body')->first()->text());
+
+        // The free-text filter searches the topic alongside title and description.
+        $crawler = $this->client->request('GET', '/initiatives?q='.urlencode($topic));
+        self::assertStringContainsString('Topic initiative', $crawler->filter('#initiative-results')->text());
+
+        $this->client->request('GET', '/initiatives/export?q='.urlencode($topic));
+        $csv = (string) $this->client->getInternalResponse()->getContent();
+        self::assertStringContainsString($topic, $csv);
+
+        $this->removeInitiative($id);
+    }
+
     public function testEditUpdatesInitiative(): void
     {
         $this->loginAsAdmin();
