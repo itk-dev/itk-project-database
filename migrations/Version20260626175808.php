@@ -14,7 +14,7 @@ final class Version20260626175808 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Create the initial schema: user, initiative with its images and attachments, and the contact, department and term entities it references.';
     }
 
     public function up(Schema $schema): void

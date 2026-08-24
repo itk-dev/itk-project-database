@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-25](https://github.com/itk-dev/itk-projects/pull/25)
+  Add partners to initiatives, with an admin CRUD, free-text search and CSV
+  export. Every delete across the app now confirms through one shared dialog,
+  which for partners lists and links the initiatives they would be detached
+  from.
 * [PR-26](https://github.com/itk-dev/itk-projects/pull/26)
   Reflect the initiative list's filters in the address bar so they can be
   deeplinked.

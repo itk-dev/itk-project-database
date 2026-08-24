@@ -117,6 +117,14 @@ function initContactSelect() {
     );
 }
 
+function initPartnerSelect() {
+    initCreatableSelect(
+        "[data-partner-select]",
+        "partnerPool",
+        (value) => value,
+    );
+}
+
 // One delegated handler on the document (which survives Turbo navigations and
 // cache restores) both opens the menu — when the click lands on the toggle —
 // and closes it on any outside click. Delegation avoids per-page binding, which
@@ -142,6 +150,7 @@ document.addEventListener("click", (event) => {
 document.addEventListener("turbo:load", () => {
     initCollections();
     initContactSelect();
+    initPartnerSelect();
     initTermSelect();
 });
 
@@ -149,4 +158,12 @@ document.addEventListener("turbo:load", () => {
 // its collections, so re-bind the add/remove buttons on the fresh markup.
 document.addEventListener("turbo:frame-load", () => {
     initCollections();
+});
+
+// Submitting from inside a confirm dialog caches the page with the dialog still
+// open; restoring that snapshot would render it inline, out of the top layer.
+document.addEventListener("turbo:before-cache", () => {
+    document.querySelectorAll("dialog[open]").forEach((dialog) => {
+        dialog.close();
+    });
 });

@@ -64,6 +64,8 @@ final class InitiativeControllerTest extends FunctionalTestCase
                 'title' => 'Coverage initiative',
                 // A typed name creates a new contact on the fly and attaches it.
                 'contacts' => 'Coverage Contact',
+                // Same free-tagging behaviour for partners.
+                'partners' => 'Coverage Partner',
                 '_token' => $token,
             ],
         ]);
@@ -74,12 +76,16 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $initiative = $this->initiatives()->findOneBy(['title' => 'Coverage initiative']);
         self::assertInstanceOf(Initiative::class, $initiative);
         self::assertGreaterThanOrEqual(1, $initiative->getContacts()->count(), 'Inline contact should be merged in.');
+        self::assertGreaterThanOrEqual(1, $initiative->getPartners()->count(), 'Inline partner should be merged in.');
 
         $em->remove($initiative);
         $em->flush();
 
         foreach ($this->contacts()->findBy(['name' => 'Coverage Contact']) as $contact) {
             $em->remove($contact);
+        }
+        foreach ($this->partners()->findBy(['name' => 'Coverage Partner']) as $partner) {
+            $em->remove($partner);
         }
         $em->flush();
     }
