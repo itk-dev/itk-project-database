@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   export. Every delete across the app now confirms through one shared dialog,
   which for partners lists and links the initiatives they would be detached
   from.
+* [PR-26](https://github.com/itk-dev/itk-projects/pull/26)
+  Reflect the initiative list's filters in the address bar so they can be
+  deeplinked.
 
 ## [0.2.0] - 2026-06-30
 
