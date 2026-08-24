@@ -1595,6 +1595,65 @@ body.is-lightbox-open {
     overflow: hidden;
 }
 
+.confirm {
+    width: min(520px, calc(100vw - var(--itk-space-6)));
+    margin: auto;
+    padding: 0;
+    color: var(--itk-ink);
+    background-color: var(--itk-surface);
+    border: 1px solid var(--itk-slate-200);
+    border-radius: var(--itk-radius-3);
+    box-shadow: var(--itk-shadow-3);
+}
+
+.confirm::backdrop {
+    background-color: rgba(17, 19, 24, 0.55);
+}
+
+.confirm__body {
+    padding: var(--itk-space-5);
+    font-size: var(--itk-text-sm);
+}
+
+.confirm__body p {
+    margin: 0;
+}
+
+.confirm__title {
+    margin: 0 0 var(--itk-space-3);
+    font-size: var(--itk-text-md);
+}
+
+.confirm__list {
+    max-height: 240px;
+    margin: var(--itk-space-3) 0 0;
+    padding-left: var(--itk-space-5);
+    overflow-y: auto;
+}
+
+.confirm__list li + li {
+    margin-top: var(--itk-space-1);
+}
+
+.confirm__body p.confirm__warning {
+    margin-top: var(--itk-space-4);
+    color: var(--itk-accent);
+}
+
+.confirm__body p.confirm__warning + p.confirm__warning {
+    margin-top: var(--itk-space-1);
+}
+
+.confirm__actions {
+    display: flex;
+    gap: var(--itk-space-3);
+    justify-content: flex-end;
+    padding: var(--itk-space-4) var(--itk-space-5);
+    background-color: var(--itk-slate-50);
+    border-top: 1px solid var(--itk-slate-200);
+    border-radius: 0 0 var(--itk-radius-3) var(--itk-radius-3);
+}
+
 .form-actions {
     display: flex;
     gap: var(--itk-space-3);

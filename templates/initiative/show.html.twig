@@ -66,6 +66,25 @@
                     </div>
                 </div>
 
+                <div class="card">
+                    <twig:Card:Header :title="'initiative.show.partners'|trans" />
+                    <div class="card__body">
+                        {% if initiative.partners|length > 0 %}
+                            {% for partner in initiative.partners %}
+                                <div class="contact-card">
+                                    <div class="contact-card__name">{{ partner.name }}</div>
+                                    {% if partner.description %}<div class="contact-card__meta">{{ partner.description }}</div>{% endif %}
+                                    {% if partner.website %}
+                                        <div class="contact-card__meta"><a href="{{ partner.website }}" target="_blank" rel="noopener">{{ partner.website }}</a></div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="muted">{{ 'initiative.show.no_partners'|trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
                 {% if initiative.images|length > 0 or initiative.attachments|length > 0 %}
                     <div class="card">
                         <twig:Card:Header :title="'initiative.show.media'|trans" />

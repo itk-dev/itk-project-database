@@ -170,6 +170,11 @@ class InitiativeType extends AbstractType
                 'required' => false,
                 'help' => 'initiative.terms_help',
             ])
+            ->add('partners', PartnersTextType::class, [
+                'label' => 'initiative.partners',
+                'required' => false,
+                'help' => 'initiative.partners_help',
+            ])
             ->add('images', CollectionType::class, [
                 'label' => 'initiative.images',
                 'entry_type' => InitiativeImageType::class,

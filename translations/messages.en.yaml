@@ -58,7 +58,7 @@ tour:
         intro: "This is the Project database — where we gather the departments' initiatives and projects in one place, so we can see what's happening across them."
         dashboard: "The overview shows key figures, status and any opportunities for collaboration across departments."
         create: "Browse every initiative from the Initiativer menu — or create a new one right away with the Opret button."
-        admin: "Inside this menu you'll find Administration, where you can create, view and edit departments, areas and contacts."
+        admin: "Inside this menu you'll find Administration, where you can create, view and edit departments, areas, partners and contacts."
         outro: "You're all set! I'm always right here in the corner if you need a tip. 🌟"
 
 autosave:
@@ -83,6 +83,7 @@ nav:
     dashboard: Overview
     initiatives: Initiatives
     contacts: Contacts
+    partners: Partners
     departments: Departments
     areas: Areas
     users: Users
@@ -112,7 +113,8 @@ action:
     add_image: Add image
     add_attachment: Add file
     remove: Remove
-    confirm_delete: Are you sure you want to delete this?
+    confirm_delete_title: "Delete “%name%”?"
+    irreversible: This action cannot be undone.
 
 common:
     yes: Yes
@@ -214,6 +216,8 @@ initiative:
     time_period: Time period
     links: Relevant links
     contacts: Contacts
+    partners: Partners
+    partners_help: Choose an existing partner, or type a new and press Enter.
     author: Filled out by
     terms_help: Choose an existing one, or type a new and press Enter.
     completion_field_hint: This field counts towards the completion rate.
@@ -232,9 +236,11 @@ initiative:
     show:
         details: Details
         contacts: Contacts
+        partners: Partners
         classification: Classification
         media: Files and images
         no_contacts: No contacts attached.
+        no_partners: No partners attached.
     empty:
         title: No initiatives found
         hint: Try adjusting your filters, or create a new initiative.
@@ -243,7 +249,7 @@ initiative:
         classification: Classification
         endorsement: Endorsement
         economy: Economy and time
-        relations: Stakeholders and contacts
+        relations: Stakeholders, partners and contacts
         media: Files and images
         meta: Other
 
@@ -266,6 +272,34 @@ contact:
     empty:
         title: No contacts yet
         hint: Create a contact, or add one directly on an initiative.
+
+partner:
+    name: Name
+    name_help: The partner's name as shown on initiatives.
+    name_duplicate: A partner with this name already exists.
+    name_comma: The name cannot contain a comma.
+    description: Description
+    description_help: A brief description of the partner.
+    website: Website
+    website_help: Link to the partner's website, if any.
+    usage: Used in
+    usage_none: Not in use
+    usage_count: "{1}1 initiative|]1,Inf[%count% initiatives"
+    delete:
+        in_use: "{1}This partner is attached to one initiative:|]1,Inf[This partner is attached to %count% initiatives:"
+        unused: This partner is not attached to any initiatives.
+        consequence: Deleting removes the partner from the initiatives above.
+        confirm: Delete anyway
+    index:
+        title: Partners
+        subtitle: Partners that can be attached to initiatives.
+    new:
+        title: New partner
+    edit:
+        title: Edit partner
+    empty:
+        title: No partners yet
+        hint: Create a partner, or add one directly on an initiative.
 
 department:
     name: Name
@@ -336,6 +370,10 @@ flash:
         created: The contact was created.
         updated: The contact was updated.
         deleted: The contact was deleted.
+    partner:
+        created: The partner was created.
+        updated: The partner was updated.
+        deleted: The partner was deleted.
     department:
         created: The department was created.
         updated: The department was updated.
