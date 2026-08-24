@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-* [PR-25](https://github.com/itk-dev/itk-projects/pull/25)
+* [PR-27](https://github.com/itk-dev/itk-projects/pull/27)
   Add a Topic field to initiatives, naming the wider programme an initiative is
   part of. Shown under the title on the form and on the initiative page, covered
   by the free-text filter, and included in the CSV export.
+* [PR-25](https://github.com/itk-dev/itk-projects/pull/25)
+  Add a Partner entity (name, description, website) with an admin CRUD, and
+  require every initiative to have at least one partner — attached through a
+  searchable multiselect that can create new partners on the fly.
 * [PR-26](https://github.com/itk-dev/itk-projects/pull/26)
   Reflect the initiative list's filters in the address bar so they can be
   deeplinked.
