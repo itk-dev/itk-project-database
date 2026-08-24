@@ -7,11 +7,51 @@ namespace App\Tests\Controller;
 use App\Entity\Initiative;
 use App\Entity\InitiativeAttachment;
 use App\Entity\InitiativeImage;
+use App\Enum\Status;
 use App\Tests\FunctionalTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 final class InitiativeControllerTest extends FunctionalTestCase
 {
+    public function testIndexAppliesFiltersFromTheQueryString(): void
+    {
+        $this->loginAsAdmin();
+        $match = $this->createInitiative('Deeplinked initiative', Status::Active);
+        $other = $this->createInitiative('Deeplinked other initiative', Status::Cancelled);
+
+        // Opening a shared link must narrow the list, not just fill the form.
+        $crawler = $this->client->request('GET', '/initiatives?q=Deeplinked&status=active&sort=title&direction=ASC');
+
+        $this->assertResponseIsSuccessful();
+        self::assertSame('active', $crawler->filter('#initiative-filters select[name="status"] option[selected]')->attr('value'));
+        self::assertSame('Deeplinked', $crawler->filter('#initiative-filters input[name="q"]')->attr('value'));
+
+        $titles = $crawler->filter('#initiative-results .cell-title')->each(static fn ($node): string => $node->text());
+        self::assertContains('Deeplinked initiative', $titles);
+        self::assertNotContains('Deeplinked other initiative', $titles);
+
+        $this->removeInitiative((string) $match->getId());
+        $this->removeInitiative((string) $other->getId());
+    }
+
+    public function testIndexSearchFieldDoesNotSubmitOnEnter(): void
+    {
+        $this->loginAsAdmin();
+        $crawler = $this->client->request('GET', '/initiatives');
+
+        $this->assertResponseIsSuccessful();
+
+        // Enter clicks the form's default button, so an owned submit button
+        // anywhere would turn it into a CSV download.
+        self::assertCount(0, $crawler->filter('#initiative-filters button[type="submit"], #initiative-filters input[type="submit"]'));
+        self::assertCount(0, $crawler->filter('button[form="initiative-filters"], input[form="initiative-filters"]'));
+
+        $search = $crawler->filter('#initiative-filters input[name="q"]');
+        self::assertStringContainsString('keydown.enter->live-search#ignoreEnter', (string) $search->attr('data-action'));
+        // Merged onto the field's attributes, not swapped in.
+        self::assertNotEmpty($search->attr('placeholder'));
+    }
+
     public function testNewPersistsInitiativeWithInlineContactAndDropsEmptyMedia(): void
     {
         $this->loginAsAdmin();
@@ -24,6 +64,8 @@ final class InitiativeControllerTest extends FunctionalTestCase
                 'title' => 'Coverage initiative',
                 // A typed name creates a new contact on the fly and attaches it.
                 'contacts' => 'Coverage Contact',
+                // Same free-tagging behaviour for partners.
+                'partners' => 'Coverage Partner',
                 '_token' => $token,
             ],
         ]);
@@ -34,6 +76,7 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $initiative = $this->initiatives()->findOneBy(['title' => 'Coverage initiative']);
         self::assertInstanceOf(Initiative::class, $initiative);
         self::assertGreaterThanOrEqual(1, $initiative->getContacts()->count(), 'Inline contact should be merged in.');
+        self::assertGreaterThanOrEqual(1, $initiative->getPartners()->count(), 'Inline partner should be merged in.');
 
         $em->remove($initiative);
         $em->flush();
@@ -41,7 +84,41 @@ final class InitiativeControllerTest extends FunctionalTestCase
         foreach ($this->contacts()->findBy(['name' => 'Coverage Contact']) as $contact) {
             $em->remove($contact);
         }
+        foreach ($this->partners()->findBy(['name' => 'Coverage Partner']) as $partner) {
+            $em->remove($partner);
+        }
         $em->flush();
+    }
+
+    public function testTopicIsSavedShownSearchableAndExported(): void
+    {
+        $this->loginAsAdmin();
+        $topic = 'Digital Europe Blueprint '.uniqid();
+
+        $crawler = $this->client->request('GET', '/initiatives/new');
+        $token = (string) $crawler->filter('input[name="initiative[_token]"]')->attr('value');
+        $this->client->request('POST', '/initiatives/new', [
+            'initiative' => ['title' => 'Topic initiative', 'topic' => $topic, '_token' => $token],
+        ]);
+        $this->assertResponseRedirects();
+
+        $initiative = $this->initiatives()->findOneBy(['title' => 'Topic initiative']);
+        self::assertInstanceOf(Initiative::class, $initiative);
+        self::assertSame($topic, $initiative->getTopic());
+        $id = (string) $initiative->getId();
+
+        $crawler = $this->client->request('GET', '/initiatives/'.$id);
+        self::assertStringContainsString($topic, $crawler->filter('.card__body')->first()->text());
+
+        // The free-text filter searches the topic alongside title and description.
+        $crawler = $this->client->request('GET', '/initiatives?q='.urlencode($topic));
+        self::assertStringContainsString('Topic initiative', $crawler->filter('#initiative-results')->text());
+
+        $this->client->request('GET', '/initiatives/export?q='.urlencode($topic));
+        $csv = (string) $this->client->getInternalResponse()->getContent();
+        self::assertStringContainsString($topic, $csv);
+
+        $this->removeInitiative($id);
     }
 
     public function testEditUpdatesInitiative(): void
@@ -222,9 +299,9 @@ final class InitiativeControllerTest extends FunctionalTestCase
         $this->removeInitiative($id);
     }
 
-    private function createInitiative(string $title): Initiative
+    private function createInitiative(string $title, ?Status $status = null): Initiative
     {
-        $initiative = (new Initiative())->setTitle($title);
+        $initiative = (new Initiative())->setTitle($title)->setStatus($status);
         $em = $this->entityManager();
         $em->persist($initiative);
         $em->flush();

@@ -10,6 +10,7 @@ use App\Entity\Department;
 use App\Entity\Initiative;
 use App\Entity\InitiativeAttachment;
 use App\Entity\InitiativeImage;
+use App\Entity\Partner;
 use App\Entity\Term;
 use App\Enum\EndorsementAuthor;
 use App\Enum\Funding;
@@ -32,6 +33,7 @@ final class InitiativeTest extends TestCase
         self::assertCount(0, $initiative->getStakeholders());
         self::assertCount(0, $initiative->getTags());
         self::assertCount(0, $initiative->getContacts());
+        self::assertCount(0, $initiative->getPartners());
         self::assertCount(0, $initiative->getImages());
         self::assertCount(0, $initiative->getAttachments());
         self::assertNull($initiative->getCreatedAt());
@@ -48,6 +50,7 @@ final class InitiativeTest extends TestCase
 
         $initiative = (new Initiative())
             ->setTitle('Grøn omstilling')
+            ->setTopic('Digital Europe Blueprint for Data Space')
             ->setArea($area)
             ->setDescription('Beskrivelse')
             ->setInitiativeType(InitiativeType::Project)
@@ -61,6 +64,7 @@ final class InitiativeTest extends TestCase
             ->setTimePeriodEnd($end);
 
         self::assertSame('Grøn omstilling', $initiative->getTitle());
+        self::assertSame('Digital Europe Blueprint for Data Space', $initiative->getTopic());
         self::assertSame($area, $initiative->getArea());
         self::assertSame('Beskrivelse', $initiative->getDescription());
         self::assertSame(InitiativeType::Project, $initiative->getInitiativeType());
@@ -201,6 +205,19 @@ final class InitiativeTest extends TestCase
 
         $initiative->removeContact($contact);
         self::assertCount(0, $initiative->getContacts());
+    }
+
+    public function testPartnerCollection(): void
+    {
+        $initiative = new Initiative();
+        $partner = (new Partner())->setName('Aarhus Universitet');
+
+        $initiative->addPartner($partner);
+        $initiative->addPartner($partner);
+        self::assertCount(1, $initiative->getPartners());
+
+        $initiative->removePartner($partner);
+        self::assertCount(0, $initiative->getPartners());
     }
 
     public function testImageCollectionLinksBackToInitiative(): void

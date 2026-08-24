@@ -3,21 +3,22 @@
 {% block title %}{{ 'initiative.index.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
 
 {% block body %}
-    <div class="page">
+    <div class="page" data-controller="live-search" data-live-search-export-url-value="{{ path('app_initiative_export') }}">
         <twig:Page:Header :title="'initiative.index.title'|trans" :subtitle="'initiative.index.subtitle'|trans">
-            <button type="submit" form="initiative-filters" formaction="{{ path('app_initiative_export') }}" formmethod="get" formnovalidate class="btn btn--ghost" data-turbo="false">{{ 'action.export'|trans }}</button>
+            <button type="button" class="btn btn--ghost" data-action="live-search#exportCsv">{{ 'action.export'|trans }}</button>
             <a href="{{ path('app_initiative_new') }}" class="btn btn--primary">{{ 'action.new'|trans }}</a>
         </twig:Page:Header>
 
         {{ form_start(form, {attr: {
             class: 'filters',
             id: 'initiative-filters',
-            'data-controller': 'live-search',
-            'data-action': 'input->live-search#submit change->live-search#submit',
+            'data-live-search-target': 'form',
+            'data-action': 'input->live-search#submit change->live-search#submit turbo:before-fetch-request->live-search#trimQuery',
             'data-turbo-frame': 'initiative-results',
         }}) }}
             <div class="filters__search">
-                {{ form_row(form.q) }}
+                {% set search_attr = form.q.vars.attr|merge({'data-action': 'keydown.enter->live-search#ignoreEnter'}) %}
+                {{ form_row(form.q, {attr: search_attr}) }}
                 <button type="button" class="btn btn--ghost" data-action="live-search#clear">{{ 'action.reset'|trans }}</button>
             </div>
             <div class="filters__grid">
@@ -30,7 +31,9 @@
         {{ form_end(form) }}
 
         <div class="card">
-            <turbo-frame id="initiative-results">
+            {# advance puts the frame's query in the address bar, so filtering,
+               sorting and paging all produce a shareable URL. #}
+            <turbo-frame id="initiative-results" data-turbo-action="advance">
                 {{ include('initiative/_results.html.twig') }}
             </turbo-frame>
         </div>

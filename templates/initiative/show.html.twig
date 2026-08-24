@@ -29,6 +29,10 @@
                     <twig:Card:Header :title="'initiative.show.details'|trans" />
                     <div class="card__body">
                         {% if initiative.description %}<p class="prose">{{ initiative.description }}</p>{% else %}<p class="muted">—</p>{% endif %}
+                        {% if initiative.topic %}
+                            <h3 class="detail-subhead">{{ 'initiative.topic'|trans }}</h3>
+                            <p class="prose">{{ initiative.topic }}</p>
+                        {% endif %}
                         {% if initiative.statusAdditional %}
                             <h3 class="detail-subhead">{{ 'initiative.status_additional'|trans }}</h3>
                             <p class="prose">{{ initiative.statusAdditional }}</p>
@@ -58,6 +62,25 @@
                             {% endfor %}
                         {% else %}
                             <p class="muted">{{ 'initiative.show.no_contacts'|trans }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <twig:Card:Header :title="'initiative.show.partners'|trans" />
+                    <div class="card__body">
+                        {% if initiative.partners|length > 0 %}
+                            {% for partner in initiative.partners %}
+                                <div class="contact-card">
+                                    <div class="contact-card__name">{{ partner.name }}</div>
+                                    {% if partner.description %}<div class="contact-card__meta">{{ partner.description }}</div>{% endif %}
+                                    {% if partner.website %}
+                                        <div class="contact-card__meta"><a href="{{ partner.website }}" target="_blank" rel="noopener">{{ partner.website }}</a></div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="muted">{{ 'initiative.show.no_partners'|trans }}</p>
                         {% endif %}
                     </div>
                 </div>

@@ -40,6 +40,12 @@ class InitiativeType extends AbstractType
                 'label' => 'initiative.title',
                 'help' => 'initiative.title_help',
             ])
+            ->add('topic', TextareaType::class, [
+                'label' => 'initiative.topic',
+                'required' => false,
+                'attr' => ['rows' => 4],
+                'help' => 'initiative.topic_help',
+            ])
             ->add('area', EntityType::class, [
                 'label' => 'initiative.area',
                 'class' => Area::class,
@@ -163,6 +169,11 @@ class InitiativeType extends AbstractType
                 'label' => 'initiative.contacts',
                 'required' => false,
                 'help' => 'initiative.terms_help',
+            ])
+            ->add('partners', PartnersTextType::class, [
+                'label' => 'initiative.partners',
+                'required' => false,
+                'help' => 'initiative.partners_help',
             ])
             ->add('images', CollectionType::class, [
                 'label' => 'initiative.images',

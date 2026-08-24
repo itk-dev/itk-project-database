@@ -64,14 +64,16 @@ class InitiativeController extends AbstractController
         $response = new StreamedResponse(function () use ($rows, $translator, $translate): void {
             $csv = Writer::createFromStream(fopen('php://output', 'w'));
             $csv->insertOne([
-                'id', $translator->trans('initiative.title'), $translator->trans('initiative.status'),
+                'id', $translator->trans('initiative.title'), $translator->trans('initiative.topic'),
+                $translator->trans('initiative.status'),
                 $translator->trans('initiative.area'), $translator->trans('initiative.initiative_type'),
                 $translator->trans('initiative.organizational_anchoring'), $translator->trans('initiative.endorsement'),
                 $translator->trans('initiative.endorsement_author'), $translator->trans('initiative.budget'),
                 $translator->trans('initiative.funding'), $translator->trans('initiative.stakeholders'),
                 $translator->trans('initiative.strategies'), $translator->trans('initiative.tags'),
                 $translator->trans('initiative.time_period_start'), $translator->trans('initiative.time_period_end'),
-                $translator->trans('initiative.contacts'), $translator->trans('initiative.author'),
+                $translator->trans('initiative.contacts'), $translator->trans('initiative.partners'),
+                $translator->trans('initiative.author'),
             ]);
 
             $names = static fn (iterable $items): string => implode(', ', array_map('strval', \is_array($items) ? $items : iterator_to_array($items)));
@@ -80,6 +82,7 @@ class InitiativeController extends AbstractController
                 $csv->insertOne([
                     (string) $row->getId(),
                     $row->getTitle(),
+                    $row->getTopic(),
                     $translate($row->getStatus()),
                     $row->getArea()?->getName(),
                     $translate($row->getInitiativeType()),
@@ -94,6 +97,7 @@ class InitiativeController extends AbstractController
                     $row->getTimePeriodStart()?->format('Y-m-d'),
                     $row->getTimePeriodEnd()?->format('Y-m-d'),
                     $names($row->getContacts()),
+                    $names($row->getPartners()),
                     ($creator = $row->getCreatedBy()) instanceof User ? $creator->getName() : null,
                 ]);
             }

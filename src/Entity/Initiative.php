@@ -35,6 +35,14 @@ class Initiative extends AbstractEntity
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    /**
+     * Which wider programme the initiative is a part of — the title names this
+     * project, the topic places it ("DS4SSCC" → "Digital Europe Blueprint for
+     * Data Space for smart and sustainable cities and communities").
+     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $topic = null;
+
     #[ORM\ManyToOne(targetEntity: Area::class)]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Area $area = null;
@@ -70,6 +78,16 @@ class Initiative extends AbstractEntity
     #[ORM\ManyToMany(targetEntity: Contact::class, cascade: ['persist'])]
     #[ORM\JoinTable(name: 'initiative_contact')]
     private Collection $contacts;
+
+    /**
+     * Not cascade-validated, as on the other free-tagging collections: a violation
+     * would carry the path partners[0].name, which the single text input cannot render.
+     *
+     * @var Collection<int, Partner>
+     */
+    #[ORM\ManyToMany(targetEntity: Partner::class, cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'initiative_partner')]
+    private Collection $partners;
 
     /** @var Collection<int, InitiativeImage> */
     #[ORM\OneToMany(targetEntity: InitiativeImage::class, mappedBy: 'initiative', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -116,6 +134,7 @@ class Initiative extends AbstractEntity
         parent::__construct();
         $this->strategies = new ArrayCollection();
         $this->contacts = new ArrayCollection();
+        $this->partners = new ArrayCollection();
         $this->stakeholders = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->images = new ArrayCollection();
@@ -130,6 +149,18 @@ class Initiative extends AbstractEntity
     public function setTitle(?string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getTopic(): ?string
+    {
+        return $this->topic;
+    }
+
+    public function setTopic(?string $topic): static
+    {
+        $this->topic = $topic;
 
         return $this;
     }
@@ -281,6 +312,28 @@ class Initiative extends AbstractEntity
     public function removeContact(Contact $contact): static
     {
         $this->contacts->removeElement($contact);
+
+        return $this;
+    }
+
+    /** @return Collection<int, Partner> */
+    public function getPartners(): Collection
+    {
+        return $this->partners;
+    }
+
+    public function addPartner(Partner $partner): static
+    {
+        if (!$this->partners->contains($partner)) {
+            $this->partners->add($partner);
+        }
+
+        return $this;
+    }
+
+    public function removePartner(Partner $partner): static
+    {
+        $this->partners->removeElement($partner);
 
         return $this;
     }

@@ -26,11 +26,11 @@
                                 <td>
                                     <div class="cell-actions">
                                         <a href="{{ path('admin_area_edit', {id: area.id}) }}" class="btn btn--ghost btn--sm">{{ 'action.edit'|trans }}</a>
-                                        <form method="post" action="{{ path('admin_area_delete', {id: area.id}) }}"
-                                              onsubmit="return confirm('{{ 'action.confirm_delete'|trans|e('js') }}');">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('delete-area-' ~ area.id) }}">
-                                            <button type="submit" class="btn btn--danger btn--sm">{{ 'action.delete'|trans }}</button>
-                                        </form>
+                                        <twig:ConfirmDelete
+                                            :action="path('admin_area_delete', {id: area.id})"
+                                            :token="csrf_token('delete-area-' ~ area.id)"
+                                            :title="'action.confirm_delete_title'|trans({'%name%': area.name})"
+                                            triggerClass="btn btn--danger btn--sm" />
                                     </div>
                                 </td>
                             </tr>

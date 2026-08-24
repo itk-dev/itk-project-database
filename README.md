@@ -1,25 +1,14 @@
-# Project database
+# ITK Projects
 
-A Symfony application for registering and browsing municipal **initiatives** and
-their **contacts**. It is a rebuild of the previous Drupal-based project
-database, focused on a friendlier interface for creating and getting an overview
+A Symfony application for registering and browsing municipal **initiatives**.
+It is a rebuild of the previous Drupal-based [project-database](https://github.com/itk-dev/project-database)
+with an accompanied react application for graph visualizations [project-database-app](https://github.com/itk-dev/project-database-app),
+focused on a friendlier interface for creating and getting an overview
 of initiatives.
 
 The project follows the itk-dev
 [`symfony` Docker template](https://github.com/itk-dev/devops_itkdev-docker) and
 runs on PHP 8.4 / Symfony 8.
-
-## Features
-
-- Dashboard with key figures and a status overview of all initiatives.
-- List of initiatives with full-text search, faceted filters, column sorting,
-  pagination and CSV export.
-- Create and edit initiatives, including inline creation of contacts,
-  free-tagging of tags, stakeholders and strategies, and image/file uploads.
-- Contact management.
-- Private file/image uploads, served only to signed-in users.
-- Local username/password login with user administration for administrators.
-- Bilingual interface (Danish and English).
 
 ## Requirements
 
@@ -36,17 +25,8 @@ development fixtures):
 task install
 ```
 
-Without Task:
-
-```sh
-docker compose up --detach
-docker compose exec phpfpm composer install
-docker compose exec phpfpm bin/console doctrine:migrations:migrate --no-interaction
-docker compose exec phpfpm bin/console doctrine:fixtures:load --no-interaction
-```
-
 The site is served on the domain configured in `.env`
-(`COMPOSE_DOMAIN`, e.g. `https://itk-project-database.local.itkdev.dk`).
+(`COMPOSE_DOMAIN`, e.g. `https://itk-projects.local.itkdev.dk`).
 
 ### Signing in
 
@@ -61,41 +41,14 @@ Create an administrator manually with:
 task create-admin -- you@example.com "Your Name"
 ```
 
-## Access control
-
-The application uses a single, flat trust model: authentication is required for
-everything (the firewall protects `^/`), and **every authenticated user is fully
-trusted**. Any signed-in user (`ROLE_USER`) can create, view, edit and delete any
-initiative or contact, and can download any uploaded image or attachment by id.
-
-The only elevated capability is **user administration** (`/admin/**`), which
-requires `ROLE_ADMIN`.
-
-This is intentional: the project database is an internal tool for a small,
-trusted group of municipal editors, so per-record ownership or per-action
-authorization would add complexity without a real security benefit. Uploaded
-files are stored outside the web root and served only through the authenticated
-`MediaController`, so they are never anonymously reachable — but they are not
-restricted between authenticated users.
-
-If a future requirement calls for restricting who may edit/delete a given record
-(or read a given file), introduce a Symfony [Voter](https://symfony.com/doc/current/security/voters.html)
-rather than loosening or working around the flat model.
-
 ## Development
 
 ```sh
-task                      # list all tasks
-task console -- <command> # run a Symfony console command
-task coding-standards:fix # apply coding standards
-task static-analysis      # run PHPStan
-task test                 # run the test suite
-task ci                   # run everything CI runs
+task                        # list all tasks
+task console -- <command>   # run a Symfony console command
+task compose -- <command>   # run a composer command
+task coding-standards:check # Check coding standards
+task coding-standards:apply # Apply coding standards
+task static-analysis        # run PHPStan
+task test                   # run the test suite
 ```
-
-### Note on controlled vocabularies
-
-The controlled vocabularies (status, category, type, organisational anchoring,
-endorsement author and funding) are modelled as PHP enums in `src/Enum/` with
-placeholder values. Adjust the enum cases and their translations
-(`translations/messages.*.yaml`) to match the real domain values.
